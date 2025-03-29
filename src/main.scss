@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-sans bg-indigo-50; /* Usa Poppins como fuente predeterminada */
+}

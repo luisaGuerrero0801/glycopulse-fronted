@@ -12,9 +12,8 @@ import Favoritos from '@/components/molecules/favoritos.vue'
   <div class="w-full flex">
     <VistaInicial />
     <div class="w-full flex-col">
-      <HeaderApp pagename="Glucometria" />
-      <VerGlucometrias />
+      <HeaderApp pagename="Recetas Saludables" />
+      <Favoritos />
     </div>
-  
   </div>
 </template>

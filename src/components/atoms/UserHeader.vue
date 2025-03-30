@@ -22,7 +22,7 @@
           ></span>
         </div>
         <div class="w-16 h-10 bg-indigo-200 border rounded-lg border-indigo-300 justify-center">
-          <img src="src/assets/iconoC.png"  alt="LogoApp" class="h-10 w-10 object-contain "/>
+          <img src="/src/assets/iconoC.png"  alt="LogoApp" class="h-10 w-10 object-contain "/>
         </div>
       </div>
     </div>

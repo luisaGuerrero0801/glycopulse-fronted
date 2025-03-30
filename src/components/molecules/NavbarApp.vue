@@ -1,5 +1,7 @@
 <script lang="ts" setup>
     import LogoApp from '../atoms/LogoApp.vue';
+    import { RouterLink } from 'vue-router';
+
 </script>
 
 <template>
@@ -18,7 +20,7 @@
                     <a href="#" class="inline-block w-full px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md">Glucometría</a> 
                 </li>
                 <li>
-                    <a href="#" class="inline-block w-full px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md">Recetas Saludables</a> 
+                    <RouterLink to="/recetas-saludables" class="inline-block w-full px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md">Recetas Saludables</RouterLink> 
                 </li>
                 <li>
                     <a href="#" class="inline-block w-full px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md">Reportes</a> 

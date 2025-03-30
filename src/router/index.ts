@@ -24,6 +24,15 @@ const router = createRouter({
       meta: {
         requiresAuth: false
       }
+      
+    },
+    {
+      path: '/recetas-saludables',
+      name: 'recetasSaludables',
+      component: () => import('../views/RecetasSaludablesView.vue'),
+      meta: {
+        requiresAuth: true 
+      }
     },
   ]
 })

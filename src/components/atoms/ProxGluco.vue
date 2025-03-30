@@ -4,4 +4,4 @@
                 <p>Fecha: Sáb 05 ago 2006</p>
                 <p>Hora: 12:00 p.m</p>
             </div>
-</template>
+</template>g

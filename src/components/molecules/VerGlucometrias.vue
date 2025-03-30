@@ -13,8 +13,8 @@ import ProxGluco from '../atoms/ProxGluco.vue';
     <hr class="bg-gray-600 mr-12 ml-12 mt-4">
     <ProxGluco class="mr-12 ml-12 mt-8"/>
     <CardGlucometria class="mr-12 ml-12 mt-8"/>
-    <CardGlucometria class="mr-12 ml-12 mt-2"/>
-    <CardGlucometria class="mr-12 ml-12 mt-2"/>
-    <CardGlucometria class="mr-12 ml-12 mt-2"/>
+    <CardGlucometria class="mr-12 ml-12 mt-1"/>
+    <CardGlucometria class="mr-12 ml-12 mt-1"/>
+    <CardGlucometria class="mr-12 ml-12 mt-1"/>
   </section>
 </template>

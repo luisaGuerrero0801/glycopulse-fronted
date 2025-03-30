@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import ButtomNew from '../atoms/ButtomNew.vue'
+import CardGlucometria from '../atoms/CardGlucometria.vue';
+import ProxGluco from '../atoms/ProxGluco.vue';
 </script>
 
 <template>
@@ -9,5 +11,10 @@ import ButtomNew from '../atoms/ButtomNew.vue'
       <ButtomNew nameButton="Nuevo" iconButton="add_circle" />
     </div>
     <hr class="border-t-4 border-gray-200 mx-12" />
+    <ProxGluco class="mr-12 ml-12 mt-8"/>
+    <CardGlucometria class="mr-12 ml-12 mt-8"/>
+    <CardGlucometria class="mr-12 ml-12 mt-2"/>
+    <CardGlucometria class="mr-12 ml-12 mt-2"/>
+    <CardGlucometria class="mr-12 ml-12 mt-2"/>
   </section>
 </template>

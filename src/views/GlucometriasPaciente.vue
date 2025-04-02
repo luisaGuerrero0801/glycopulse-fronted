@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
-import VistaInicial from '@/components/molecules/NavbarApp.vue'
-import Favoritos from '@/components/molecules/Favoritos.vue';
+import VistaInicial from '@/components/molecules/NavbarApp.vue';
+import VerGlucometrias from '@/components/molecules/VerGlucometrias.vue';
 import HeaderApp from '@/components/molecules/HeaderApp.vue';
 </script>
 
@@ -11,8 +11,8 @@ import HeaderApp from '@/components/molecules/HeaderApp.vue';
   <div class="w-full flex">
     <VistaInicial />
     <div class="w-full flex-col">
-      <HeaderApp pagename="Recetas Saludables" />
-      <Favoritos />
+      <HeaderApp pagename="Glucometrías" />
+      <VerGlucometrias></VerGlucometrias>
     </div>
   </div>
 </template>

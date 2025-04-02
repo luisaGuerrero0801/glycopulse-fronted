@@ -17,7 +17,7 @@
                     <a href="#" class="inline-block w-full px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md">Donantes</a> 
                 </li>
                 <li>
-                    <a href="#" class="inline-block w-full px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md">Glucometría</a> 
+                    <RouterLink to="/glucometrias" class="inline-block w-full px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md">Glucometría</RouterLink> 
                 </li>
                 <li>
                     <RouterLink to="/recetas-saludables" class="inline-block w-full px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md">Recetas Saludables</RouterLink> 

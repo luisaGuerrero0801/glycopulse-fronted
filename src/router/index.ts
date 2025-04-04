@@ -52,6 +52,17 @@ const router = createRouter({
         requiresAuth: false
       }
     },
+    {
+      path: '/donantes',
+      name: 'donantes',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/DonantesView.vue'),
+      meta: {
+        requiresAuth: false
+      }
+    },
   ]
 })
 

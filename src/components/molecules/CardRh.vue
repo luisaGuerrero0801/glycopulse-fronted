@@ -40,43 +40,42 @@ import rhdata from '../rhdata'
 </template> -->
 
 <template>
-  <div  class=" space-y-4 ">
-   
+  <div class="space-y-4">
     <div
       class="bg-white shadow-md rounded-xl p-4 flex item-center justify-between"
       v-for="donante in rhdata"
-      :key="donante.id"
+      :key="donante.idUsuario"
     >
       <div class="flex space-x-28 text-sm text-center w-full">
         <div>
           <p class="text-black font-bold w-10 h-10">Perfil</p>
-          <img :src="donante.imagen" alt="icon" />
+          <!-- <img :src="donante.imagen" alt="icon" /> -->
         </div>
 
         <div>
           <p class="text-black font-bold h-12">Nombre</p>
-          <p class="text-gray-500">{{ donante.nombre }}</p>
+          <p class="text-gray-500">{{ donante.nombresUsuario }} {{ donante.apellidosUsuario }}</p>
         </div>
         <div>
-          <p class="text-black font-bold h-12 ">Ubicacion</p>
-          <p class="text-gray-500">{{ donante.ubicacion }}</p>
+          <p class="text-black font-bold h-12">Ubicacion</p>
+          <p class="text-gray-500">{{ donante.ubicacionUsuario }}, Colombia </p>
         </div>
         <div>
-          <p class="text-black font-bold h-12 ">Edad</p>
-          <p class="text-gray-500">{{ donante.edad }}</p>
+          <p class="text-black font-bold h-12">Edad</p>
+          <p class="text-gray-500">{{ donante.edadUsuario }}</p>
         </div>
 
         <div>
-          <p class="text-black font-bold h-12 ">Email</p>
-          <p class="text-gray-500">{{ donante.email }}</p>
+          <p class="text-black font-bold h-12">Email</p>
+          <p class="text-gray-500">{{ donante.correoUsuario }}</p>
         </div>
         <div>
           <p class="text-black font-bold h-12">Telefono</p>
-          <p class="text-gray-500">{{ donante.telefono }}</p>
+          <p class="text-gray-500">{{ donante.telefonoUsuario }}</p>
         </div>
         <div>
           <p class="text-black font-bold h-12">RH</p>
-          <p class="text-gray-500">{{ donante.rh }}</p>
+          <p class="text-gray-500">{{ donante.rhUsuario }}</p>
         </div>
         <div>
           <span class="material-icons text-gray-600 h-12">help_outline</span>
@@ -86,7 +85,17 @@ import rhdata from '../rhdata'
   </div>
 </template>
 <script lang="ts" setup>
-import rhdata from '@/data/rhdata'
-console.log(rhdata)
+// import rhdata from '@/data/rhdata'
 
+import { ref, onMounted } from 'vue'
+const rhdata = ref([])
+onMounted(async () => {
+  try {
+    const resp = await fetch('http://localhost:3000/api/v1/usuarios')
+    const data = await resp.json()
+    rhdata.value = data
+  } catch (error) {
+    console.log('Error no se encontraron Datos', error)
+  }
+})
 </script>

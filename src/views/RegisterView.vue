@@ -3,12 +3,12 @@
 import { ref } from 'vue'
 import router from "@/router";
 import {useRoute} from "vue-router";
-import Login from '@/components/molecules/Login.vue';
+import Register from '@/components/molecules/Register.vue';
 
 </script>
 
 <template>
   <div>
-   <Login/>
+   <Register/>
   </div>
 </template>

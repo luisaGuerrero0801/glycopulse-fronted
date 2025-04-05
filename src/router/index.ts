@@ -49,23 +49,30 @@ const router = createRouter({
       
     },
     {
-      path: '/glucometria',
-      name: 'glucometria',
-      // route level code-splitting
-      // this generates a separate chunk (LoginView-[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/GlucometryView.vue'),
-      meta: {
-        requiresAuth: false
-      }
-      
-    },
-    {
       path: '/recetas-saludables',
       name: 'recetasSaludables',
       component: () => import('../views/RecetasSaludablesView.vue'),
       meta: {
         requiresAuth: true 
+      }
+    },
+    {
+      path: '/glucometrias',
+      name: 'glucometrias',
+      component: () => import('../views/GlucometriasPaciente.vue'),
+      meta: {
+        requiresAuth: true 
+      }
+    },
+    {
+      path: '/donantes',
+      name: 'donantes',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/DonantesView.vue'),
+      meta: {
+        requiresAuth: false
       }
     },
   ]

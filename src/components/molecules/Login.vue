@@ -1,3 +1,4 @@
+
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
   import{ LabelForm, InputForm} from "../atoms/index";
@@ -52,7 +53,3 @@
     </div>
    
   </template>
-  
-  
-  
-  

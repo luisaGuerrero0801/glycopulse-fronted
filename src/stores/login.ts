@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
+
 import Login from '@/Providers/LoginProvider';
+
 import { toast } from 'vue3-toastify';
 
 export type State = {

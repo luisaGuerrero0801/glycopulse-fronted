@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import VistaInicial from '@/components/molecules/NavbarApp.vue'
-import Favoritos from '@/components/molecules/Favoritos.vue';
+import DonantesRh from '@/components/molecules/Donantes.vue'
 import HeaderApp from '@/components/molecules/HeaderApp.vue';
 </script>
 
@@ -11,8 +11,8 @@ import HeaderApp from '@/components/molecules/HeaderApp.vue';
   <div class="w-full flex">
     <VistaInicial />
     <div class="w-full flex-col">
-      <HeaderApp pagename="Recetas Saludables" />
-      <Favoritos />
+      <HeaderApp pagename="Donantes" />
+      <DonantesRh />
     </div>
   </div>
 </template>

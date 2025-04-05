@@ -38,6 +38,3 @@ import { LabelForm, InputForm } from '../atoms/index.js'
       </div>
     </div>
   </template>
-  
- 
-  

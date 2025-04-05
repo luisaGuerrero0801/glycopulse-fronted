@@ -1,8 +1,18 @@
+<script lang="ts" setup>
+import { ref } from 'vue'; 
+import ButtonLogin from '../atoms/ButtonLogin.vue';
+import { LabelForm, InputForm } from '../atoms/index.js'
+const genero = ref(''); 
+const tipoSangre = ref('');
+</script>
+
 <template>
   <div class="flex min-h-screen items-center justify-center bg-white">
     <div class="flex w-3/4 max-w-6xl shadow-lg overflow-hidden bg-white">
       <div class="w-1/2 hidden md:block">
-        <img class="w-full h-full object-cover shadow-lg" src="/img/fondoLogin.png" alt="logo" />
+
+        <img class="w-full h-full object-cover shadow-lg" src="/assets/img/fondoLogin.png" alt="logo" />
+
       </div>
 
       <div class="w-full md:w-1/2 p-8 flex flex-col justify-center">
@@ -17,6 +27,25 @@
           <LabelForm nameForm="Fecha de Nacimiento" />
           <InputForm namePlaceholder="Fecha de nacimiento" inputType="date" />
 
+          <!--inicio tipo de sangre-->
+          <LabelForm nameForm="Tipo de Sangre" />
+          <select
+            v-model="tipoSangre"
+            class="border rounded-2xl w-full p-2 mt-2 bg-gray-50 text-gray-700"
+          >
+            <option value="" disabled selected>Selecciona tu tipo de sangre</option>
+            <option value="A+">A+</option>
+            <option value="O+">O+</option>
+            <option value="B+">B+</option>
+            <option value="AB+">AB+</option>
+            <option value="A-">A-</option>
+            <option value="O-">O-</option>
+            <option value="B-">B-</option>
+            <option value="AB-">AB-</option>
+          </select>
+          <!--fin tipo de sangre-->
+
+
           <!--inicio genero-->
 
           <LabelForm nameForm="Genero" />
@@ -28,6 +57,7 @@
                 type="radio"
                 id="genero_hombre"
                 v-model="genero"
+                value="Hombre" 
                 required
                 class="w-5 h-5 border-gray-300 bg-gray-50"
               />
@@ -40,6 +70,7 @@
                 type="radio"
                 id="genero_mujer"
                 v-model="genero"
+                value="Mujer"  
                 required
                 class="w-5 h-5 border-gray-300 bg-gray-50"
               />
@@ -59,8 +90,8 @@
           <InputForm namePlaceholder="Numero de celular " inputType="number" />
 
           <a class="mb-4 text-blue-500 text-sm text-end" href="#">¿Has olvidado tu contraseña?</a>
+          <ButtonLogin text="Registrate" />
 
-          <Button text="Registrate" />
         </form>
 
         <p class="text-gray-600 text-sm mt-4 text-center">
@@ -71,6 +102,3 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { Button, LabelForm, InputForm } from '../atomos/index.js'
-</script>

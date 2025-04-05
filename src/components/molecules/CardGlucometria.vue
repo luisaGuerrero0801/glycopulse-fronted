@@ -1,5 +1,10 @@
 <script lang="ts" setup>
-
+defineProps<{
+  fecha: string;
+  hora: string;
+  glucosa: number;
+  comentario: string;
+}>();
 </script>
 <template>
             <div class="mt-2 bg-white p-4 rounded-md shadow">
@@ -15,10 +20,10 @@
                     </thead>
                     <tbody>
                         <tr class="">
-                            <td class="p-2">Sáb 05 ago 2006</td>
-                            <td class="p-2">10:24 a.m</td>
-                            <td class="p-2">190 mg/dL</td>
-                            <td class="p-2">Nivel de glucosa alto</td>
+                            <td class="p-2">{{ fecha }}</td>
+                            <td class="p-2">{{ hora }}</td>
+                            <td class="p-2">{{ glucosa }}</td>
+                            <td class="p-2">{{ comentario }}</td>
                             <td class="p-2 flex gap-2">
                                 <button class="text-blue-800">Ver</button>
                                 <button class="text-blue-800">Editar</button>

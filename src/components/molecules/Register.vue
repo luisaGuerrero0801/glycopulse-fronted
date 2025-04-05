@@ -102,3 +102,7 @@ const tipoSangre = ref('');
   </div>
 </template>
 
+<script lang="ts" setup>
+/**import { Button, LabelForm, InputForm } from '../atomos/index.js'**/
+</script>
+

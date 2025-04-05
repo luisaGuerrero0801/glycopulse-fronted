@@ -10,21 +10,14 @@
 
         <h1 class="text-2xl font-bold text-gray-700 mb-4 text-center">Iniciar Sesión</h1>
 
-        <form ref="form">
-        <LabelForm nameForm="Nombre" />
-          <InputForm namePlaceholder="asdasdasd" inputId="correo" v-model="formData.correoUser"/> 
+        <form ref="form" @submit.prevent="handleClick" >
+        <LabelForm nameForm="Correo" />
+          <InputForm namePlaceholder="Ingrese su correo" inputId="correo" v-model="formData.correoUser"/> 
 
           <LabelForm nameForm="Contraseña"/>
-          <InputForm namePlaceholder="ingrese su contraseña" name="pass" inputId="pass" v-model="formData.pass" inputType="password"/>
+          <InputForm namePlaceholder="Ingrese su contraseña" name="pass" inputId="pass" v-model="formData.pass" inputType="password"/>
 
           <a class="mb-4 text-blue-500 text-sm text-end" href="#">¿Has olvidado tu contraseña?</a>
-
-          <!-- <button
-            class="w-full bg-blue-800 text-white py-3 rounded rounded-lg hover:bg-blue-700 transition"
-            @click="login"
-          >
-            Iniciar sesión
-          </button> -->
           <div>
             <ButtonUno text="Iniciar Sesión" @-on-click="handleClick" />
           </div>
@@ -48,7 +41,9 @@ const login = loginStore();
 const formData = reactive({correoUser: '', pass:''})
 
 const handleClick = () => {
-  alert(formData.correoUser)
+  if (!formData.correoUser || !formData.pass) {
+    return alert("Por favor, llena todos los campos.");
+  }
   login.validateUser(formData.correoUser, formData.pass)
 }
 </script>

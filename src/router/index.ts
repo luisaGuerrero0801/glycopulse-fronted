@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
+import { loginStore } from '@/stores/login';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,7 +20,8 @@ const router = createRouter({
       name: 'recetasSaludables',
       component: () => import('../views/RecetasSaludablesView.vue'),
       meta: {
-        requiresAuth: true 
+        requiresAuth: true ,
+        allowedRoles: ['Paciente']
       }
     },
     {
@@ -27,7 +29,8 @@ const router = createRouter({
       name: 'glucometrias',
       component: () => import('../views/GlucometriasPaciente.vue'),
       meta: {
-        requiresAuth: true 
+        requiresAuth: true,
+        allowedRoles: ['Paciente']
       }
     },
     {
@@ -53,7 +56,24 @@ const router = createRouter({
       }
     },
   ]
-})
+});
 
+router.beforeEach((to, from, next) => {
+  const token = sessionStorage.getItem('token');
+  const rol = sessionStorage.getItem('rol') ?? '';
+  const requiresAuth = to.meta.requiresAuth;
+  const allowedRoles = (to.meta.allowedRoles || []) as string [] ;
 
-export default router
+  if(requiresAuth && !token){
+    return next('/');
+  }
+
+  if(requiresAuth && allowedRoles.length && !allowedRoles.includes( rol )) {
+    return next('/');
+  }
+
+  next();
+  
+});
+
+export default router;

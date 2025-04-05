@@ -72,5 +72,5 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, LabelForm, InputForm } from '../atomos/index.js'
+/**import { Button, LabelForm, InputForm } from '../atomos/index.js'**/
 </script>

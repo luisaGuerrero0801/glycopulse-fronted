@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from '@/providers/axiosInstance';
 
 const BASE_URL = import.meta.env.VITE_API_URL +"auth/";
 
@@ -9,13 +9,8 @@ const login = ({correoUsuario,contrasenaUsuario}) => {
         {
             "correoUsuario": correoUsuario,
             "contrasenaUsuario": contrasenaUsuario,
-        },
-        {
-            headers: {
-                "Accept":"*"            
-            }
         });
-}
+};
 
 export default {
     login

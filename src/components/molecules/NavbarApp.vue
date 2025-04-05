@@ -14,7 +14,7 @@
         <div class="pb-8 pt-8 pr-10 pl-8">
             <ul>
                 <li>
-                    <a href="#" class="inline-block w-full px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md">Donantes</a> 
+                    <RouterLink to="/Donantes" class="inline-block w-full px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md">Donantes</RouterLink> 
                 </li>
                 <li>
                     <RouterLink to="/glucometrias" class="inline-block w-full px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md">Glucometría</RouterLink> 

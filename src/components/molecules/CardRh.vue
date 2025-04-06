@@ -60,10 +60,11 @@ import rhdata from '../rhdata'
           <p class="text-black font-bold h-12">Ubicacion</p>
           <p class="text-gray-500">{{ donante.ubicacionUsuario }}, Colombia </p>
         </div>
+        <!-- Este botón envía el formulario 
         <div>
           <p class="text-black font-bold h-12">Edad</p>
           <p class="text-gray-500">{{ donante.edadUsuario }}</p>
-        </div>
+        </div>-->
 
         <div>
           <p class="text-black font-bold h-12">Email</p>

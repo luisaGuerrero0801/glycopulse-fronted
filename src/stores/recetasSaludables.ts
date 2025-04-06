@@ -1,3 +1,4 @@
+import router from "@/router";
 import { defineStore } from "pinia";
 
 export const useRecetasStore = defineStore('recetas', {

@@ -1,4 +1,7 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import DropdownMenu from '../atoms/DropdownMenu.vue';
+
+</script>
 
 <template>
   <section>
@@ -21,8 +24,8 @@
             class="absolute top-6 right-9 w-2.5 h-2.5 bg-blue-500 rounded-full border border-red-50"
           ></span>
         </div>
-        <div class="w-16 h-10 bg-indigo-200 border rounded-lg border-indigo-300 justify-center">
-          <img src="/src/assets/iconoC.png"  alt="LogoApp" class="h-10 w-10 object-contain "/>
+        <div class="w-16 h-10 justify-center">
+          <DropdownMenu/>
         </div>
       </div>
     </div>

@@ -1,3 +1,24 @@
+  <script lang="ts" setup>
+  
+  interface Props{
+    paciente:string,
+    ubicacion:string,
+    grupoSanguineo:string,
+  }
+  
+  defineProps<Props>()
+  
+  import { ref } from 'vue'
+  
+  const searchPaciente = ref('')
+  const ubicacionSeleccionada = ref('')
+  const grupoSanguineoSeleccionado = ref('')
+  
+  const ubicaciones = ['Bogotá', 'Medellín', 'Cali', 'Barranquilla']
+  const gruposSanguineos = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+  </script>
+
+
 <template>
   <div
     class="bg-gray-50 p-4 rounded-xl shadow-md flex justify-between items-center space-x-5 ml-20 mt-6 w-[1400px]"
@@ -40,24 +61,3 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-
-interface Props{
-  paciente:string,
-  ubicacion:string,
-  grupoSanguineo:string,
-
-
-
-}
-defineProps<Props>()
-
-import { ref } from 'vue'
-
-const searchPaciente = ref('')
-const ubicacionSeleccionada = ref('')
-const grupoSanguineoSeleccionado = ref('')
-
-const ubicaciones = ['Bogotá', 'Medellín', 'Cali', 'Barranquilla']
-const gruposSanguineos = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
-</script>

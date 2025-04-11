@@ -47,7 +47,7 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/GlucometryView.vue'),
       meta: {
-        requiresAuth: false
+        requiresAuth: true
       }
       
     },
@@ -75,7 +75,7 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/DonantesView.vue'),
       meta: {
-        requiresAuth: false
+        requiresAuth: true
       }
     },
   ]

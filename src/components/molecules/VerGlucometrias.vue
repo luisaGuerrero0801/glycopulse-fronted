@@ -5,7 +5,6 @@ import FiltrosGluco from './FiltrosGluco.vue';
 import ProxGluco from './ProxGluco.vue';
 import { onMounted } from 'vue';
 import { useGlucometriasStore } from '@/stores/AllGlucometrias';
-
 const storeGluco = useGlucometriasStore();
 
 onMounted(() => {

@@ -1,3 +1,4 @@
+// src/stores/login.ts
 import { defineStore } from 'pinia'
 import Login from '@/providers/LoginProvider'
 import { toast } from 'vue3-toastify'

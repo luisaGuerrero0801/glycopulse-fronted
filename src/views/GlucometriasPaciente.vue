@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import router from '@/router'
-import { useRoute } from 'vue-router'
 import VistaInicial from '@/components/molecules/NavbarApp.vue';
 import VerGlucometrias from '@/components/molecules/VerGlucometrias.vue';
 import HeaderApp from '@/components/molecules/HeaderApp.vue';

@@ -27,14 +27,14 @@ const updateValue = (value: string) => {
         :placeholder="placeholder"
         :v-model="modelValue"
         @input="updateValue(($event.target as HTMLInputElement).value)"
-        class="w-60 mt-2 bg-transparent rounded-md border-zinc-300 font-light bg-red-50 text-gray-400 filter"
+        class="w-56 mt-2 bg-transparent rounded-md border-zinc-300 font-light bg-red-50 text-gray-400 filter"
       />
 
       <select
         v-else
         :value="modelValue"
         @change="updateValue(($event.target as HTMLInputElement).value)"
-        class="w-60 mt-2 bg-transparent rounded-md border-zinc-300 font-light bg-red-50 text-gray-800 "
+        class="w-56 mt-2 bg-transparent rounded-md border-zinc-300 font-light bg-red-50 text-gray-800 "
       >
         <option v-for="option in options" :key="option.value" :value="option.value">
           {{ option.label }}

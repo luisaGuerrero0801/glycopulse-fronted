@@ -23,8 +23,7 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/RegisterView.vue'),
       meta: {
-        requiresAuth: true ,
-        allowedRoles: ['Paciente']
+        requiresAuth: false
       }
     },
     {
@@ -35,8 +34,7 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/RecoverAccountView.vue'),
       meta: {
-        requiresAuth: true,
-        allowedRoles: ['Paciente']
+        requiresAuth: false
       }
     },
     {

@@ -89,20 +89,16 @@ const tipoSangre = ref('');
           <LabelForm nameForm="Celular" />
           <InputForm namePlaceholder="Numero de celular " inputType="number" />
 
-          <a class="mb-4 text-blue-500 text-sm text-end" href="#">¿Has olvidado tu contraseña?</a>
+          <RouterLink to="/recover" class="inline-block w-full px-4 py-2 font-sans text-sm text-blue-500">¿Has olvidado la contraseña?</RouterLink>
           <ButtonLogin text="Registrate" />
 
         </form>
 
         <p class="text-gray-600 text-sm mt-4 text-center">
-          tienes una cuenta? <a class="text-blue-500 hover:underline" href="#">Iniciar</a>
+          tienes una cuenta? <RouterLink to="/" class="inline-block w-full px-4 py-2 font-sans text-sm text-blue-500">Iniciar Sesión</RouterLink>
         </p>
       </div>
     </div>
   </div>
 </template>
-
-<script lang="ts" setup>
-/**import { Button, LabelForm, InputForm } from '../atomos/index.js'**/
-</script>
 

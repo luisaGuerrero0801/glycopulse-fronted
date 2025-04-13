@@ -17,14 +17,14 @@
           <LabelForm nameForm="Contraseña"/>
           <InputForm namePlaceholder="Ingrese su contraseña" name="pass" inputId="pass" v-model="formData.pass" inputType="password"/>
 
-          <a class="mb-4 text-blue-500 text-sm text-end" href="#">¿Has olvidado tu contraseña?</a>
+          <RouterLink to="/recover" class="inline-block w-full px-4 py-2 font-sans text-sm text-blue-500">¿Has olvidado la contraseña?</RouterLink>
           <div>
             <ButtonUno text="Iniciar Sesión" @-on-click="handleClick" />
           </div>
         </form>
 
         <p class="text-gray-600 text-sm mt-4 text-center">
-          No tienes una cuenta? <a class="text-blue-500 hover:underline" href="#">Crea una aquí</a>
+          No tienes una cuenta? <RouterLink to="/register" class="inline-block w-full px-4 py-2 font-sans text-sm text-blue-500">Crea una Aquí</RouterLink>
         </p>
       </div>
     </div>

@@ -1,11 +1,11 @@
 <template>
-  <Menu as="div" class="fixed top-4 right-4 z-50">
+  <Menu as="div" class="fixed top-4 right-4 z-50 mr-10">
     <div>
       <MenuButton
-        class="w-16 h-10 bg-indigo-200 border rounded-lg border-indigo-300 justify-center flex items-center"
+        class="w-20 h-10 bg-indigo-200 border rounded-lg border-indigo-300 justify-center flex items-center"
       >
-        <img src="/src/assets/iconoC.png" alt="LogoApp" class="h-8 w-8 object-contain" />
-        <ChevronDownIcon class="w-5 h-5 ml-2 -mr-1" aria-hidden="true" />
+        <img src="/src/assets/iconoC.png" alt="LogoApp" class="h-10 w-10 object-contain" />
+        <ChevronDownIcon class="w-5 h-5 ml-1 mr-2" aria-hidden="true" />
       </MenuButton>
     </div>
 

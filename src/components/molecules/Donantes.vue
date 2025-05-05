@@ -11,7 +11,7 @@ import FiltroRh from '@/components/molecules/FiltroRh.vue';
     </div>
     
     <div class="w-full flex ">
-    <FiltroRh paciente="Search" ubicacion="Ubicacion" grupoSanguineo="Grupo Sanguineo"   class="mr-12 ml-2 mt-8 mb-4"/>
+    <FiltroRh paciente="Search" ubicacion="Ubicacion" grupoSanguineo="Grupo Sanguineo"   class="mr-12 ml-2 mt-8 mb-4 "/>
     </div>
     <hr class="border-t-2 border-gray-200 mx-12 mt-1" />
     <div class="   px-12 mt-8 pb-4">

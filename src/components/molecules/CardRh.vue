@@ -12,7 +12,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="space-y-4 overflow-y-auto max-h-[600px]">
+  <div class="space-y-4 overflow-y-auto max-h-[600px] w-11/12">
     <div v-if="loading" class="text-center py-4">Cargando usuarios...</div>
     <div v-else-if="error" class="text-red-500 text-center py-4">{{ error }}</div>
     <div v-else-if="usuariosFiltrados.length === 0" class="text-gray-500 text-center py-8">

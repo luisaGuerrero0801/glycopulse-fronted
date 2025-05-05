@@ -8,7 +8,7 @@ const gruposSanguineos = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 </script>
 
 <template>
-  <div class="bg-gray-50 p-4 rounded-xl shadow-md flex justify-between items-center space-x-5 ml-20 mt-6 w-[1400px]">
+  <div class="bg-gray-50 p-4 rounded-xl shadow-md flex justify-between items-center space-x-5 ml-20 mt-6 w-[88.5%]">
     <!-- Campo de búsqueda -->
     <div class="flex flex-col w-[32%]">
       <label class="text-gray-500 text-sm mb-1">Search</label>

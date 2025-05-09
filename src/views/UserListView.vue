@@ -11,5 +11,6 @@ import VerGlucometrias from '@/components/molecules/VerGlucometrias.vue'
       <HeaderApp pagename="Glucometria" />
       <VerGlucometrias />
     </div>
+  
   </div>
 </template>

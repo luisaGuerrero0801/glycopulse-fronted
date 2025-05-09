@@ -9,7 +9,6 @@ const props = defineProps<{
 
 const emit = defineEmits(['verGluco', 'editarGluco'])
 
-
 const verDetalle = () => emit('verGluco', props.id)
 
 const editarRegistro = () => {
@@ -22,7 +21,6 @@ const editarRegistro = () => {
 }
 
 </script>
-
 
 <template>
   <div class="mt-2 bg-white p-4 rounded-md shadow ">

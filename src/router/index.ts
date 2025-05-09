@@ -5,6 +5,17 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/admin',
+      name: 'admin',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/AdminPageView.vue'),
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
       path: '/',
       name: 'login',
       // route level code-splitting

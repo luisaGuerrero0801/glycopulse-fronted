@@ -34,7 +34,6 @@ export const useGlucometriasStore = defineStore('glucometrias', {
         const response = await GlucometriasProvider.crearGlucometria(data)
         console.log('Datos recibidos:', response.data)
         this.glucometrias.push(response.data)
-        console.log()
         toast.success('Glucometría creada exitosamente')
       } catch (err) {
         this.error = 'Error al crear la glucometría'
@@ -55,6 +54,27 @@ export const useGlucometriasStore = defineStore('glucometrias', {
         toast.error(this.error)
         console.error(err)
         return null
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async actualizarGlucometria(
+      id: number,
+      data: { fechaGlucometria: string; horaGlucometria: string; nivelGlucometria: number }
+    ) {
+      this.loading = true
+      this.error = ''
+      try {
+        const response = await GlucometriasProvider.actualizarGlucometria(id, data)
+        this.glucometrias = this.glucometrias.map((g) =>
+          g.idGlucometria === id ? response.data : g
+        )
+        toast.success('Glucometría actualizada exitosamente')
+      } catch (err) {
+        this.error = 'Error al actualizar la glucometría'
+        toast.error(this.error)
+        console.error(err)
       } finally {
         this.loading = false
       }

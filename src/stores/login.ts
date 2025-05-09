@@ -3,11 +3,20 @@ import { defineStore } from 'pinia'
 import Login from '@/providers/LoginProvider'
 import { toast } from 'vue3-toastify'
 import router from '@/router'
+import jwtDecode from 'jwt-decode'
+
+
+interface DecodedToken {
+  sub: number;
+  emailUser: string;
+  rol: string;
+}
 
 export const loginStore = defineStore('login', {
   state: () => ({
     token: '',
-    rol: ''
+    rol: '',
+    idUsuario: null as number | null
   }),
   actions: {
     async validateUser(correoUsuario: string, contrasenaUsuario: string) {
@@ -18,10 +27,18 @@ export const loginStore = defineStore('login', {
         })
 
         this.token = res.data.token
-        this.rol = res.data.rol
+        const decodedToken: DecodedToken = jwtDecode(this.token)
+        this.rol = decodedToken.rol
+        this.idUsuario = decodedToken.sub
 
         sessionStorage.setItem('token', this.token)
         sessionStorage.setItem('rol', this.rol)
+    
+        if (this.idUsuario !== null) {
+          sessionStorage.setItem('idUsuario', this.idUsuario.toString())
+        } else {
+          console.warn('ID de usuario no definido, no se guardó en sessionStorage')
+        }
 
         toast('Login Correcto', { type: toast.TYPE.SUCCESS })
 
@@ -41,6 +58,9 @@ export const loginStore = defineStore('login', {
       this.token = ''
       this.rol = ''
       sessionStorage.clear()
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('rol')
+      sessionStorage.removeItem('idUsuario')
       router.push('/')
     },
 
@@ -50,6 +70,12 @@ export const loginStore = defineStore('login', {
 
     getRol() {
       return sessionStorage.getItem('rol')
+    },
+
+    getUserId() {
+      if (this.idUsuario !== null) return this.idUsuario
+      const storedId = sessionStorage.getItem('idUsuario')
+      return storedId !== null ? Number(storedId) : null
     }
   }
 })

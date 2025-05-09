@@ -19,9 +19,21 @@ const crearGlucometria = (data: {
   const obtenerGlucometriaPorId = (id: number): Promise<{ data: Glucometria }> => {
     return axios.get(`${BASE_URL}/${id}`)
   }
+  
+  const actualizarGlucometria = (
+    id: number,
+    data: {
+      fechaGlucometria: string;
+      horaGlucometria: string;
+      nivelGlucometria: number;
+    }
+  ): Promise<{ data: Glucometria }> => {
+    return axios.patch(`${BASE_URL}/${id}`, data)
+  }
 
 export default {
     todasGlucometrias,
     crearGlucometria,
-    obtenerGlucometriaPorId
+    obtenerGlucometriaPorId,
+    actualizarGlucometria
 }

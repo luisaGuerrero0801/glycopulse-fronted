@@ -1,16 +1,25 @@
 <script lang="ts" setup>
 const props = defineProps<{
   id: number,
-  fecha: string
-  hora: string
-  glucosa: number
+  fecha: string,
+  hora: string,
+  glucosa: number,
   comentario: string
 }>()
 
-const emit = defineEmits(['verGluco'])
+const emit = defineEmits(['verGluco', 'editarGluco'])
 
 
 const verDetalle = () => emit('verGluco', props.id)
+
+const editarRegistro = () => {
+  emit('editarGluco', {
+    id: props.id,
+    fecha: props.fecha,
+    hora: props.hora,
+    glucosa: props.glucosa,
+  })
+}
 
 </script>
 
@@ -39,7 +48,7 @@ const verDetalle = () => emit('verGluco', props.id)
           </td>
           <td class="p-2 flex gap-2">
             <button class="text-blue-800" @click="verDetalle">Ver</button>
-            <button class="text-blue-800">Editar</button>
+            <button class="text-blue-800" @click="editarRegistro">Editar</button>
           </td>
         </tr>
       </tbody>

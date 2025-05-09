@@ -12,8 +12,13 @@
       </div>
 
       <!-- Vista FORMULARIO -->
-      <GlucoseForm v-if="modalType === 'form'" :form="form" :submitForm="handleSubmit" @update:form="updateForm"/>
-
+      <GlucoseForm 
+        v-if="modalType === 'form'" 
+        :form="form" 
+        :submitForm="isEdit ? undefined : handleSubmit"
+        :submitEdit="isEdit ? handleSubmit : undefined"
+        @update:form="updateForm"/>
+      
       <!-- Vista INFORMACIÓN -->
       <GlucoseInfo
         v-else-if="modalType === 'info'"
@@ -27,8 +32,8 @@
 </template>
 
 <script setup lang="ts">
-import { type PropType } from 'vue'
-import GlucoseForm from '@/components/molecules/formGlucos.vue'
+import { type PropType } from 'vue';
+import GlucoseForm from '@/components/molecules/FormGlucos.vue';
 import GlucoseInfo from '@/components/molecules/GlucoInfo.vue'
 
 const props = defineProps({
@@ -40,6 +45,7 @@ const props = defineProps({
     glucosa: number;
     comentario: string;
   }>,
+  isEdit: Boolean,
   closeModal: Function,
   submitForm: Function
 })

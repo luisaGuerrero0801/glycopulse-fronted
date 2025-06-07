@@ -18,7 +18,7 @@
           </div>
         </router-link>
 
-        <router-link to="/admin/notificaciones">
+        <router-link to="/admin/notification">
           <div
             class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300"
           >
@@ -44,7 +44,7 @@
           </div>
         </router-link>
 
-        <router-link to="/admin/soporte">
+        <router-link to="/admin/support">
           <div
             class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300"
           >
@@ -55,7 +55,7 @@
           </div>
         </router-link>
 
-        <router-link to="/admin/roles">
+        <router-link to="/admin/rol">
           <div
             class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300"
           >
@@ -66,7 +66,7 @@
           </div>
         </router-link>
 
-        <router-link to="/admin/grupos">
+        <router-link to="/admin/groups">
           <div
             class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300"
           >

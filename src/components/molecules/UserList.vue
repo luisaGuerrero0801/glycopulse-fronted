@@ -11,6 +11,9 @@ interface Usuario {
   correoUsuario: string
   rhUsuario: string
   activo: boolean
+  rol: {
+    nombreRol: string
+  }
 }
 
 const usuariosStore = useUsuariosStore()
@@ -42,7 +45,6 @@ async function guardarCambios(usuarioEditado: Usuario) {
       throw new Error(`Error al guardar los cambios: ${response.statusText}`)
     }
 
- 
     await usuariosStore.fetchUsuarios()  
     modalVisible.value = false
   } catch (err) {
@@ -62,71 +64,102 @@ async function toggleEstadoUsuario(donante: Usuario) {
 </script>
 
 <template>
-  <div class="space-y-3 overflow-y-auto max-h-[600px]">
-    <div v-if="loading" class="text-center py-4">Cargando usuarios...</div>
-    <div v-else-if="error" class="text-red-500 text-center py-4">{{ error }}</div>
-    <div v-else-if="usuariosFiltrados.length === 0" class="text-gray-500 text-center py-8">
-      No se encontraron donantes con los filtros aplicados
+  <div class="flex justify-center items-center flex-col py-8 bg-white rounded-t-xl shadow-sm">
+  <h1 class="text-4xl font-bold text-gray-800">👥 Gestión de Usuarios</h1>
+  <p class="text-gray-600 mt-2">Administra los usuarios del sistema</p>
+</div>
+  <div class="bg-white rounded-xl shadow-md p-6">
+  
+    <div v-if="loading" class="text-center py-8">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+      <p class="mt-2 text-gray-600">Cargando usuarios...</p>
+    </div>
+    
+    <div v-else-if="error" class="text-center py-8 bg-red-50 rounded-lg">
+      <p class="text-red-500 font-medium">⚠️ {{ error }}</p>
+    </div>
+    
+    <div v-else-if="usuariosFiltrados.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+      <p class="text-gray-500">No se encontraron usuarios con los filtros aplicados</p>
     </div>
 
-    <div
-      v-else
-      v-for="donante in usuariosFiltrados"
-      :key="donante.idUsuario"
-      class="bg-white shadow-md rounded-xl p-4 flex items-center justify-between"
-    >
-      <div class="w-full">
-        <div class="grid grid-cols-7 place-items-center text-center gap-4">
-          <div>
-            <p class="text-black font-bold w-10 h-10">Perfil</p>
-          </div>
-
-          <div>
-            <p class="text-black font-bold h-12">Nombres</p>
-            <p class="text-gray-500">{{ donante.nombresUsuario }}</p>
-          </div>
-
-          <div>
-            <p class="text-black font-bold h-12">Apellidos</p>
-            <p class="text-gray-500">{{ donante.apellidosUsuario }}</p>
-          </div>
-
-          <div>
-            <p class="text-black font-bold h-12">Correo</p>
-            <p class="text-gray-500">{{ donante.correoUsuario }}</p>
-          </div>
-
-          <div>
-            <p class="text-black font-bold h-12">RH</p>
-            <p class="text-gray-500">{{ donante.rhUsuario }}</p>
-          </div>
-             <div>
-            <p class="text-black font-bold h-12">Rol</p>
-            <p class="text-gray-500">{{ donante.rol.nombreRol }}</p>
-          </div>
-
-          <div class="space-y-1">
-            <div class="flex flex-col space-y-1 mt-2">
-              <button
-                @click="editarUsuario(donante)"
-                class="bg-blue-500 text-white px-3 py-1 rounded"
-                aria-label="Editar usuario"
-              >
-                Editar
-              </button>
-
-              <button
-                @click="toggleEstadoUsuario(donante)"
-                :class="donante.activo ? 'bg-red-500' : 'bg-green-500'"
-                class="text-white px-3 py-1 rounded"
-                :aria-label="donante.activo ? 'Inactivar usuario' : 'Reactivar usuario'"
-              >
-                {{ donante.activo ? 'Inactivar' : 'Reactivar' }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div v-else class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Perfil
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Nombres
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Apellidos
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Correo
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              RH
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Rol
+            </th>
+            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr v-for="donante in usuariosFiltrados" :key="donante.idUsuario" class="hover:bg-gray-50 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span class="text-blue-600 text-lg">👤</span>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ donante.nombresUsuario }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ donante.apellidosUsuario }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ donante.correoUsuario }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                {{ donante.rhUsuario }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                {{ donante.rol.nombreRol }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <div class="flex space-x-2 justify-end">
+                <button
+                  @click="editarUsuario(donante)"
+                  class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-sm transition-colors"
+                  aria-label="Editar usuario"
+                >
+                  Editar
+                </button>
+                <button
+                  @click="toggleEstadoUsuario(donante)"
+                  :class="donante.activo ? 'text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100' : 'text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100'"
+                  class="px-3 py-1 rounded-md text-sm transition-colors"
+                  :aria-label="donante.activo ? 'Inactivar usuario' : 'Reactivar usuario'"
+                >
+                  {{ donante.activo ? 'Inactivar' : 'Reactivar' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <EditUsuarioModal

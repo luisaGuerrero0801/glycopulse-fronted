@@ -28,6 +28,28 @@ const router = createRouter({
       name: 'AdminDashboard',
       component: () => import('../views/DashboardView.vue'),
     },
+    
+    
+    {
+      path: 'notification',
+      name: 'AdminNotification',
+      component: () => import('../views/NotificationView.vue'),
+    },
+    {
+      path: 'support',
+      name: 'AdminSupport',
+      component: () => import('../views/NotificationView.vue'),
+    },
+    {
+      path: 'groups',
+      name: 'AdminGroups',
+      component: () => import('../views/NotificationView.vue'),
+    },
+    {
+      path: 'rol',
+      name: 'AdminRol',
+      component: () => import('../views/NotificationView.vue'),
+    },
   ],
 }
 ,

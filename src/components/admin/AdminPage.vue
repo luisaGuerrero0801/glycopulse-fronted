@@ -29,7 +29,7 @@
         </li>
         <li>
           <RouterLink
-            to="/admin/notificaciones"
+            to="/admin/notification"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
           >
             <span class="material-icons text-white">notifications</span>
@@ -47,7 +47,7 @@
         </li>
          <li>
           <RouterLink
-            to="/admin/soporte"
+            to="/admin/support"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
           >
             <span class="material-icons text-white">support_agent</span>
@@ -56,7 +56,7 @@
         </li>
            <li>
           <RouterLink
-            to="/admin/roles"
+            to="/admin/rol"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
           >
             <span class="material-icons text-white">admin_panel_settings</span>
@@ -66,7 +66,7 @@
 
             <li>
           <RouterLink
-            to="/admin/grupos"
+            to="/admin/groups"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
           >
             <span class="material-icons text-white">group</span>

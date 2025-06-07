@@ -29,7 +29,7 @@
         </li>
         <li>
           <RouterLink
-            to="/notificaciones"
+            to="/admin/notificaciones"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
           >
             <span class="material-icons text-white">notifications</span>
@@ -38,13 +38,43 @@
         </li>
         <li>
           <RouterLink
-            to="/listado"
+            to="/admin/dashboard"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
           >
-            <span class="material-icons text-white">assignment_turned_in</span>
-            Listado
+            <span class="material-icons text-white">dashboard</span>
+            Dashboard
           </RouterLink>
         </li>
+         <li>
+          <RouterLink
+            to="/admin/soporte"
+            class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
+          >
+            <span class="material-icons text-white">support_agent</span>
+            Soporte
+          </RouterLink>
+        </li>
+           <li>
+          <RouterLink
+            to="/admin/roles"
+            class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
+          >
+            <span class="material-icons text-white">admin_panel_settings</span>
+            Roles
+          </RouterLink>
+        </li>
+
+            <li>
+          <RouterLink
+            to="/admin/grupos"
+            class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
+          >
+            <span class="material-icons text-white">group</span>
+            Grupos
+          </RouterLink>
+        </li>
+        
+        
       </ul>
     </div>
   </section>

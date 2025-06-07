@@ -22,6 +22,12 @@ const router = createRouter({
       name: 'AdminPanel',
       component: () => import('../views/PanelView.vue'),
     },
+    
+    {
+      path: 'dashboard',
+      name: 'AdminDashboard',
+      component: () => import('../views/DashboardView.vue'),
+    },
   ],
 }
 ,

@@ -1,11 +1,11 @@
-import HeaderApp from '@/components/molecules/HeaderApp.vue';
 <template>
   <div class="w-full flex">
-    <AdminPage />
-
     <div class="w-full flex-col">
-      <HeaderApp pagename="Glucometria" />
-      <router-view> </router-view>
+      <Dashboard />
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import Dashboard from '@/components/molecules/Dashboard.vue'
+</script>

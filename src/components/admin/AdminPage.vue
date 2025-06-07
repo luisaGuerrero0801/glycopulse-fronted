@@ -11,7 +11,16 @@
       <ul>
         <li>
           <RouterLink
-            to="/UserList"
+            to="/admin/panel"
+            class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
+          >
+            <span class="material-icons text-white">home</span>
+            Inicio
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
+            to="/admin/users"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
           >
             <span class="material-icons text-white">people_alt</span>
@@ -34,24 +43,6 @@
           >
             <span class="material-icons text-white">assignment_turned_in</span>
             Listado
-          </RouterLink>
-        </li>
-        <li>
-          <RouterLink
-            to="/panel"
-            class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
-          >
-            <span class="material-icons text-white">dashboard</span>
-            Panel
-          </RouterLink>
-        </li>
-        <li>
-          <RouterLink
-            to="/salir"
-            class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
-          >
-            <span class="material-icons text-white">logout</span>
-            Salir
           </RouterLink>
         </li>
       </ul>

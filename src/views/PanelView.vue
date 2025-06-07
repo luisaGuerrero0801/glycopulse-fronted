@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import UserList from '@/components/molecules/UserList.vue';
+import HeaderApp from '@/components/molecules/HeaderApp.vue'
+import Panel from '@/components/molecules/Panel.vue'
 </script>
 
 <template>
   <div class="w-full flex">
-   
     <div class="w-full flex-col">
-    
-      <UserList />
+      <Panel />
     </div>
-  
   </div>
 </template>

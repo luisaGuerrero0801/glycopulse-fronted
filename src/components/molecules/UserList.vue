@@ -2,7 +2,6 @@
 import { useUsuariosStore } from '@/stores/usuarios'
 import { storeToRefs } from 'pinia'
 import { ref, onMounted } from 'vue'
-import ButtomNew from '../atoms/ButtomNew.vue'
 import EditUsuarioModal from '../molecules/EditUsuarioModal.vue'
 
 interface Usuario {
@@ -63,7 +62,7 @@ async function toggleEstadoUsuario(donante: Usuario) {
 </script>
 
 <template>
-  <div class="space-y-4 overflow-y-auto max-h-[600px]">
+  <div class="space-y-3 overflow-y-auto max-h-[600px]">
     <div v-if="loading" class="text-center py-4">Cargando usuarios...</div>
     <div v-else-if="error" class="text-red-500 text-center py-4">{{ error }}</div>
     <div v-else-if="usuariosFiltrados.length === 0" class="text-gray-500 text-center py-8">
@@ -77,7 +76,7 @@ async function toggleEstadoUsuario(donante: Usuario) {
       class="bg-white shadow-md rounded-xl p-4 flex items-center justify-between"
     >
       <div class="w-full">
-        <div class="grid grid-cols-6 place-items-center text-center gap-4">
+        <div class="grid grid-cols-7 place-items-center text-center gap-4">
           <div>
             <p class="text-black font-bold w-10 h-10">Perfil</p>
           </div>
@@ -100,6 +99,10 @@ async function toggleEstadoUsuario(donante: Usuario) {
           <div>
             <p class="text-black font-bold h-12">RH</p>
             <p class="text-gray-500">{{ donante.rhUsuario }}</p>
+          </div>
+             <div>
+            <p class="text-black font-bold h-12">Rol</p>
+            <p class="text-gray-500">{{ donante.rol.nombreRol }}</p>
           </div>
 
           <div class="space-y-1">

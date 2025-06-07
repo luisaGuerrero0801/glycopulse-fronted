@@ -4,17 +4,27 @@ import { loginStore } from '@/stores/login';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+  {
+  path: '/admin',
+  name: 'admin',
+  component: () => import('../views/AdminPageView.vue'),
+  meta: {
+    requiresAuth: false,
+  },
+  children: [
     {
-      path: '/admin',
-      name: 'admin',
-      // route level code-splitting
-      // this generates a separate chunk (LoginView-[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AdminPageView.vue'),
-      meta: {
-        requiresAuth: false
-      }
+      path: 'users',
+      name: 'AdminUsers',
+      component: () => import('../views/UserListView.vue'), 
     },
+    {
+      path: 'panel',
+      name: 'AdminPanel',
+      component: () => import('../views/PanelView.vue'),
+    },
+  ],
+}
+,
     {
       path: '/',
       name: 'login',

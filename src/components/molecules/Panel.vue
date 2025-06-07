@@ -14,7 +14,7 @@
             <h2 class="text-xl font-bold flex items-center">
               <span class="material-icons mr-3">group</span> Usuarios
             </h2>
-            <p class="mt-2 text-sm">Gestiona todos los usuarios registrados.</p>
+            <p class="mt-2 text-sm text-gray-500">Gestiona todos los usuarios registrados.</p>
           </div>
         </router-link>
 
@@ -25,7 +25,7 @@
             <h2 class="text-xl font-bold flex items-center">
               <span class="material-icons mr-3">notifications</span> Notificaciones
             </h2>
-            <p class="mt-2 text-sm">
+            <p class="mt-2 text-sm text-gray-500">
               Tienes
               <span class="font-bold text-red-600">{{ notificaciones }}</span> nuevas
               notificaciones.
@@ -40,7 +40,9 @@
             <h2 class="text-xl font-bold flex items-center">
               <span class="material-icons mr-3">dashboard</span> Dashboard
             </h2>
-            <p class="mt-2 text-sm">Visión general de las estadísticas del sistema.</p>
+            <p class="mt-2 text-sm text-gray-500">
+              Visión general de las estadísticas del sistema.
+            </p>
           </div>
         </router-link>
 
@@ -51,7 +53,7 @@
             <h2 class="text-xl font-bold flex items-center">
               <span class="material-icons mr-3">headset_mic</span> Soporte
             </h2>
-            <p class="mt-2 text-sm">Accede al centro de ayuda y soporte técnico.</p>
+            <p class="mt-2 text-sm text-gray-500">Accede al centro de ayuda y soporte técnico.</p>
           </div>
         </router-link>
 
@@ -62,7 +64,7 @@
             <h2 class="text-xl font-bold flex items-center">
               <span class="material-icons mr-3">shield</span> Roles
             </h2>
-            <p class="mt-2 text-sm">Gestiona los roles y permisos de los usuarios.</p>
+            <p class="mt-2 text-sm text-gray-500">Gestiona los roles y permisos de los usuarios.</p>
           </div>
         </router-link>
 
@@ -73,7 +75,7 @@
             <h2 class="text-xl font-bold flex items-center">
               <span class="material-icons mr-3">group_work</span> Grupos
             </h2>
-            <p class="mt-2 text-sm">Organiza a los usuarios en grupos específicos.</p>
+            <p class="mt-2 text-sm text-gray-500">Organiza a los usuarios en grupos específicos.</p>
           </div>
         </router-link>
       </div>

@@ -272,7 +272,7 @@ async function reactivarUsuario() {
           <button @click="cerrarModalReactivar" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">
             Cancelar
           </button>
-         <button @click="reactivarUsuario" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+         <button @click="reactivarUsuario" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800">
   Reactivar
 </button>
         </div>

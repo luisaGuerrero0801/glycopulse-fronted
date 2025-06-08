@@ -48,7 +48,7 @@ const router = createRouter({
     {
       path: 'rol',
       name: 'AdminRol',
-      component: () => import('../views/NotificationView.vue'),
+      component: () => import('../views/RolView.vue'),
     },
   ],
 }

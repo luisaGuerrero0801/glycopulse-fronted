@@ -31,40 +31,40 @@
           <RouterLink
             to="/admin/users"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
-            >
+          >
             <span class="material-icons text-white">people_alt</span>
             Usuarios
           </RouterLink>
         </li>
         <li>
           <RouterLink
-          to="/admin/groups"
-          class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
+            to="/admin/groups"
+            class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
           >
-          <span class="material-icons text-white">group</span>
-          Grupos
-        </RouterLink>
-      </li>
-      <li>
-     <RouterLink
-       to="/admin/rol"
-       class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
-     >
-       <span class="material-icons text-white">admin_panel_settings</span>
-       Roles
-     </RouterLink>
-   </li>
-      <li>
-        <RouterLink
-        to="/admin/notification"
-        class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
-        >
-        <span class="material-icons text-white">notifications</span>
-        Notificaciones
-      </RouterLink>
-    </li>
-      <li>
-        <RouterLink
+            <span class="material-icons text-white">group</span>
+            Grupos
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
+            to="/admin/rol"
+            class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
+          >
+            <span class="material-icons text-white">admin_panel_settings</span>
+            Roles
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
+            to="/admin/notification"
+            class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
+          >
+            <span class="material-icons text-white">notifications</span>
+            Notificaciones
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
             to="/admin/support"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
           >
@@ -72,12 +72,27 @@
             Soporte
           </RouterLink>
         </li>
-
-        
-        
+        <li>
+          <RouterLink
+            to="/admin/support"
+            class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
+            @click="logout"
+          >
+            <span class="material-icons text-white">exit_to_app</span>
+            Salir
+          </RouterLink>
+        </li>
       </ul>
     </div>
   </section>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { loginStore } from '@/stores/login'
+
+const store = loginStore()
+
+function logout() {
+  store.logout()
+}
+</script>

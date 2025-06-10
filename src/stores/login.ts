@@ -46,8 +46,8 @@ export const loginStore = defineStore('login', {
           router.push('/recetas-saludables')
         } else if (this.rol === 'Doctor') {
           router.push('/register')
-        } else {
-          router.push('/register')
+        } else if (this.rol=== 'Admin') {
+          router.push('/admin')
         }
       } catch (e) {
         toast('Login Incorrecto', { type: toast.TYPE.ERROR })

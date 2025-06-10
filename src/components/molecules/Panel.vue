@@ -1,7 +1,11 @@
 <template>
   <div class="min-h-screen bg-gray-100">
     <div class="flex justify-center items-center flex-col py-8">
-      <h1 class="text-4xl font-bold">👋 ¡Hola, Admin!</h1>
+      <h1 class="text-4xl font-bold">
+        👋 
+        <span v-if="loading">Cargando usuario...</span>
+        <span v-else>¡Hola, {{ nombreUsuario }}!</span>
+      </h1>
       <p class="text-gray-600 mt-2">Elige una opción para gestionar el sistema:</p>
     </div>
 
@@ -84,7 +88,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
+import { useUsuariosStore } from '../../stores/donantes'
+import { storeToRefs } from 'pinia'
 
-const notificaciones = ref(3) // Puedes cambiar este valor o conectarlo a una API
+const token = sessionStorage.getItem('token')
+const rol = sessionStorage.getItem('rol')
+const idUsuario = Number(sessionStorage.getItem('idUsuario'))
+
+const usuariosStore = useUsuariosStore()
+const { usuariosFiltrados, loading, error } = storeToRefs(usuariosStore)
+
+onMounted(() => {
+  usuariosStore.fetchUsuarios()
+})
+
+const nombreUsuario = computed(() => {
+  const usuarioEncontrado = usuariosFiltrados.value.find(u => u.idUsuario === idUsuario)
+  return usuarioEncontrado ? usuarioEncontrado.nombresUsuario : 'Usuario'
+})
+
+
+const notificaciones = ref(3)
 </script>

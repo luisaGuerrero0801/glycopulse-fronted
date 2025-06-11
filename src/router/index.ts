@@ -43,7 +43,7 @@ const router = createRouter({
     {
       path: 'groups',
       name: 'AdminGroups',
-      component: () => import('../views/NotificationView.vue'),
+      component: () => import('../views/GroupsView.vue'),
     },
     {
       path: 'rol',

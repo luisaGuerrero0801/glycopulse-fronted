@@ -38,6 +38,7 @@
     "vue-final-modal": "^4.4.5",
     "vue-preloader": "^1.1.2",
     "vue-router": "^4.2.2",
+    "vue3-country-region-select": "^1.0.0",
     "vue3-dropzone": "^2.0.1",
     "vue3-loading-overlay": "^0.0.0",
     "vue3-slider": "^1.9.0",

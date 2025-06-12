@@ -118,14 +118,23 @@ async function reactivarUsuario() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 py-6">
+  <div class="min-h-screen bg-[#F7FAFD] py-6">
+    <!-- Cabecera de Gestión de Grupos -->
+    <div class="flex justify-center items-center flex-col py-6 bg-white rounded-xl shadow max-w-4xl mx-auto mb-6">
+      <h1 class="text-4xl font-bold text-gray-800">🛡 Gestión de Roles
+
+      </h1>
+      <p class="text-gray-600 mt-2">Administra los roles y permisos de los usuarios del sistema </p>
+    </div>
+
+    <!-- Contenedor principal -->
     <div
-      :class="usuarioSeleccionado ? 'grid-cols-12' : 'grid-cols-1'"
+      :class="usuarioSeleccionado ? 'grid-cols-1 md:grid-cols-12' : 'grid-cols-1'"
       class="grid gap-6 max-w-7xl mx-auto px-4 transition-all duration-300 min-h-[70vh]"
     >
       <!-- Lista de usuarios -->
       <div
-        :class="usuarioSeleccionado ? 'col-span-7' : 'col-span-12'"
+        :class="usuarioSeleccionado ? 'md:col-span-7' : 'col-span-1'"
         class="bg-white rounded-xl shadow p-4 flex flex-col min-h-[500px] sm:min-h-[550px] md:min-h-[600px]"
       >
         <table class="w-full text-left text-sm text-gray-700 table-auto">
@@ -155,15 +164,13 @@ async function reactivarUsuario() {
         </table>
       </div>
 
-      <!-- Panel derecho -->
-      <div v-if="usuarioSeleccionado" class="col-span-5 flex flex-col gap-6">
-        <!-- Card perfil -->
-        <div class="bg-white rounded-xl shadow p-4 text-center">
-          <img
-            :src="usuarioSeleccionado.foto || 'https://via.placeholder.com/100'"
-            alt="Perfil"
-            class="w-20 h-20 rounded-full object-cover bg-gray-200 mx-auto mb-3"
-          />
+      <!-- Panel derecho (detalles del usuario) -->
+      <div v-if="usuarioSeleccionado" class="md:col-span-5 flex flex-col h-full">
+        <!-- Card perfil (ocupa alto completo) -->
+        <div class="bg-white rounded-xl shadow p-4 text-center flex-1 flex flex-col justify-start">
+          <div class="w-24 h-24 rounded-full bg-blue-500 mx-auto mb-4 flex items-center justify-center text-3xl font-semibold text-white">
+            {{ usuarioSeleccionado.nombresUsuario.charAt(0).toUpperCase() }}
+          </div>
           <p class="text-base font-semibold text-gray-800">
             {{ usuarioSeleccionado.nombresUsuario }} {{ usuarioSeleccionado.apellidosUsuario }}
           </p>
@@ -176,105 +183,59 @@ async function reactivarUsuario() {
           <p v-if="mensajeExito" class="text-green-600 mt-2 text-sm">{{ mensajeExito }}</p>
         </div>
 
-        <!-- Card filtros -->
-        <div class="bg-white rounded-xl shadow p-4">
-          <h3 class="text-sm font-medium text-gray-700 mb-3">Filtros</h3>
-          <div class="space-y-3">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Rol</label>
-              <select v-model="filtroRol" class="border rounded-lg px-3 py-2 shadow-sm w-full text-sm">
-                <option value="Todos">Todos</option>
-                <option
-                  v-for="rol in rolesPermitidos"
-                  :key="rol.idRol"
-                  :value="rol.nombreRol"
-                >
-                  {{ rol.nombreRol }}
-                </option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Deshabilitado</label>
-              <select class="border rounded-lg px-3 py-2 shadow-sm w-full text-sm">
-                <option>Todos</option>
-                <option>Activos</option>
-                <option>Inactivos</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card permisos -->
-        <div class="bg-white rounded-xl shadow p-4">
-          <h3 class="text-sm font-medium text-gray-700 mb-3">Permisos del usuario</h3>
-          <div class="space-y-2 mb-4">
-            <div v-for="permiso in listaPermisos" :key="permiso.id" class="flex items-center gap-2">
-              <input
-                type="checkbox"
-                :id="'permiso-' + permiso.id"
-                v-model="permiso.activo"
-                class="text-blue-600 border-gray-300 rounded"
-              />
-              <label :for="'permiso-' + permiso.id" class="text-sm text-gray-700">
-                {{ permiso.nombre }}
-              </label>
+        <!-- Contenedor inferior para filtros y permisos -->
+        <div class="mt-4 flex flex-col gap-4">
+          <!-- Card filtros -->
+          <div class="bg-white rounded-xl shadow p-4">
+            <h3 class="text-sm font-medium text-gray-700 mb-3">Filtros</h3>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Rol</label>
+                <select v-model="filtroRol" class="border rounded-lg px-3 py-2 shadow-sm w-full text-sm">
+                  <option value="Todos">Todos</option>
+                  <option
+                    v-for="rol in rolesPermitidos"
+                    :key="rol.idRol"
+                    :value="rol.nombreRol"
+                  >
+                    {{ rol.nombreRol }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Deshabilitado</label>
+                <select class="border rounded-lg px-3 py-2 shadow-sm w-full text-sm">
+                  <option>Todos</option>
+                  <option>Activos</option>
+                  <option>Inactivos</option>
+                </select>
+              </div>
             </div>
           </div>
-          <button
-            @click="abrirModal"
-            class="w-full bg-blue-600 text-white px-4 py-2 text-sm rounded hover:bg-blue-700 mb-2"
-          >
-            Cambiar rol
-          </button>
 
-          <!-- Botón para reactivar usuario solo si está inactivo -->
-          <button
-            v-if="usuarioSeleccionado.estado !== 'Activo'"
-  @click="abrirModalReactivar"
-  class="w-full bg-red-900 text-white px-4 py-2 text-sm rounded hover:bg-red-700"
->
-            Reactivar usuario
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal cambiar rol -->
-    <div v-if="mostrarModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md space-y-4 mx-4">
-        <h2 class="text-lg font-semibold text-gray-800">Cambiar rol de usuario</h2>
-        <select v-model="rolSeleccionado" class="w-full border rounded px-3 py-2 text-sm">
-          <option
-            v-for="rol in rolesPermitidos"
-            :key="rol.idRol"
-            :value="rol.idRol"
-          >
-            {{ rol.nombreRol }}
-          </option>
-        </select>
-        <div class="flex justify-end space-x-2 mt-4">
-          <button @click="cerrarModal" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">
-            Cancelar
-          </button>
-          <button @click="guardarCambioRol" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Guardar
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal reactivar usuario -->
-    <div v-if="mostrarModalReactivar" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md space-y-4 mx-4">
-        <h2 class="text-lg font-semibold text-gray-800">Reactivar usuario</h2>
-        <p>¿Estás seguro que quieres reactivar al usuario <strong>{{ usuarioSeleccionado.nombresUsuario }} {{ usuarioSeleccionado.apellidosUsuario }}</strong>?</p>
-        <div class="flex justify-end space-x-2 mt-4">
-          <button @click="cerrarModalReactivar" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">
-            Cancelar
-          </button>
-         <button @click="reactivarUsuario" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800">
-  Reactivar
-</button>
+          <!-- Card permisos -->
+          <div class="bg-white rounded-xl shadow p-4 flex flex-col">
+            <h3 class="text-sm font-medium text-gray-700 mb-3">Permisos del usuario</h3>
+            <div class="space-y-2 mb-4">
+              <div v-for="permiso in listaPermisos" :key="permiso.id" class="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  :id="'permiso-' + permiso.id"
+                  v-model="permiso.activo"
+                  class="text-blue-600 border-gray-300 rounded"
+                />
+                <label :for="'permiso-' + permiso.id" class="text-sm text-gray-700">
+                  {{ permiso.nombre }}
+                </label>
+              </div>
+            </div>
+            <button
+              @click="abrirModal"
+              class="w-full bg-blue-600 text-white px-4 py-2 text-sm rounded hover:bg-blue-700 mb-2"
+            >
+              Cambiar rol
+            </button>
+          </div>
         </div>
       </div>
     </div>

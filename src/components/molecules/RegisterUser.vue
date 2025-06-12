@@ -321,7 +321,7 @@ const registrarUsuario = async () => {
 
         <p class="text-gray-600 text-sm mt-4 text-center">
           ¿Tienes una cuenta?
-          <RouterLink to="/login" class="text-blue-500 hover:text-blue-700 font-medium">
+          <RouterLink to="/" class="text-blue-500 hover:text-blue-700 font-medium">
             Iniciar Sesión
           </RouterLink>
         </p>

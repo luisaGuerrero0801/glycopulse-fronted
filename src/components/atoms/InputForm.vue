@@ -5,13 +5,16 @@
       :id="inputId"
       :placeholder="namePlaceholder"
       v-model="internalValue"
-      class="w-full p-2 border rounded-2xl mb-4 border border-gray-300 bg-gray-50"
+      :class="[
+        'w-full border rounded-xl mb-1 border-gray-300 bg-gray-50 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400',
+        inputClass
+      ]"
     />
   </section>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   inputType: {
@@ -20,15 +23,18 @@ const props = defineProps({
   },
   inputId: String,
   namePlaceholder: String,
-  modelValue: String
-});
+  modelValue: String,
+  inputClass: {
+    type: String,
+    default: 'py-1 px-2'
+  }
+})
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue'])
 
-const internalValue = ref(props.modelValue);
+const internalValue = ref(props.modelValue)
 
-// Verifica cuando internalValue cambie y emite la actualización
 watch(internalValue, (newValue) => {
-  emit('update:modelValue', newValue);
-});
+  emit('update:modelValue', newValue)
+})
 </script>

@@ -12,16 +12,14 @@ const props = withDefaults(defineProps<Props>(), {
   colorButtonHover: 'hover:bg-blue-700'
 })
 </script>
+
 <template>
   <section>
-    
     <button
-      :class="`w-full ${colorButton} text-white py-3 rounded rounded-lg ${colorButtonHover} transition mb-15`"
-      @click = "$emit('OnClick')"
+      :class="`w-full ${colorButton} text-white py-1.5 text-sm rounded-lg ${colorButtonHover} transition`"
+      @click="$emit('OnClick')"
     >
       {{ text }}
     </button>
   </section>
 </template>
-
-

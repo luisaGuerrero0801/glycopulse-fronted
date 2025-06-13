@@ -9,7 +9,6 @@ import { useRegisterStore } from '@/stores/register'
 const router = useRouter()
 const registerStore = useRegisterStore()
 
-// Estados del formulario
 const form = ref({
   nombresUsuario: '',
   apellidosUsuario: '',
@@ -18,44 +17,38 @@ const form = ref({
   rhUsuario: '',
   correoUsuario: '',
   contrasenaUsuario: '',
-  country: '',
+  country: 'CO',
   region: ''
 })
+
+const countryMap: Record<string, string> = {
+  CO: 'Colombia'
+}
+
 const idRol = ref(2)
 const isLoading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 
-// Mapeo de códigos a nombres completos
-const countryMap: Record<string, string> = {
-  CO: 'Colombia',
-  US: 'Estados Unidos',
-  MX: 'México',
-  ES: 'España',
-  AR: 'Argentina',
-  PE: 'Perú',
-  CL: 'Chile',
-  BR: 'Brasil'
-}
-
 const regionMap: Record<string, Record<string, string>> = {
   CO: {
-    'DC': 'Bogotá D.C.',
-    'ANT': 'Antioquia',
-    'VAL': 'Valle del Cauca',
-    'SAN': 'Santander',
-    'BOY': 'Boyacá'
-  },
-  US: {
-    'NY': 'New York',
-    'CA': 'California',
-    'FL': 'Florida',
-    'TX': 'Texas',
-    'IL': 'Illinois'
+    DC: 'Bogotá D.C.',
+    ANT: 'Antioquia',
+    VAL: 'Valle del Cauca',
+    SAN: 'Santander',
+    BOY: 'Boyacá',
+    CUN: 'Cundinamarca',
+    ATL: 'Atlántico',
+    BOL: 'Bolívar',
+    CAL: 'Caldas',
+    HUI: 'Huila',
+    NAR: 'Nariño',
+    MAG: 'Magdalena'
   }
 }
 
-// Funciones de validación
+const paisesDisponibles = [{ code: 'CO', name: 'Colombia' }]
+
 const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 const validarContrasena = (password: string) => password.length >= 8
 
@@ -65,17 +58,20 @@ const formatDate = (dateString: string) => {
 }
 
 const obtenerNombreCompletoPais = (codigoPais: string) => {
-  return codigoPais.length > 4 || codigoPais.includes(' ') ? codigoPais : countryMap[codigoPais] || codigoPais
+  return codigoPais.length > 4 || codigoPais.includes(' ')
+    ? codigoPais
+    : countryMap[codigoPais] || codigoPais
 }
 
 const obtenerNombreCompletoCiudad = (codigoCiudad: string, codigoPais: string) => {
-  return codigoCiudad.length > 4 || codigoCiudad.includes(' ') ? codigoCiudad : 
-    (regionMap[codigoPais] || {})[codigoCiudad] || codigoCiudad
+  return codigoCiudad.length > 4 || codigoCiudad.includes(' ')
+    ? codigoCiudad
+    : (regionMap[codigoPais] || {})[codigoCiudad] || codigoCiudad
 }
 
 const validarFormulario = () => {
   errorMessage.value = ''
-  
+
   const camposRequeridos = [
     { value: form.value.nombresUsuario, message: 'El nombre es obligatorio' },
     { value: form.value.apellidosUsuario, message: 'El apellido es obligatorio' },
@@ -118,21 +114,6 @@ const validarFormulario = () => {
   return true
 }
 
-const resetForm = () => {
-  form.value = {
-    nombresUsuario: '',
-    apellidosUsuario: '',
-    fechaNacimientoUsuario: '',
-    generoUsuario: '',
-    rhUsuario: '',
-    correoUsuario: '',
-    contrasenaUsuario: '',
-    country: '',
-    region: ''
-  }
-  errorMessage.value = ''
-}
-
 const registrarUsuario = async () => {
   if (!validarFormulario()) return
 
@@ -159,7 +140,6 @@ const registrarUsuario = async () => {
     await registerStore.registerUser(usuario)
     successMessage.value = '¡Registro exitoso! Redirigiendo...'
     router.push('/')
-    
   } catch (error: any) {
     console.error('Error completo:', error)
     errorMessage.value = error.message || 'Error al registrar usuario. Por favor intenta nuevamente.'
@@ -170,9 +150,8 @@ const registrarUsuario = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex items-center justify-center p-4 overflow-x-hidden">
-    <div class="flex flex-col md:flex-row w-full max-w-5xl shadow-lg bg-white rounded-xl overflow-hidden" style="min-height: 90vh;">
-      <!-- Imagen (oculta en móviles) -->
+  <div class="min-h-screen bg-white flex items-center justify-center p-4">
+    <div class="flex flex-col md:flex-row w-full max-w-5xl shadow-lg bg-white rounded-xl overflow-hidden">
       <div class="hidden md:block md:w-1/2 bg-gray-100">
         <img
           class="w-full h-full object-cover"
@@ -181,57 +160,37 @@ const registrarUsuario = async () => {
         />
       </div>
 
-      <!-- Formulario -->
-      <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col">
-        <h1 class="text-2xl font-bold text-gray-700 mb-4 text-center">Crea una cuenta fácil</h1>
+      <div class="w-full md:w-1/2 p-4 md:p-5 flex flex-col justify-between">
+        <h1 class="text-xl font-bold text-gray-700 mb-2 text-center">Crea una cuenta fácil</h1>
 
-        <!-- Mensajes de estado -->
-        <div v-if="errorMessage" class="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+        <div v-if="errorMessage" class="mb-2 p-2 bg-red-100 text-red-700 rounded-lg text-sm">
           {{ errorMessage }}
         </div>
-        <div v-if="successMessage" class="mb-4 p-3 bg-green-100 text-green-700 rounded-lg text-sm">
+        <div v-if="successMessage" class="mb-2 p-2 bg-green-100 text-green-700 rounded-lg text-sm">
           {{ successMessage }}
         </div>
 
-        <form @submit.prevent="registrarUsuario" class="space-y-4 flex-grow">
-          <!-- Nombre -->
+        <form @submit.prevent="registrarUsuario" class="space-y-1 flex-grow">
           <div>
             <LabelForm nameForm="Nombre" />
-            <InputForm 
-              namePlaceholder="Nombre" 
-              v-model="form.nombresUsuario"
-              @blur="validarFormulario"
-            />
+            <InputForm v-model="form.nombresUsuario" namePlaceholder="Nombre" inputClass="py-1.5 px-2 text-sm" />
           </div>
 
-          <!-- Apellido -->
           <div>
             <LabelForm nameForm="Apellido" />
-            <InputForm 
-              namePlaceholder="Apellido" 
-              v-model="form.apellidosUsuario"
-              @blur="validarFormulario"
-            />
+            <InputForm v-model="form.apellidosUsuario" namePlaceholder="Apellido" inputClass="py-1.5 px-2 text-sm" />
           </div>
 
-          <!-- Fecha de Nacimiento -->
           <div>
             <LabelForm nameForm="Fecha de Nacimiento" />
-            <InputForm
-              namePlaceholder="Fecha de nacimiento"
-              inputType="date"
-              v-model="form.fechaNacimientoUsuario"
-              @blur="validarFormulario"
-            />
+            <InputForm v-model="form.fechaNacimientoUsuario" inputType="date" inputClass="py-1.5 px-2 text-sm" />
           </div>
 
-          <!-- Tipo de Sangre -->
           <div>
             <LabelForm nameForm="Tipo de Sangre" />
             <select
               v-model="form.rhUsuario"
-              class="border border-gray-300 rounded-2xl w-full p-3 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              @change="validarFormulario"
+              class="border border-gray-300 rounded-2xl w-full py-2 px-3 bg-gray-50 text-gray-700 text-sm"
             >
               <option value="" disabled selected>Selecciona tu tipo de sangre</option>
               <option value="A+">A+</option>
@@ -245,13 +204,11 @@ const registrarUsuario = async () => {
             </select>
           </div>
 
-          <!-- Género -->
           <div>
             <LabelForm nameForm="Género" />
             <select
               v-model="form.generoUsuario"
-              class="border border-gray-300 rounded-2xl w-full p-3 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              @change="validarFormulario"
+              class="border border-gray-300 rounded-2xl w-full py-2 px-3 bg-gray-50 text-gray-700 text-sm"
             >
               <option disabled value="">Selecciona tu género</option>
               <option value="Hombre">Hombre</option>
@@ -261,57 +218,43 @@ const registrarUsuario = async () => {
             </select>
           </div>
 
-          <!-- Correo -->
           <div>
             <LabelForm nameForm="Correo" />
-            <InputForm 
-              namePlaceholder="Correo" 
-              inputType="email" 
-              v-model="form.correoUsuario"
-              @blur="validarFormulario"
-            />
+            <InputForm v-model="form.correoUsuario" inputType="email" namePlaceholder="Correo" inputClass="py-2 px-3 text-sm" />
           </div>
 
-          <!-- Contraseña -->
           <div>
             <LabelForm nameForm="Contraseña" />
-            <InputForm 
-              namePlaceholder="Contraseña" 
-              inputType="password" 
-              v-model="form.contrasenaUsuario"
-              @blur="validarFormulario"
-            />
+            <InputForm v-model="form.contrasenaUsuario" inputType="password" namePlaceholder="Contraseña" inputClass="py-2 px-3 text-sm" />
           </div>
 
-          <!-- País -->
           <div>
             <LabelForm nameForm="País" />
-            <CountrySelect
+            <select
               v-model="form.country"
-              placeholder="Seleccione país"
-              class="border border-gray-300 rounded-2xl w-full p-3 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              countryName
-              @change="validarFormulario"
-            />
+              class="border border-gray-300 rounded-2xl w-full py-2 px-3 bg-gray-50 text-gray-700 text-sm"
+            >
+              <option disabled value="">Seleccione país</option>
+              <option v-for="pais in paisesDisponibles" :key="pais.code" :value="pais.code">
+                {{ pais.name }}
+              </option>
+            </select>
           </div>
 
-          <!-- Ciudad -->
           <div>
             <LabelForm nameForm="Ciudad" />
             <RegionSelect
               v-model="form.region"
               :country="form.country"
               placeholder="Seleccione ciudad"
-              class="border border-gray-300 rounded-2xl w-full p-3 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="border border-gray-300 rounded-2xl w-full py-2 px-3 bg-gray-50 text-gray-700 text-sm"
               regionName
-              @change="validarFormulario"
             />
           </div>
 
-          <!-- Botón de registro -->
-          <div class="pt-4">
-            <ButtonLogin 
-              text="Registrate" 
+          <div class="pt-2">
+            <ButtonLogin
+              text="Registrate"
               :disabled="isLoading"
               :loading="isLoading"
               class="w-full"
@@ -319,7 +262,7 @@ const registrarUsuario = async () => {
           </div>
         </form>
 
-        <p class="text-gray-600 text-sm mt-4 text-center">
+        <p class="text-gray-600 text-xs mt-2 text-center">
           ¿Tienes una cuenta?
           <RouterLink to="/" class="text-blue-500 hover:text-blue-700 font-medium">
             Iniciar Sesión
@@ -331,7 +274,6 @@ const registrarUsuario = async () => {
 </template>
 
 <style scoped>
-/* Estilos personalizados si son necesarios */
 .rounded-2xl {
   border-radius: 1rem;
 }

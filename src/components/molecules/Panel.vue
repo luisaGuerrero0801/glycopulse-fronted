@@ -83,7 +83,7 @@
           </div>
         </router-link>
 
-        <router-link to="/admin/groups">
+        <router-link to="/admin/recipe">
           <div
             class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300"
           >

@@ -50,6 +50,12 @@ const router = createRouter({
       name: 'AdminRol',
       component: () => import('../views/RolView.vue'),
     },
+    
+    {
+      path: 'recipe',
+      name: 'AdminRecipe',
+      component: () => import('../views/CreateRecipeView.vue'),
+    },
   ],
 }
 ,

@@ -12,7 +12,7 @@ interface Usuario {
   generoUsuario: string
   ciudadUsuario: string
   paisUsuario: string
-  activo: boolean
+  activo: boolean // <- Este lo usaremos para traducir desde "estado"
 }
 
 export const useUsuariosStore = defineStore('usuarios', () => {
@@ -20,12 +20,17 @@ export const useUsuariosStore = defineStore('usuarios', () => {
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
 
-  // 🔄 Obtener todos los usuarios
+  // 🔄 Obtener todos los usuarios y adaptar "estado" a "activo"
   const fetchUsuarios = async () => {
     loading.value = true
     try {
       const response = await axios.get('http://localhost:3000/api/v1/usuarios')
-      usuariosFiltrados.value = response.data
+
+      // Transformamos estado: 'Activo' | 'Inactivo' a activo: boolean
+      usuariosFiltrados.value = response.data.map((usuario: any) => ({
+        ...usuario,
+        activo: usuario.estado === 'Activo'
+      }))
     } catch (err) {
       error.value = 'Error al cargar los usuarios.'
       console.error('Error al cargar los usuarios:', err)
@@ -34,7 +39,7 @@ export const useUsuariosStore = defineStore('usuarios', () => {
     }
   }
 
-  // ✏️ Editar usuario
+  // ✏️ Editar usuario (usa PUT general)
   const editarUsuario = async (usuarioEditado: any) => {
     try {
       const datosActualizados = {
@@ -45,11 +50,9 @@ export const useUsuariosStore = defineStore('usuarios', () => {
         fechaNacimientoUsuario: usuarioEditado.fechaNacimientoUsuario,
         generoUsuario: usuarioEditado.generoUsuario,
         ciudadUsuario: usuarioEditado.ciudadUsuario,
-        paissenaUsuario: usuarioEditado.paisUsuario,
-        activo: usuarioEditado.activo
+        paisUsuario: usuarioEditado.paisUsuario,
+        activo: usuarioEditado.activo // será ignorado si backend usa "estado"
       }
-
-      console.log('Enviando PUT con:', datosActualizados)
 
       const response = await axios.put(
         `http://localhost:3000/api/v1/usuarios/${usuarioEditado.idUsuario}`,
@@ -62,7 +65,10 @@ export const useUsuariosStore = defineStore('usuarios', () => {
         )
 
         if (index !== -1) {
-          usuariosFiltrados.value[index] = response.data
+          usuariosFiltrados.value[index] = {
+            ...response.data,
+            activo: response.data.estado === 'Activo' // Adaptar también aquí
+          }
         }
       }
     } catch (err) {
@@ -72,12 +78,13 @@ export const useUsuariosStore = defineStore('usuarios', () => {
     }
   }
 
-  // 🔄 Cambiar estado (activar / desactivar usuario)
+  // ✅ Cambiar estado usando el endpoint PATCH /usuarios/:idUsuario/estado
   const cambiarEstadoUsuario = async (idUsuario: number, nuevoEstado: boolean) => {
     try {
-      const response = await axios.put(`http://localhost:3000/api/v1/usuarios/${idUsuario}`, {
-        activo: nuevoEstado
-      })
+      const response = await axios.patch(
+        `http://localhost:3000/api/v1/usuarios/${idUsuario}/estado`,
+        { activo: nuevoEstado }
+      )
 
       if (response.status === 200) {
         const index = usuariosFiltrados.value.findIndex(

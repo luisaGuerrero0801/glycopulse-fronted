@@ -18,7 +18,7 @@ const form = ref({
   rhUsuario: '',
   correoUsuario: '',
   contrasenaUsuario: '',
-  country: '',
+  country: 'CO',
   region: ''
 })
 const idRol = ref(2)
@@ -26,34 +26,39 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 
-// Mapeo de códigos a nombres completos
+// Mapeo de códigos de país (solo dejamos Colombia activa)
 const countryMap: Record<string, string> = {
-  CO: 'Colombia',
-  US: 'Estados Unidos',
-  MX: 'México',
-  ES: 'España',
-  AR: 'Argentina',
-  PE: 'Perú',
-  CL: 'Chile',
-  BR: 'Brasil'
+  CO: 'Colombia'
 }
 
+// Ciudades principales de Colombia
 const regionMap: Record<string, Record<string, string>> = {
   CO: {
-    'DC': 'Bogotá D.C.',
-    'ANT': 'Antioquia',
-    'VAL': 'Valle del Cauca',
-    'SAN': 'Santander',
-    'BOY': 'Boyacá'
-  },
-  US: {
-    'NY': 'New York',
-    'CA': 'California',
-    'FL': 'Florida',
-    'TX': 'Texas',
-    'IL': 'Illinois'
+    BOG: 'Bogotá',
+    MED: 'Medellín',
+    CAL: 'Cali',
+    BAR: 'Barranquilla',
+    CAR: 'Cartagena',
+    CUC: 'Cúcuta',
+    BUI: 'Bucaramanga',
+    PER: 'Pereira',
+    MAN: 'Manizales',
+    IBA: 'Ibagué',
+    PAS: 'Pasto',
+    NEI: 'Neiva',
+    ARM: 'Armenia',
+    MON: 'Montería',
+    RIO: 'Riohacha',
+    SMA: 'Santa Marta',
+    QUI: 'Quibdó',
+    YOP: 'Yopal',
+    TUN: 'Tunja',
+    FLO: 'Florencia'
   }
 }
+
+// Filtrar países disponibles (solo Colombia)
+const paisesDisponibles = [{ code: 'CO', name: 'Colombia' }]
 
 // Funciones de validación
 const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -65,17 +70,22 @@ const formatDate = (dateString: string) => {
 }
 
 const obtenerNombreCompletoPais = (codigoPais: string) => {
-  return codigoPais.length > 4 || codigoPais.includes(' ') ? codigoPais : countryMap[codigoPais] || codigoPais
+  return codigoPais.length > 4 || codigoPais.includes(' ')
+    ? codigoPais
+    : countryMap[codigoPais] || codigoPais
 }
 
 const obtenerNombreCompletoCiudad = (codigoCiudad: string, codigoPais: string) => {
-  return codigoCiudad.length > 4 || codigoCiudad.includes(' ') ? codigoCiudad : 
-    (regionMap[codigoPais] || {})[codigoCiudad] || codigoCiudad
+  return codigoCiudad.length > 4 || codigoCiudad.includes(' ')
+    ? codigoCiudad
+    : (regionMap[codigoPais] || {})[codigoCiudad] || codigoCiudad
 }
 
 const validarFormulario = () => {
   errorMessage.value = ''
-  
+  //  Limpia lo que el usuario haya escrito (por si pegó números)
+  soloLetras('nombresUsuario')
+  soloLetras('apellidosUsuario')
   const camposRequeridos = [
     { value: form.value.nombresUsuario, message: 'El nombre es obligatorio' },
     { value: form.value.apellidosUsuario, message: 'El apellido es obligatorio' },
@@ -91,6 +101,27 @@ const validarFormulario = () => {
       errorMessage.value = campo.message
       return false
     }
+  }
+  //  Nuevas validaciones estrictas
+  if (!soloLetrasValidas(form.value.nombresUsuario)) {
+    errorMessage.value = 'El nombre solo debe contener letras'
+    return false
+  }
+
+  if (!soloLetrasValidas(form.value.apellidosUsuario)) {
+    errorMessage.value = 'El apellido solo debe contener letras'
+    return false
+  }
+  for (const campo of camposRequeridos) {
+    if (!campo.value) {
+      errorMessage.value = campo.message
+      return false
+    }
+  }
+  const edad = calcularEdad(form.value.fechaNacimientoUsuario)
+  if (edad < 10) {
+    errorMessage.value = 'Debes tener al menos 10 años para registrarte'
+    return false
   }
 
   if (!validarEmail(form.value.correoUsuario)) {
@@ -132,10 +163,23 @@ const resetForm = () => {
   }
   errorMessage.value = ''
 }
+const soloLetras = (campo: 'nombresUsuario' | 'apellidosUsuario') => {
+  const texto = form.value[campo]
+  const limpio = texto.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
+  form.value[campo] = limpio
+}
+const soloLetrasValidas = (texto: string) => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(texto.trim())
+
+const onlyLetters = (e: KeyboardEvent) => {
+  const char = String.fromCharCode(e.keyCode)
+  const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/
+  if (!regex.test(char)) {
+    e.preventDefault()
+  }
+}
 
 const registrarUsuario = async () => {
   if (!validarFormulario()) return
-
   try {
     isLoading.value = true
     successMessage.value = ''
@@ -159,19 +203,34 @@ const registrarUsuario = async () => {
     await registerStore.registerUser(usuario)
     successMessage.value = '¡Registro exitoso! Redirigiendo...'
     router.push('/')
-    
   } catch (error: any) {
     console.error('Error completo:', error)
-    errorMessage.value = error.message || 'Error al registrar usuario. Por favor intenta nuevamente.'
+    errorMessage.value =
+      error.message || 'Error al registrar usuario. Por favor intenta nuevamente.'
   } finally {
     isLoading.value = false
   }
 }
+const calcularEdad = (fechaNacimiento: string) => {
+  const hoy = new Date()
+  const nacimiento = new Date(fechaNacimiento)
+  let edad = hoy.getFullYear() - nacimiento.getFullYear()
+  const mes = hoy.getMonth() - nacimiento.getMonth()
+
+  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--
+  }
+
+  return edad
+}
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex items-center justify-center p-4 overflow-x-hidden">
-    <div class="flex flex-col md:flex-row w-full max-w-5xl shadow-lg bg-white rounded-xl overflow-hidden" style="min-height: 90vh;">
+  <div class="min-h-screen bg-white flex items-center justify-center p-1 overflow-x-hidden">
+    <div
+      class="flex flex-col md:flex-row w-full max-w-5xl shadow-lg bg-white rounded-xl overflow-hidden"
+      style="min-height: 90vh"
+    >
       <!-- Imagen (oculta en móviles) -->
       <div class="hidden md:block md:w-1/2 bg-gray-100">
         <img
@@ -182,24 +241,26 @@ const registrarUsuario = async () => {
       </div>
 
       <!-- Formulario -->
-      <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col">
-        <h1 class="text-2xl font-bold text-gray-700 mb-4 text-center">Crea una cuenta fácil</h1>
+      <div class="w-full md:w-1/2 p-2 md:p-4 flex flex-col">
+        <h1 class="text-xl font-bold text-gray-700 mb-0.5 text-center">Crea una cuenta fácil</h1>
 
         <!-- Mensajes de estado -->
-        <div v-if="errorMessage" class="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+        <div v-if="errorMessage" class="mb-4 p-1 bg-red-100 text-red-700 rounded-lg text-sm">
           {{ errorMessage }}
         </div>
-        <div v-if="successMessage" class="mb-4 p-3 bg-green-100 text-green-700 rounded-lg text-sm">
+        <div v-if="successMessage" class="mb-4 p-1 bg-green-100 text-green-700 rounded-lg text-sm">
           {{ successMessage }}
         </div>
 
-        <form @submit.prevent="registrarUsuario" class="space-y-4 flex-grow">
+        <form @submit.prevent="registrarUsuario" class="flex flex-col gap-1 flex-grow">
           <!-- Nombre -->
           <div>
             <LabelForm nameForm="Nombre" />
-            <InputForm 
-              namePlaceholder="Nombre" 
+            <InputForm
+              namePlaceholder="Nombre"
               v-model="form.nombresUsuario"
+              @input="soloLetras('nombresUsuario')"
+              @keypress="onlyLetters($event)"
               @blur="validarFormulario"
             />
           </div>
@@ -207,9 +268,11 @@ const registrarUsuario = async () => {
           <!-- Apellido -->
           <div>
             <LabelForm nameForm="Apellido" />
-            <InputForm 
-              namePlaceholder="Apellido" 
+            <InputForm
+              namePlaceholder="Apellido"
               v-model="form.apellidosUsuario"
+              @input="soloLetras('apellidosUsuario')"
+              @keypress="onlyLetters($event)"
               @blur="validarFormulario"
             />
           </div>
@@ -230,7 +293,7 @@ const registrarUsuario = async () => {
             <LabelForm nameForm="Tipo de Sangre" />
             <select
               v-model="form.rhUsuario"
-              class="border border-gray-300 rounded-2xl w-full p-3 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="border border-gray-300 rounded-2xl w-full p-2 mt-0.5 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               @change="validarFormulario"
             >
               <option value="" disabled selected>Selecciona tu tipo de sangre</option>
@@ -250,7 +313,7 @@ const registrarUsuario = async () => {
             <LabelForm nameForm="Género" />
             <select
               v-model="form.generoUsuario"
-              class="border border-gray-300 rounded-2xl w-full p-3 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               @change="validarFormulario"
             >
               <option disabled value="">Selecciona tu género</option>
@@ -264,9 +327,9 @@ const registrarUsuario = async () => {
           <!-- Correo -->
           <div>
             <LabelForm nameForm="Correo" />
-            <InputForm 
-              namePlaceholder="Correo" 
-              inputType="email" 
+            <InputForm
+              namePlaceholder="Correo"
+              inputType="email"
               v-model="form.correoUsuario"
               @blur="validarFormulario"
             />
@@ -275,9 +338,9 @@ const registrarUsuario = async () => {
           <!-- Contraseña -->
           <div>
             <LabelForm nameForm="Contraseña" />
-            <InputForm 
-              namePlaceholder="Contraseña" 
-              inputType="password" 
+            <InputForm
+              namePlaceholder="Contraseña"
+              inputType="password"
               v-model="form.contrasenaUsuario"
               @blur="validarFormulario"
             />
@@ -286,13 +349,16 @@ const registrarUsuario = async () => {
           <!-- País -->
           <div>
             <LabelForm nameForm="País" />
-            <CountrySelect
+            <select
               v-model="form.country"
-              placeholder="Seleccione país"
-              class="border border-gray-300 rounded-2xl w-full p-3 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              countryName
+              class="border border-gray-300 rounded-2xl w-full p-2 mt-0.5 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               @change="validarFormulario"
-            />
+            >
+              <option disabled value="">Seleccione país</option>
+              <option v-for="pais in paisesDisponibles" :key="pais.code" :value="pais.code">
+                {{ pais.name }}
+              </option>
+            </select>
           </div>
 
           <!-- Ciudad -->
@@ -302,7 +368,7 @@ const registrarUsuario = async () => {
               v-model="form.region"
               :country="form.country"
               placeholder="Seleccione ciudad"
-              class="border border-gray-300 rounded-2xl w-full p-3 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="border border-gray-300 rounded-2xl w-full p-2 mt-0.5 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               regionName
               @change="validarFormulario"
             />
@@ -310,8 +376,8 @@ const registrarUsuario = async () => {
 
           <!-- Botón de registro -->
           <div class="pt-4">
-            <ButtonLogin 
-              text="Registrate" 
+            <ButtonLogin
+              text="Registrate"
               :disabled="isLoading"
               :loading="isLoading"
               class="w-full"
@@ -319,7 +385,7 @@ const registrarUsuario = async () => {
           </div>
         </form>
 
-        <p class="text-gray-600 text-sm mt-4 text-center">
+        <p class="text-gray-600 text-sm mt-2 text-center">
           ¿Tienes una cuenta?
           <RouterLink to="/" class="text-blue-500 hover:text-blue-700 font-medium">
             Iniciar Sesión

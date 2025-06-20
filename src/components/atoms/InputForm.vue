@@ -5,7 +5,7 @@
       :id="inputId"
       :placeholder="namePlaceholder"
       v-model="internalValue"
-      class="w-full p-2 border rounded-2xl mb-4 border border-gray-300 bg-gray-50"
+    class="w-full p-2 rounded-2xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400" 
     />
   </section>
 </template>

@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
   <section>
     
     <button
-      :class="`w-full ${colorButton} text-white py-3 rounded rounded-lg ${colorButtonHover} transition mb-15`"
+    :class="`w-full ${colorButton} text-white py-2 text-sm rounded-lg ${colorButtonHover} transition`"
       @click = "$emit('OnClick')"
     >
       {{ text }}

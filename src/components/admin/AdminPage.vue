@@ -54,7 +54,7 @@
             Roles
           </RouterLink>
         </li>
-        <li>
+        <!-- <li>
           <RouterLink
             to="/admin/notification"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
@@ -62,8 +62,8 @@
             <span class="material-icons text-white">notifications</span>
             Notificaciones
           </RouterLink>
-        </li>
-        <li>
+        </li> -->
+        <!-- <li>
           <RouterLink
             to="/admin/support"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
@@ -71,7 +71,7 @@
             <span class="material-icons text-white">support_agent</span>
             Soporte
           </RouterLink>
-        </li>
+        </li> -->
         <li>
           <RouterLink
             to="/admin/support"

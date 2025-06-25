@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useUsuariosStore } from '@/stores/usuarios'
+import { useUsuariosStore as useUsuariosGestionStore } from '@/stores/usuarios'
 import { storeToRefs } from 'pinia'
 import { ref, onMounted } from 'vue'
 import EditUsuarioModal from '../molecules/EditUsuarioModal.vue'
@@ -12,11 +12,11 @@ interface Usuario {
   rhUsuario: string
   activo: boolean
   rol: {
-    nombreRol: string
+    nombreRol: stringcheck
   }
 }
 
-const usuariosStore = useUsuariosStore()
+const usuariosStore = useUsuariosGestionStore()
 const { usuariosFiltrados, loading, error } = storeToRefs(usuariosStore)
 
 onMounted(() => {

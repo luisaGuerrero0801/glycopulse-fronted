@@ -1,12 +1,12 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-white">
-    <div class="flex w-3/4 max-w-6xl shadow-lg overflow-hidden bg-white">
+  <div class="flex min-h-screen items-center justify-center bg-indigo-100">
+    <div class="flex w-3/4 max-w-6xl shadow-xl overflow-hidden bg-white rounded-lg ">
       <div class="w-1/2 hidden md:block">
         <img class="w-full h-full object-cover shadow-lg" src="/img/fondoLogin.png" alt="logo" />
       </div>
 
       <div class="w-full md:w-1/2 p-8 flex flex-col justify-center">
-        <img class="w-[100px] h-full object-cover mx-auto" src="/img/logo.png" alt="" />
+        <img class="w-[100px] h-full object-cover mx-auto" src="/img/logocolor.png" alt="logoColorGlyco" />
 
         <h1 class="text-2xl font-bold text-gray-700 mb-4 text-center">Iniciar Sesión</h1>
 

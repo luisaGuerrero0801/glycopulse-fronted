@@ -8,6 +8,7 @@ import { useRegisterStore } from '@/stores/register'
 import { toast } from 'vue3-toastify'
 import _ from 'lodash'
 
+
 const router = useRouter()
 const registerStore = useRegisterStore()
 
@@ -112,6 +113,9 @@ const validarFormulario = () => {
   soloLetras('nombresUsuario')
   soloLetras('apellidosUsuario')
 
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com)$/;
+
+
   const camposRequeridos = [
     { value: form.value.nombresUsuario, message: 'El nombre es obligatorio' },
     { value: form.value.apellidosUsuario, message: 'El apellido es obligatorio' },
@@ -145,7 +149,7 @@ const validarFormulario = () => {
     return false
   }
 
-  if (!validarEmail(form.value.correoUsuario)) {
+  if (!validarEmail(form.value.correoUsuario) ||!emailRegex.test(form.value.correoUsuario) ) {
     toast.error('Por favor ingresa un correo electrónico válido')
     return false
   }

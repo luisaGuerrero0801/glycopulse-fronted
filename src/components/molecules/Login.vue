@@ -19,7 +19,7 @@
 
           <RouterLink to="/recover" class="inline-block w-full px-4 py-2 font-sans text-sm text-blue-500">¿Has olvidado la contraseña?</RouterLink>
           <div>
-            <ButtonUno text="Iniciar Sesión" @-on-click="handleClick" />
+            <ButtonUno text="Iniciar Sesión"  />
           </div>
         </form>
 
@@ -36,13 +36,14 @@ import{ LabelForm, InputForm} from "../atoms/index.js";
 import { loginStore } from "@/stores/login.js";
 import { reactive } from "vue";
 import ButtonUno from "../atoms/ButtonUno.vue";
+import { toast } from 'vue3-toastify';
 
 const login = loginStore();
 const formData = reactive({correoUser: '', pass:''})
 
 const handleClick = () => {
   if (!formData.correoUser || !formData.pass) {
-    return alert("Por favor, llena todos los campos.");
+    return toast.success("Por favor, llena todos los campos.");
   }
   login.validateUser(formData.correoUser, formData.pass)
 }

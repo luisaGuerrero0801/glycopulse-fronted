@@ -43,7 +43,7 @@ const formData = reactive({correoUser: '', pass:''})
 
 const handleClick = () => {
   if (!formData.correoUser || !formData.pass) {
-    return toast.success("Por favor, llena todos los campos.");
+    return toast.warning("Por favor, llena todos los campos.");
   }
   login.validateUser(formData.correoUser, formData.pass)
 }

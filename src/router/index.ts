@@ -9,7 +9,7 @@ const router = createRouter({
   name: 'admin',
   component: () => import('../views/AdminPageView.vue'),
   meta: {
-    requiresAuth: false,
+    requiresAuth: true,
   },
   children: [
     {

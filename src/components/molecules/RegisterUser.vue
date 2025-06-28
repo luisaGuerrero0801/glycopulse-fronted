@@ -210,11 +210,27 @@ const registrarUsuario = async () => {
     }
 
     await registerStore.registerUser(usuario)
+
     successMessage.value = '¡Registro exitoso! Redirigiendo...'
     router.push('/')
   } catch (error: any) {
+    // Mostrar todo el error en consola para diagnóstico
     console.error('Error completo:', error)
-    toast.error(error.message || 'Error al registrar usuario. Por favor intenta nuevamente.')
+    console.dir(error)
+
+    // Extraer mensaje probable del error
+    const msg =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      String(error)
+
+    // Detectar si el error está relacionado con correo duplicado
+    if (typeof msg === 'string' && msg.toLowerCase().includes('correo')) {
+      toast.error('El correo ya está en uso. Por favor, usa otro correo.')
+    } else {
+      toast.error(msg || 'Error al registrar usuario. Por favor intenta nuevamente.')
+    }
   } finally {
     isLoading.value = false
   }

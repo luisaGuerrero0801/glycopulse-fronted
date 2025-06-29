@@ -6,6 +6,8 @@ import { LabelForm, InputForm } from '../atoms/index.js'
 import { CountrySelect, RegionSelect } from 'vue3-country-region-select'
 import { useRegisterStore } from '@/stores/register'
 import { useNotificacionesStore } from '@/stores/notificaciones'
+import { toast } from 'vue3-toastify'
+import _ from 'lodash'
 
 const router = useRouter()
 const registerStore = useRegisterStore()
@@ -22,11 +24,13 @@ const form = ref({
   country: 'CO',
   region: ''
 })
+
 const idRol = ref(2)
 const isLoading = ref(false)
-const errorMessage = ref('')
 const successMessage = ref('')
 
+
+// Mapas de país y región
 const countryMap: Record<string, string> = {
   CO: 'Colombia'
 }
@@ -58,6 +62,7 @@ const regionMap: Record<string, Record<string, string>> = {
 
 const paisesDisponibles = [{ code: 'CO', name: 'Colombia' }]
 
+// Validaciones básicas
 const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 const validarContrasena = (password: string) => password.length >= 8
 
@@ -78,10 +83,39 @@ const obtenerNombreCompletoCiudad = (codigoCiudad: string, codigoPais: string) =
     : (regionMap[codigoPais] || {})[codigoCiudad] || codigoCiudad
 }
 
+const soloLetras = (campo: 'nombresUsuario' | 'apellidosUsuario') => {
+  const texto = form.value[campo]
+  const limpio = texto.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
+  form.value[campo] = limpio
+}
+
+const soloLetrasValidas = (texto: string) => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(texto.trim())
+
+const onlyLetters = (e: KeyboardEvent) => {
+  const char = String.fromCharCode(e.keyCode)
+  const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/
+  if (!regex.test(char)) {
+    e.preventDefault()
+  }
+}
+
+const calcularEdad = (fechaNacimiento: string) => {
+  const hoy = new Date()
+  const nacimiento = new Date(fechaNacimiento)
+  let edad = hoy.getFullYear() - nacimiento.getFullYear()
+  const mes = hoy.getMonth() - nacimiento.getMonth()
+  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--
+  }
+  return edad
+}
+
 const validarFormulario = () => {
-  errorMessage.value = ''
+  // Limpia nombres y apellidos de caracteres inválidos
   soloLetras('nombresUsuario')
   soloLetras('apellidosUsuario')
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com)$/
 
   const camposRequeridos = [
     { value: form.value.nombresUsuario, message: 'El nombre es obligatorio' },
@@ -95,46 +129,46 @@ const validarFormulario = () => {
 
   for (const campo of camposRequeridos) {
     if (!campo.value) {
-      errorMessage.value = campo.message
+      toast.error(campo.message)
       return false
     }
   }
 
   if (!soloLetrasValidas(form.value.nombresUsuario)) {
-    errorMessage.value = 'El nombre solo debe contener letras'
+    toast.error('El nombre solo debe contener letras')
     return false
   }
 
   if (!soloLetrasValidas(form.value.apellidosUsuario)) {
-    errorMessage.value = 'El apellido solo debe contener letras'
+    toast.error('El apellido solo debe contener letras')
     return false
   }
 
   const edad = calcularEdad(form.value.fechaNacimientoUsuario)
   if (edad < 10) {
-    errorMessage.value = 'Debes tener al menos 10 años para registrarte'
+    toast.error('Debes tener al menos 10 años para registrarte')
     return false
   }
 
-  if (!validarEmail(form.value.correoUsuario)) {
-    errorMessage.value = 'Por favor ingresa un correo electrónico válido'
+  if (!validarEmail(form.value.correoUsuario) || !emailRegex.test(form.value.correoUsuario)) {
+    toast.error('Por favor ingresa un correo electrónico válido')
     return false
   }
 
   if (!validarContrasena(form.value.contrasenaUsuario)) {
-    errorMessage.value = 'La contraseña debe tener al menos 8 caracteres'
+    toast.error('La contraseña debe tener al menos 8 caracteres')
     return false
   }
 
   const paisCompleto = obtenerNombreCompletoPais(form.value.country)
   if (paisCompleto.length < 4) {
-    errorMessage.value = 'El nombre del país es demasiado corto'
+    toast.error('El nombre del país es demasiado corto')
     return false
   }
 
   const ciudadCompleta = obtenerNombreCompletoCiudad(form.value.region, form.value.country)
   if (ciudadCompleta.length < 4) {
-    errorMessage.value = 'El nombre de la ciudad es demasiado corto'
+    toast.error('El nombre de la ciudad es demasiado corto')
     return false
   }
 
@@ -169,6 +203,7 @@ const onlyLetters = (e: KeyboardEvent) => {
   if (!regex.test(char)) {
     e.preventDefault()
   }
+  successMessage.value = ''
 }
 
 const calcularEdad = (fechaNacimiento: string) => {
@@ -213,9 +248,23 @@ const registrarUsuario = async () => {
     successMessage.value = '¡Registro exitoso! Redirigiendo...'
     router.push('/')
   } catch (error: any) {
+    // Mostrar todo el error en consola para diagnóstico
     console.error('Error completo:', error)
-    errorMessage.value =
-      error.message || 'Error al registrar usuario. Por favor intenta nuevamente.'
+    console.dir(error)
+
+    // Extraer mensaje probable del error
+    const msg =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      String(error)
+
+    // Detectar si el error está relacionado con correo duplicado
+    if (typeof msg === 'string' && msg.toLowerCase().includes('correo')) {
+      toast.error('El correo ya está en uso. Por favor, usa otro correo.')
+    } else {
+      toast.error(msg || 'Error al registrar usuario. Por favor intenta nuevamente.')
+    }
   } finally {
     isLoading.value = false
   }
@@ -242,26 +291,26 @@ const registrarUsuario = async () => {
       <div class="w-full md:w-1/2 p-2 md:p-4 flex flex-col">
         <h1 class="text-xl font-bold text-gray-700 mb-0.5 text-center">Crea una cuenta fácil</h1>
 
-        <!-- Mensajes de estado -->
-        <div v-if="errorMessage" class="mb-4 p-1 bg-red-100 text-red-700 rounded-lg text-sm">
-          {{ errorMessage }}
-        </div>
+        <!-- Mensaje de éxito -->
         <div v-if="successMessage" class="mb-4 p-1 bg-green-100 text-green-700 rounded-lg text-sm">
           {{ successMessage }}
         </div>
 
         <form @submit.prevent="registrarUsuario" class="flex flex-col gap-1 flex-grow">
           <!-- Nombre -->
-          <div>
-            <LabelForm nameForm="Nombre" />
-            <InputForm
-              namePlaceholder="Nombre"
-              v-model="form.nombresUsuario"
-              @input="soloLetras('nombresUsuario')"
-              @keypress="onlyLetters($event)"
-              @blur="validarFormulario"
-            />
-          </div>
+          <LabelForm nameForm="Nombre" />
+          <InputForm
+            namePlaceholder="Nombre"
+            v-model="form.nombresUsuario"
+            @input="
+              () => {
+                form.nombresUsuario = _.startCase(_.toLower(form.nombresUsuario))
+                soloLetras('nombresUsuario')
+              }
+            "
+            @keypress="onlyLetters($event)"
+            @blur="validarFormulario"
+          />
 
           <!-- Apellido -->
           <div>
@@ -269,7 +318,12 @@ const registrarUsuario = async () => {
             <InputForm
               namePlaceholder="Apellido"
               v-model="form.apellidosUsuario"
-              @input="soloLetras('apellidosUsuario')"
+              @input="
+                () => {
+                  form.apellidosUsuario = _.startCase(_.toLower(form.apellidosUsuario))
+                  soloLetras('apellidosUsuario')
+                }
+              "
               @keypress="onlyLetters($event)"
               @blur="validarFormulario"
             />
@@ -395,7 +449,6 @@ const registrarUsuario = async () => {
 </template>
 
 <style scoped>
-/* Estilos personalizados si son necesarios */
 .rounded-2xl {
   border-radius: 1rem;
 }

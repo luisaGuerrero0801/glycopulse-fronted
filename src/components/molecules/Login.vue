@@ -1,6 +1,6 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-indigo-100">
-    <div class="flex w-3/4 max-w-6xl shadow-xl overflow-hidden bg-white rounded-lg">
+  <div class="flex min-h-screen items-center justify-center bg-indigo-50">
+    <div class="flex w-3/4 max-w-6xl shadow-xl overflow-hidden bg-white rounded-3xl">
       <div class="w-1/2 hidden md:block">
         <img class="w-full h-full object-cover shadow-lg" src="/img/fondoLogin.png" alt="logo" />
       </div>

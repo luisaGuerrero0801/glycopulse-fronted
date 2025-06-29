@@ -11,7 +11,7 @@ import _ from 'lodash'
 
 const router = useRouter()
 const registerStore = useRegisterStore()
-const notificaciones = useNotificacionesStore() // 👈 nuevo
+const notificaciones = useNotificacionesStore()
 
 const form = ref({
   nombresUsuario: '',
@@ -29,8 +29,6 @@ const idRol = ref(2)
 const isLoading = ref(false)
 const successMessage = ref('')
 
-
-// Mapas de país y región
 const countryMap: Record<string, string> = {
   CO: 'Colombia'
 }
@@ -62,7 +60,6 @@ const regionMap: Record<string, Record<string, string>> = {
 
 const paisesDisponibles = [{ code: 'CO', name: 'Colombia' }]
 
-// Validaciones básicas
 const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 const validarContrasena = (password: string) => password.length >= 8
 
@@ -97,6 +94,7 @@ const onlyLetters = (e: KeyboardEvent) => {
   if (!regex.test(char)) {
     e.preventDefault()
   }
+  successMessage.value = ''
 }
 
 const calcularEdad = (fechaNacimiento: string) => {
@@ -104,14 +102,15 @@ const calcularEdad = (fechaNacimiento: string) => {
   const nacimiento = new Date(fechaNacimiento)
   let edad = hoy.getFullYear() - nacimiento.getFullYear()
   const mes = hoy.getMonth() - nacimiento.getMonth()
+
   if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
     edad--
   }
+
   return edad
 }
 
 const validarFormulario = () => {
-  // Limpia nombres y apellidos de caracteres inválidos
   soloLetras('nombresUsuario')
   soloLetras('apellidosUsuario')
 
@@ -187,36 +186,7 @@ const resetForm = () => {
     country: '',
     region: ''
   }
-  errorMessage.value = ''
-}
-
-const soloLetras = (campo: 'nombresUsuario' | 'apellidosUsuario') => {
-  const texto = form.value[campo]
-  const limpio = texto.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
-  form.value[campo] = limpio
-}
-const soloLetrasValidas = (texto: string) => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(texto.trim())
-
-const onlyLetters = (e: KeyboardEvent) => {
-  const char = String.fromCharCode(e.keyCode)
-  const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/
-  if (!regex.test(char)) {
-    e.preventDefault()
-  }
   successMessage.value = ''
-}
-
-const calcularEdad = (fechaNacimiento: string) => {
-  const hoy = new Date()
-  const nacimiento = new Date(fechaNacimiento)
-  let edad = hoy.getFullYear() - nacimiento.getFullYear()
-  const mes = hoy.getMonth() - nacimiento.getMonth()
-
-  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
-    edad--
-  }
-
-  return edad
 }
 
 const registrarUsuario = async () => {
@@ -243,23 +213,20 @@ const registrarUsuario = async () => {
 
     await registerStore.registerUser(usuario)
 
-    notificaciones.agregar(`👤 Nuevo usuario registrado: ${usuario.nombresUsuario} ${usuario.apellidosUsuario}`) // ✅ notificación
+    notificaciones.agregar(`👤 Nuevo usuario registrado: ${usuario.nombresUsuario} ${usuario.apellidosUsuario}`)
 
     successMessage.value = '¡Registro exitoso! Redirigiendo...'
     router.push('/')
   } catch (error: any) {
-    // Mostrar todo el error en consola para diagnóstico
     console.error('Error completo:', error)
     console.dir(error)
 
-    // Extraer mensaje probable del error
     const msg =
       error.response?.data?.message ||
       error.response?.data?.error ||
       error.message ||
       String(error)
 
-    // Detectar si el error está relacionado con correo duplicado
     if (typeof msg === 'string' && msg.toLowerCase().includes('correo')) {
       toast.error('El correo ya está en uso. Por favor, usa otro correo.')
     } else {
@@ -270,10 +237,8 @@ const registrarUsuario = async () => {
   }
 }
 </script>
-
-
 <template>
-  <div class="min-h-screen bg-white flex items-center justify-center p-1 overflow-x-hidden">
+  <div class="min-h-screen bg-indigo-50 flex items-center justify-center p-1 overflow-x-hidden">
     <div
       class="flex flex-col md:flex-row w-full max-w-5xl shadow-lg bg-white rounded-xl overflow-hidden"
       style="min-height: 90vh"

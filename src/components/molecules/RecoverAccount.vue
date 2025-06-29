@@ -3,7 +3,7 @@ import ButtonLogin from '../atoms/ButtonLogin.vue';
 import { LabelForm, InputForm } from '../atoms/index.js'
 </script>
 <template>
-    <div class="flex min-h-screen items-center justify-center bg-white">
+    <div class="flex min-h-screen items-center justify-center bg-indigo-50">
       <div class="flex w-3/4 max-w-6xl shadow-lg overflow-hidden bg-white">
         <div class="w-1/2 hidden md:block">
           <img class="w-full h-full object-cover shadow-lg" src="/assets/img/fondoLogin.png" alt="logo" />

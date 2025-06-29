@@ -9,6 +9,19 @@ import 'vue3-toastify/dist/index.css';
 
 import 'vue3-timepicker/dist/VueTimepicker.css'
 
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
+} from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+ChartJS.defaults.font.family = 'Poppins'
+
 const app = createApp(App)
 
 app.use(createPinia())

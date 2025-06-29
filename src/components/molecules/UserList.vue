@@ -12,7 +12,7 @@ interface Usuario {
   rhUsuario: string
   activo: boolean
   rol: {
-    nombreRol: stringcheck
+    nombreRol: string
   }
 }
 
@@ -65,20 +65,19 @@ async function toggleEstadoUsuario(donante: Usuario) {
 
 <template>
   <div class="flex justify-center items-center flex-col py-8 bg-white rounded-t-xl shadow-sm">
-  <h1 class="text-4xl font-bold text-gray-800">👥 Gestión de Usuarios</h1>
-  <p class="text-gray-600 mt-2">Administra los usuarios del sistema</p>
-</div>
+    <h1 class="text-4xl font-bold text-gray-800">👥 Gestión de Usuarios</h1>
+    <p class="text-gray-600 mt-2">Administra los usuarios del sistema</p>
+  </div>
   <div class="bg-white rounded-xl shadow-md p-6">
-  
     <div v-if="loading" class="text-center py-8">
       <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
       <p class="mt-2 text-gray-600">Cargando usuarios...</p>
     </div>
-    
+
     <div v-else-if="error" class="text-center py-8 bg-red-50 rounded-lg">
       <p class="text-red-500 font-medium">⚠️ {{ error }}</p>
     </div>
-    
+
     <div v-else-if="usuariosFiltrados.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
       <p class="text-gray-500">No se encontraron usuarios con los filtros aplicados</p>
     </div>
@@ -87,27 +86,14 @@ async function toggleEstadoUsuario(donante: Usuario) {
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Perfil
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Nombres
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Apellidos
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Correo
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              RH
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Rol
-            </th>
-            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Acciones
-            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Perfil</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombres</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apellidos</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correo</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RH</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
@@ -119,40 +105,26 @@ async function toggleEstadoUsuario(donante: Usuario) {
                 </div>
               </div>
             </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ donante.nombresUsuario }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ donante.apellidosUsuario }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ donante.correoUsuario }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{{ donante.nombresUsuario }}</div>
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{{ donante.rhUsuario }}</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{{ donante.apellidosUsuario }}</div>
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">{{ donante.rol.nombreRol }}</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{{ donante.correoUsuario }}</div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                {{ donante.rhUsuario }}
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
-                {{ donante.rol.nombreRol }}
+              <span :class="donante.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                {{ donante.activo ? 'Activo' : 'Inhabilitado' }}
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <div class="flex space-x-2 justify-end">
-                <button
-                  @click="editarUsuario(donante)"
-                  class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-sm transition-colors"
-                  aria-label="Editar usuario"
-                >
-                  Editar
-                </button>
-                <button
-                  @click="toggleEstadoUsuario(donante)"
-                  :class="donante.activo ? 'text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100' : 'text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100'"
-                  class="px-3 py-1 rounded-md text-sm transition-colors"
-                  :aria-label="donante.activo ? 'Inactivar usuario' : 'Reactivar usuario'"
-                >
+                <button @click="editarUsuario(donante)" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-sm transition-colors">Editar</button>
+                <button @click="toggleEstadoUsuario(donante)"
+                        :class="donante.activo ? 'text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100' : 'text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100'"
+                        class="px-3 py-1 rounded-md text-sm transition-colors">
                   {{ donante.activo ? 'Inactivar' : 'Reactivar' }}
                 </button>
               </div>

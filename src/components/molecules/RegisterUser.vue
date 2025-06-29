@@ -5,11 +5,12 @@ import ButtonLogin from '../atoms/ButtonLogin.vue'
 import { LabelForm, InputForm } from '../atoms/index.js'
 import { CountrySelect, RegionSelect } from 'vue3-country-region-select'
 import { useRegisterStore } from '@/stores/register'
+import { useNotificacionesStore } from '@/stores/notificaciones'
 
 const router = useRouter()
 const registerStore = useRegisterStore()
+const notificaciones = useNotificacionesStore() // 👈 nuevo
 
-// Estados del formulario
 const form = ref({
   nombresUsuario: '',
   apellidosUsuario: '',
@@ -26,12 +27,10 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 
-// Mapeo de códigos de país (solo dejamos Colombia activa)
 const countryMap: Record<string, string> = {
   CO: 'Colombia'
 }
 
-// Ciudades principales de Colombia
 const regionMap: Record<string, Record<string, string>> = {
   CO: {
     BOG: 'Bogotá',
@@ -57,10 +56,8 @@ const regionMap: Record<string, Record<string, string>> = {
   }
 }
 
-// Filtrar países disponibles (solo Colombia)
 const paisesDisponibles = [{ code: 'CO', name: 'Colombia' }]
 
-// Funciones de validación
 const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 const validarContrasena = (password: string) => password.length >= 8
 
@@ -83,9 +80,9 @@ const obtenerNombreCompletoCiudad = (codigoCiudad: string, codigoPais: string) =
 
 const validarFormulario = () => {
   errorMessage.value = ''
-  //  Limpia lo que el usuario haya escrito (por si pegó números)
   soloLetras('nombresUsuario')
   soloLetras('apellidosUsuario')
+
   const camposRequeridos = [
     { value: form.value.nombresUsuario, message: 'El nombre es obligatorio' },
     { value: form.value.apellidosUsuario, message: 'El apellido es obligatorio' },
@@ -102,7 +99,7 @@ const validarFormulario = () => {
       return false
     }
   }
-  //  Nuevas validaciones estrictas
+
   if (!soloLetrasValidas(form.value.nombresUsuario)) {
     errorMessage.value = 'El nombre solo debe contener letras'
     return false
@@ -112,12 +109,7 @@ const validarFormulario = () => {
     errorMessage.value = 'El apellido solo debe contener letras'
     return false
   }
-  for (const campo of camposRequeridos) {
-    if (!campo.value) {
-      errorMessage.value = campo.message
-      return false
-    }
-  }
+
   const edad = calcularEdad(form.value.fechaNacimientoUsuario)
   if (edad < 10) {
     errorMessage.value = 'Debes tener al menos 10 años para registrarte'
@@ -163,6 +155,7 @@ const resetForm = () => {
   }
   errorMessage.value = ''
 }
+
 const soloLetras = (campo: 'nombresUsuario' | 'apellidosUsuario') => {
   const texto = form.value[campo]
   const limpio = texto.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
@@ -176,6 +169,19 @@ const onlyLetters = (e: KeyboardEvent) => {
   if (!regex.test(char)) {
     e.preventDefault()
   }
+}
+
+const calcularEdad = (fechaNacimiento: string) => {
+  const hoy = new Date()
+  const nacimiento = new Date(fechaNacimiento)
+  let edad = hoy.getFullYear() - nacimiento.getFullYear()
+  const mes = hoy.getMonth() - nacimiento.getMonth()
+
+  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--
+  }
+
+  return edad
 }
 
 const registrarUsuario = async () => {
@@ -201,6 +207,9 @@ const registrarUsuario = async () => {
     }
 
     await registerStore.registerUser(usuario)
+
+    notificaciones.agregar(`👤 Nuevo usuario registrado: ${usuario.nombresUsuario} ${usuario.apellidosUsuario}`) // ✅ notificación
+
     successMessage.value = '¡Registro exitoso! Redirigiendo...'
     router.push('/')
   } catch (error: any) {
@@ -211,19 +220,8 @@ const registrarUsuario = async () => {
     isLoading.value = false
   }
 }
-const calcularEdad = (fechaNacimiento: string) => {
-  const hoy = new Date()
-  const nacimiento = new Date(fechaNacimiento)
-  let edad = hoy.getFullYear() - nacimiento.getFullYear()
-  const mes = hoy.getMonth() - nacimiento.getMonth()
-
-  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
-    edad--
-  }
-
-  return edad
-}
 </script>
+
 
 <template>
   <div class="min-h-screen bg-white flex items-center justify-center p-1 overflow-x-hidden">

@@ -15,7 +15,7 @@ interface Usuario {
   activo: boolean // <- Este lo usaremos para traducir desde "estado"
 }
 
-export const useUsuariosStore = defineStore('usuarios', () => {
+export const useUsuariosStore = defineStore('usuariosGestion', () => {
   const usuariosFiltrados = ref<Usuario[]>([])
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)

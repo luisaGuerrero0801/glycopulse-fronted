@@ -5,11 +5,13 @@ import ButtonLogin from '../atoms/ButtonLogin.vue'
 import { LabelForm, InputForm } from '../atoms/index.js'
 import { CountrySelect, RegionSelect } from 'vue3-country-region-select'
 import { useRegisterStore } from '@/stores/register'
+import { useNotificacionesStore } from '@/stores/notificaciones'
 import { toast } from 'vue3-toastify'
 import _ from 'lodash'
 
 const router = useRouter()
 const registerStore = useRegisterStore()
+const notificaciones = useNotificacionesStore() // 👈 nuevo
 
 const form = ref({
   nombresUsuario: '',
@@ -26,6 +28,7 @@ const form = ref({
 const idRol = ref(2)
 const isLoading = ref(false)
 const successMessage = ref('')
+
 
 // Mapas de país y región
 const countryMap: Record<string, string> = {
@@ -184,7 +187,36 @@ const resetForm = () => {
     country: '',
     region: ''
   }
+  errorMessage.value = ''
+}
+
+const soloLetras = (campo: 'nombresUsuario' | 'apellidosUsuario') => {
+  const texto = form.value[campo]
+  const limpio = texto.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
+  form.value[campo] = limpio
+}
+const soloLetrasValidas = (texto: string) => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(texto.trim())
+
+const onlyLetters = (e: KeyboardEvent) => {
+  const char = String.fromCharCode(e.keyCode)
+  const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/
+  if (!regex.test(char)) {
+    e.preventDefault()
+  }
   successMessage.value = ''
+}
+
+const calcularEdad = (fechaNacimiento: string) => {
+  const hoy = new Date()
+  const nacimiento = new Date(fechaNacimiento)
+  let edad = hoy.getFullYear() - nacimiento.getFullYear()
+  const mes = hoy.getMonth() - nacimiento.getMonth()
+
+  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--
+  }
+
+  return edad
 }
 
 const registrarUsuario = async () => {
@@ -211,6 +243,8 @@ const registrarUsuario = async () => {
 
     await registerStore.registerUser(usuario)
 
+    notificaciones.agregar(`👤 Nuevo usuario registrado: ${usuario.nombresUsuario} ${usuario.apellidosUsuario}`) // ✅ notificación
+
     successMessage.value = '¡Registro exitoso! Redirigiendo...'
     router.push('/')
   } catch (error: any) {
@@ -236,6 +270,7 @@ const registrarUsuario = async () => {
   }
 }
 </script>
+
 
 <template>
   <div class="min-h-screen bg-white flex items-center justify-center p-1 overflow-x-hidden">

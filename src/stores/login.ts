@@ -1,15 +1,13 @@
-// src/stores/login.ts
 import { defineStore } from 'pinia'
 import Login from '@/providers/LoginProvider'
 import { toast } from 'vue3-toastify'
 import router from '@/router'
 import jwtDecode from 'jwt-decode'
 
-
 interface DecodedToken {
-  sub: number;
-  emailUser: string;
-  rol: string;
+  sub: number
+  emailUser: string
+  rol: string
 }
 
 export const loginStore = defineStore('login', {
@@ -26,6 +24,7 @@ export const loginStore = defineStore('login', {
           contrasenaUsuario
         })
 
+        // Si el login fue exitoso, guardar token y datos
         this.token = res.data.token
         const decodedToken: DecodedToken = jwtDecode(this.token)
         this.rol = decodedToken.rol
@@ -33,24 +32,42 @@ export const loginStore = defineStore('login', {
 
         sessionStorage.setItem('token', this.token)
         sessionStorage.setItem('rol', this.rol)
-    
+
         if (this.idUsuario !== null) {
           sessionStorage.setItem('idUsuario', this.idUsuario.toString())
         } else {
           console.warn('ID de usuario no definido, no se guardó en sessionStorage')
         }
 
-        toast('Login Correcto', { type: toast.TYPE.SUCCESS })
+        toast('Login correcto', { type: toast.TYPE.SUCCESS })
 
+        // Redirección por rol
         if (this.rol === 'Paciente') {
           router.push('/recetas-saludables')
         } else if (this.rol === 'Doctor') {
           router.push('/register')
-        } else if (this.rol=== 'Admin') {
+        } else if (this.rol === 'Admin') {
           router.push('/admin/panel')
         }
-      } catch (e) {
-        toast('Login Incorrecto', { type: toast.TYPE.ERROR })
+
+      } catch (e: any) {
+        const mensaje = e?.response?.data?.message || 'Error al iniciar sesión. Verifica tus datos o intenta más tarde.'
+
+        if (mensaje === 'El usuario está inactivo') {
+          toast(' Tu cuenta está inhabilitada. Contacta al administrador.', {
+            type: toast.TYPE.WARNING
+          })
+        } else {
+          toast(`❌ ${mensaje}`, {
+            type: toast.TYPE.ERROR
+          })
+        }
+
+        
+        this.token = ''
+        this.rol = ''
+        this.idUsuario = null
+        sessionStorage.clear()
       }
     },
 
@@ -58,9 +75,6 @@ export const loginStore = defineStore('login', {
       this.token = ''
       this.rol = ''
       sessionStorage.clear()
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('rol')
-      sessionStorage.removeItem('idUsuario')
       router.push('/')
     },
 

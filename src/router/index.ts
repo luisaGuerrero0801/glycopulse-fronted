@@ -71,6 +71,13 @@ const router = createRouter({
       }
     },
     {
+  path: '/verify',
+  name: 'verify',
+  component: () => import('../views/VerifyAccountView.vue'),
+  meta: { requiresAuth: false }
+}
+,
+    {
       path: '/register',
       name: 'register',
       // route level code-splitting

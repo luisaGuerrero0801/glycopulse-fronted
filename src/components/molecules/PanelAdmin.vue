@@ -71,10 +71,12 @@ const { usuariosFiltrados, loading, error } = storeToRefs(usuariosStore)
 
 const notificacionesStore = useNotificacionesStore()
 
+onMounted(async () => {
+  // 1. Cargar usuarios antes de usarlos
+  await usuariosStore.fetchUsuarios()
 
-
-onMounted(() => {
-  notificacionesStore.lista.forEach((n, i) => {
+  // 2. Mostrar notificaciones emergentes si no han sido leídas
+  notificacionesStore.lista.forEach((n) => {
     if (n.emergente && !n.leido) {
       const clave = `toastMostrado-${n.mensaje}`
 
@@ -87,8 +89,12 @@ onMounted(() => {
       }
     }
   })
+  
+  if (rol === 'Admin') {
+    setTimeout(() => {
+    }, 7000)
+  }
 })
-
 
 const nombreUsuario = computed(() => {
   const usuarioEncontrado = usuariosFiltrados.value.find(u => u.idUsuario === idUsuario)

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HeaderApp from '@/components/molecules/HeaderApp.vue'
-import Panel from '@/components/molecules/Panel.vue'
+import Panel from '@/components/molecules/PanelAdmin.vue'
 </script>
 
 <template>

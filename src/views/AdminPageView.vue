@@ -19,7 +19,6 @@ import AdminPage from '@/components/admin/AdminPage.vue'
     <AdminPage />
 
     <div class="w-full flex-col">
-     
       <router-view> </router-view>
     </div>
   </div>

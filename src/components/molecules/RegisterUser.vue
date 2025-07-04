@@ -25,7 +25,7 @@ const form = ref({
   region: ''
 })
 
-const idRol = ref(2)
+const idRol = ref(1)
 const isLoading = ref(false)
 const successMessage = ref('')
 

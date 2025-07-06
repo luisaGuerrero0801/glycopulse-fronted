@@ -38,6 +38,15 @@
         </li>
         <li>
           <RouterLink
+            to="/admin/favoritos"
+            class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
+          >
+            <span class="material-icons text-white">restaurant_menu</span>
+            Recetas
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
             to="/admin/support"
             class="inline-flex items-center w-full gap-2 px-4 py-2 font-sans text-sm text-red-50 hover:bg-gray-900 rounded-md"
             @click="logout"

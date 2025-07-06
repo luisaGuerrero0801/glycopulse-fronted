@@ -54,6 +54,11 @@ const router = createRouter({
           path: 'recipe',
           name: 'AdminRecipe',
           component: () => import('../views/CreateRecipeView.vue')
+        },
+        {
+          path: 'favoritos',
+          name: 'AdminFav',
+          component: () => import('../views/FavoritosView.vue')
         }
       ]
     },
@@ -126,6 +131,11 @@ const router = createRouter({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: '/recetas',
+      name: 'Recetas',
+      component: () => import('@/views/FavoritosView.vue')
     },
     {
       path: '/glucometrias',

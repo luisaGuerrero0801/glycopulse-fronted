@@ -3,8 +3,6 @@ import { useUsuariosStore } from '@/stores/donantes'
 import { graficosStore } from '@/stores/graficosAdmin'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, onUnmounted } from 'vue'
-
-// Importa Chart.js y vue-chartjs
 import { Bar } from 'vue-chartjs'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import {
@@ -16,6 +14,7 @@ import {
   CategoryScale,
   LinearScale
 } from 'chart.js'
+import html2canvas from 'html2canvas'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels)
 
@@ -42,7 +41,6 @@ onUnmounted(() => {
     clearInterval(intervalId)
   }
 })
-
 
 function contarPorGrupo(grupo: string) {
   return usuariosFiltrados.value.filter((usuario) => usuario.rhUsuario === grupo).length
@@ -118,6 +116,19 @@ const chartOptions = {
   }
 }
 
+function captureScreen() {
+  const element = document.getElementById('capture') // Captura el div que contiene el gráfico
+
+  if (element) {
+    html2canvas(element).then((canvas) => {
+      const img = canvas.toDataURL('image/png')
+      const link = document.createElement('a')
+      link.href = img
+      link.download = 'informe.png'
+      link.click()
+    })
+  }
+}
 </script>
 
 <template>
@@ -127,26 +138,20 @@ const chartOptions = {
       <p class="text-gray-600 mt-2">Resumen de información actual</p>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
-      <div
-        class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6"
-      >
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center overflow-hidden">
+      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 overflow-hidden">
         <h2 class="text-xl font-bold flex items-center justify-center">👥 Usuarios en sistema</h2>
         <p class="text-gray-800 text-3xl font-bold">{{ totalUsuarios }}</p>
         <p class="mt-1 text-sm text-gray-500">Total registrados</p>
       </div>
 
-      <div
-        class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6"
-      >
+      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 overflow-hidden">
         <h2 class="text-xl font-bold flex items-center justify-center">🛠️ Administradores</h2>
         <p class="text-gray-800 text-3xl font-bold">{{ totalAdmins }}</p>
         <p class="mt-1 text-sm text-gray-500">Total registrados</p>
       </div>
 
-      <div
-        class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6"
-      >
+      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 overflow-hidden">
         <h2 class="text-xl font-bold flex items-center justify-center">🤱🏻 Pacientes</h2>
         <p class="text-gray-800 text-3xl font-bold">{{ totalPacientes }}</p>
         <p class="mt-1 text-sm text-gray-500">Total registrados</p>
@@ -154,74 +159,61 @@ const chartOptions = {
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
-      <div
-        class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4"
-      >
+      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
         <h2 class="text-xl font-bold flex items-center justify-center">🩸 A+</h2>
         <p class="text-gray-800 text-3xl font-bold">{{ totalAmas }}</p>
         <p class="mt-1 text-sm text-gray-500">Total registrados</p>
       </div>
 
-      <div
-        class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4"
-      >
+      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
         <h2 class="text-xl font-bold flex items-center justify-center">🩸 A-</h2>
         <p class="text-gray-800 text-3xl font-bold">{{ totalAmenos }}</p>
         <p class="mt-1 text-sm text-gray-500">Total registrados</p>
       </div>
 
-      <div
-        class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4"
-      >
+      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
         <h2 class="text-xl font-bold flex items-center justify-center">🩸 B+</h2>
         <p class="text-gray-800 text-3xl font-bold">{{ totalBmas }}</p>
         <p class="mt-1 text-sm text-gray-500">Total registrados</p>
       </div>
 
-      <div
-        class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4"
-      >
+      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
         <h2 class="text-xl font-bold flex items-center justify-center">🩸 B-</h2>
         <p class="text-gray-800 text-3xl font-bold">{{ totalBmenos }}</p>
         <p class="mt-1 text-sm text-gray-500">Total registrados</p>
       </div>
 
-      <div
-        class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4"
-      >
+      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
         <h2 class="text-xl font-bold flex items-center justify-center">🩸 AB+</h2>
         <p class="text-gray-800 text-3xl font-bold">{{ totalABmas }}</p>
         <p class="mt-1 text-sm text-gray-500">Total registrados</p>
       </div>
 
-      <div
-        class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4"
-      >
+      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
         <h2 class="text-xl font-bold flex items-center justify-center">🩸 AB-</h2>
         <p class="text-gray-800 text-3xl font-bold">{{ totalABmenos }}</p>
         <p class="mt-1 text-sm text-gray-500">Total registrados</p>
       </div>
 
-      <div
-        class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4"
-      >
+      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
         <h2 class="text-xl font-bold flex items-center justify-center">🩸 O+</h2>
         <p class="text-gray-800 text-3xl font-bold">{{ totalOmas }}</p>
         <p class="mt-1 text-sm text-gray-500">Total registrados</p>
       </div>
 
-      <div
-        class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4"
-      >
+      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
         <h2 class="text-xl font-bold flex items-center justify-center">🩸 O-</h2>
         <p class="text-gray-800 text-3xl font-bold">{{ totalOmenos }}</p>
         <p class="mt-1 text-sm text-gray-500">Total registrados</p>
       </div>
     </div>
 
-    <!-- Gráfico de Barras -->
-    <div class="w-full h-[400px] bg-white rounded-lg shadow-lg p-6 mt-8">
+    <div class="w-full max-h-[400px] bg-white rounded-lg shadow-lg p-6 mt-8 overflow-hidden" id="capture">
       <Bar :data="chartData" :options="chartOptions" :key="chartDataKey"/>
     </div>
+
+    <button @click="captureScreen" class="mt-8 bg-blue-600 text-white py-2 px-4 rounded-lg">
+      Descargar Informe
+    </button>
   </div>
 </template>

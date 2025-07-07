@@ -133,11 +133,6 @@ const router = createRouter({
       }
     },
     {
-      path: '/recetas',
-      name: 'Recetas',
-      component: () => import('@/views/FavoritosView.vue')
-    },
-    {
       path: '/glucometrias',
       name: 'glucometrias',
       component: () => import('../views/GlucometriasPaciente.vue'),

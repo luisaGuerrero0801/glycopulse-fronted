@@ -158,8 +158,7 @@ const handleSubmit = async () => {
     categoriaReceta: []
   }
 
-  router.push('/recetas') 
-
+  router.push({ name: 'AdminFav' })
 }
 
 onMounted(() => {

@@ -160,11 +160,6 @@ const handleSubmit = async () => {
 
     <hr class="border-t-2 border-gray-200 mx-12 mt-6" />
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mx-12 mt-8 mb-8">
-      <ProxGluco />
-      <FiltrosGluco class="col-span-2" />
-    </div>
-
     <div v-if="storeGluco.loading" class="ml-12 mt-2">Cargando glucometrias ...</div>
     <div v-else-if="storeGluco.error" class="ml-12 mt-2 text-red-600">{{ storeGluco.error }}</div>
 

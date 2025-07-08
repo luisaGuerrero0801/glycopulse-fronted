@@ -18,11 +18,11 @@ export const graficosStore = defineStore('GRAFICOS', {
       try {
         const response = await graficosAdmin.ConteoPorRol()
         this.conteoRolRh = response.data
-        console.log('Conteo obtenido:', this.conteoRolRh)
+        // console.log('Conteo obtenido:', this.conteoRolRh)
       } catch (err) {
         this.error = 'Error al obtener conteo de usuarios por rol y RH'
         toast.error(this.error)
-        console.error(err)
+        // console.error(err)
       } finally {
         this.loading = false
       }

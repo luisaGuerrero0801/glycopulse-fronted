@@ -96,8 +96,8 @@ const editarGlucometria = async (id: number) => {
       comentario: detalle.recomendacionGlucometria || ''
     }
 
-    console.log('Tipo de fecha:', typeof form.value.fecha)
-    console.log('Valor de fecha:', form.value.fecha)
+    // console.log('Tipo de fecha:', typeof form.value.fecha)
+    // console.log('Valor de fecha:', form.value.fecha)
     
     modalType.value = 'form' 
     isModalVisible.value = true
@@ -123,7 +123,7 @@ const handleSubmit = async () => {
   }
 
   if (form.value.id) {
-    console.log(form.value)
+    // console.log(form.value)
     await storeGluco.actualizarGlucometria(form.value.id, {
       fechaGlucometria: form.value.fecha,
       horaGlucometria: form.value.hora,

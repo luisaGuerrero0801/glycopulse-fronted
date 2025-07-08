@@ -43,7 +43,7 @@ export const useRecetasStore = defineStore('recetas', {
       this.error = ''
       try {
         const response = await RecetasProvider.crearReceta(data)
-        console.log('Datos recibidos:', response.data)
+        // console.log('Datos recibidos:', response.data)
         this.recetas.push(response.data)
         toast.success('Receta creada exitosamente')
       } catch (err) {

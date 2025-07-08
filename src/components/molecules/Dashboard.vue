@@ -115,6 +115,7 @@ const chartOptions = {
     }
   }
 }
+const chartDataKey = 'chart-key'
 
 function captureScreen() {
   const element = document.getElementById('capture') // Captura el div que contiene el gráfico

@@ -20,7 +20,7 @@ export const useRecetasStore = defineStore('recetas', {
           throw new Error('No hay token de autenticación');
         }
 
-        console.log('Token que se enviará:', token); 
+        // console.log('Token que se enviará:', token); 
         
         const response = await fetch('http://localhost:3000/api/v1/recetas', {
           headers: {

@@ -32,7 +32,7 @@ export const useGlucometriasStore = defineStore('glucometrias', {
       this.error = ''
       try {
         const response = await GlucometriasProvider.crearGlucometria(data)
-        console.log('Datos recibidos:', response.data)
+        // console.log('Datos recibidos:', response.data)
         this.glucometrias.push(response.data)
         toast.success('Glucometría creada exitosamente')
       } catch (err) {

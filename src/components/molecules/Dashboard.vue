@@ -2,26 +2,36 @@
 import { useUsuariosStore } from '@/stores/donantes'
 import { graficosStore } from '@/stores/graficosAdmin'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, onUnmounted } from 'vue'
-import { Bar } from 'vue-chartjs'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { Bar, Pie } from 'vue-chartjs'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import {
   Chart as ChartJS,
   Title,
   Tooltip,
   Legend,
+  ArcElement,
   BarElement,
   CategoryScale,
   LinearScale
 } from 'chart.js'
 import html2canvas from 'html2canvas'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels)
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  ChartDataLabels
+)
 
 const usuariosStore = useUsuariosStore()
-const { usuariosFiltrados, loading, error } = storeToRefs(usuariosStore)
-
 const graficos = graficosStore()
+
+const { usuariosFiltrados } = storeToRefs(usuariosStore)
 const { conteoRolRh } = storeToRefs(graficos)
 
 let intervalId: number | undefined
@@ -29,68 +39,68 @@ let intervalId: number | undefined
 onMounted(() => {
   graficos.cargarConteoRolRh()
   usuariosStore.fetchUsuarios()
-
   intervalId = setInterval(() => {
     graficos.cargarConteoRolRh()
     usuariosStore.fetchUsuarios()
-  }, 1000) 
+  }, 1000)
 })
 
 onUnmounted(() => {
-  if (intervalId) {
-    clearInterval(intervalId)
-  }
+  if (intervalId) clearInterval(intervalId)
 })
 
 function contarPorGrupo(grupo: string) {
   return usuariosFiltrados.value.filter((usuario) => usuario.rhUsuario === grupo).length
 }
-
-function contarPorAdmin(grupoAdmin: string) {
-  return usuariosFiltrados.value.filter((usuario) => usuario.rol.nombreRol === grupoAdmin).length
+function contarPorRol(rol: string) {
+  return usuariosFiltrados.value.filter((usuario) => usuario.rol.nombreRol === rol).length
 }
 
 const totalUsuarios = computed(() => usuariosFiltrados.value.length)
-const totalAmas = computed(() => contarPorGrupo('A+'))
-const totalAmenos = computed(() => contarPorGrupo('A-'))
-const totalBmas = computed(() => contarPorGrupo('B+'))
-const totalBmenos = computed(() => contarPorGrupo('B-'))
-const totalABmas = computed(() => contarPorGrupo('AB+'))
-const totalABmenos = computed(() => contarPorGrupo('AB-'))
-const totalOmas = computed(() => contarPorGrupo('O+'))
-const totalOmenos = computed(() => contarPorGrupo('O-'))
+const totalAdmins = computed(() => contarPorRol('Admin'))
+const totalPacientes = computed(() => contarPorRol('Paciente'))
 
-const totalAdmins = computed(
-  () => usuariosFiltrados.value.filter((usuario) => usuario.rol.nombreRol === 'Admin').length
-)
-
-const totalPacientes = computed(
-  () => usuariosFiltrados.value.filter((usuario) => usuario.rol.nombreRol === 'Paciente').length
-)
-
-const chartData = computed(() => {
-  return {
-    labels: conteoRolRh.value.map((item) => `${item.rh} / ${item.rol}`),
-    datasets: [
-      {
-        label: 'Usuarios por tipo de sangre y rol',
-        backgroundColor: '#3b82f6',
-        borderColor: '#2563eb',
-        borderWidth: 1,
-        borderRadius: 5,
-        data: conteoRolRh.value.map((item) => Number(item.cantidad))
-      }
-    ]
-  }
+const paginated = ref({
+  page: 1,
+  perPage: 5
 })
+const totalPages = computed(() => Math.ceil(usuariosFiltrados.value.length / paginated.value.perPage))
+
+const usuariosPaginados = computed(() => {
+  const start = (paginated.value.page - 1) * paginated.value.perPage
+  return usuariosFiltrados.value.slice(start, start + paginated.value.perPage)
+})
+
+const chartData = computed(() => ({
+  labels: conteoRolRh.value.map((item) => `${item.rh} / ${item.rol}`),
+  datasets: [
+    {
+      label: 'Usuarios por tipo de sangre y rol',
+      backgroundColor: '#3b82f6',
+      borderColor: '#2563eb',
+      borderWidth: 1,
+      borderRadius: 5,
+      data: conteoRolRh.value.map((item) => Number(item.cantidad))
+    }
+  ]
+}))
+
+const chartDataPie = computed(() => ({
+  labels: ['Administradores', 'Pacientes'],
+  datasets: [
+    {
+      label: 'Distribución por rol',
+      backgroundColor: ['#22c55e', '#f97316'],
+      data: [totalAdmins.value, totalPacientes.value]
+    }
+  ]
+}))
 
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: {
-      display: true
-    },
+    legend: { display: true },
     title: {
       display: true,
       text: 'Distribución de Usuarios por Tipo de Sangre',
@@ -99,12 +109,12 @@ const chartOptions = {
         family: 'Poppins',
         weight: 'bold',
         size: 18
-      },
+      }
     },
     datalabels: {
-      anchor: 'center', 
-      align: 'center', 
-      clamp: true, 
+      anchor: 'center',
+      align: 'center',
+      clamp: true,
       color: '#FFF',
       font: {
         family: 'Poppins',
@@ -118,8 +128,7 @@ const chartOptions = {
 const chartDataKey = 'chart-key'
 
 function captureScreen() {
-  const element = document.getElementById('capture') // Captura el div que contiene el gráfico
-
+  const element = document.getElementById('capture')
   if (element) {
     html2canvas(element).then((canvas) => {
       const img = canvas.toDataURL('image/png')
@@ -133,88 +142,95 @@ function captureScreen() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100 p-6">
-    <div class="flex justify-center items-center flex-col py-8">
-      <h1 class="text-4xl font-bold">📊 Dashboard</h1>
-      <p class="text-gray-600 mt-2">Resumen de información actual</p>
+  <div class="min-h-screen bg-gray-100 p-4" id="capture">
+    <!-- Botón flotante de descarga arriba a la derecha -->
+    <div class="fixed top-4 right-4 z-50">
+      <button @click="captureScreen" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow">
+        Descargar Informe
+      </button>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-center overflow-hidden">
-      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 overflow-hidden">
-        <h2 class="text-xl font-bold flex items-center justify-center">👥 Usuarios en sistema</h2>
-        <p class="text-gray-800 text-3xl font-bold">{{ totalUsuarios }}</p>
-        <p class="mt-1 text-sm text-gray-500">Total registrados</p>
+    <!-- Contenedor central alineado con sidebar -->
+    <div class="max-w-6xl mx-auto space-y-8">
+      <div class="text-center">
+        <h1 class="text-3xl font-bold">📊 Dashboard</h1>
+        <p class="text-gray-600">Resumen de información actual</p>
       </div>
 
-      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 overflow-hidden">
-        <h2 class="text-xl font-bold flex items-center justify-center">🛠️ Administradores</h2>
-        <p class="text-gray-800 text-3xl font-bold">{{ totalAdmins }}</p>
-        <p class="mt-1 text-sm text-gray-500">Total registrados</p>
+      <!-- Tarjetas Resumen -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
+        <div class="bg-white text-blue-600 rounded-lg shadow p-4">
+          <h2 class="text-lg font-semibold">👥 Usuarios</h2>
+          <p class="text-2xl font-bold">{{ totalUsuarios }}</p>
+        </div>
+        <div class="bg-white text-green-600 rounded-lg shadow p-4">
+          <h2 class="text-lg font-semibold">🛠️ Administradores</h2>
+          <p class="text-2xl font-bold">{{ totalAdmins }}</p>
+        </div>
+        <div class="bg-white text-orange-600 rounded-lg shadow p-4">
+          <h2 class="text-lg font-semibold">🤱🏻 Pacientes</h2>
+          <p class="text-2xl font-bold">{{ totalPacientes }}</p>
+        </div>
       </div>
 
-      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6 overflow-hidden">
-        <h2 class="text-xl font-bold flex items-center justify-center">🤱🏻 Pacientes</h2>
-        <p class="text-gray-800 text-3xl font-bold">{{ totalPacientes }}</p>
-        <p class="mt-1 text-sm text-gray-500">Total registrados</p>
+      <!-- Gráficos -->
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-white p-4 rounded-lg shadow h-[360px]">
+          <Bar :data="chartData" :options="chartOptions" />
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow h-[360px]">
+          <Pie :data="chartDataPie" :options="{ responsive: true }" />
+        </div>
+      </div>
+
+      <!-- Tabla con paginación -->
+      <div class="bg-white rounded-lg shadow p-4 overflow-x-auto">
+        <h2 class="text-lg font-semibold mb-4">📋 Tabla de usuarios</h2>
+        <table class="w-full text-left table-auto border-collapse">
+          <thead class="bg-blue-100">
+            <tr>
+              <th class="px-3 py-2">Nombre</th>
+              <th class="px-3 py-2">Email</th>
+              <th class="px-3 py-2">Rol</th>
+              <th class="px-3 py-2">Tipo de Sangre</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="usuario in usuariosPaginados" :key="usuario.idUsuario" class="border-b hover:bg-gray-50">
+              <td class="px-3 py-2">{{ usuario.nombreUsuario }}</td>
+              <td class="px-3 py-2">{{ usuario.emailUsuario }}</td>
+              <td class="px-3 py-2">{{ usuario.rol.nombreRol }}</td>
+              <td class="px-3 py-2">{{ usuario.rhUsuario }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Paginación -->
+        <div class="flex justify-between items-center mt-4">
+          <button
+            @click="paginated.page = Math.max(1, paginated.page - 1)"
+            class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
+            :disabled="paginated.page === 1"
+          >
+            Anterior
+          </button>
+          <span class="text-sm">Página {{ paginated.page }} de {{ totalPages }}</span>
+          <button
+            @click="paginated.page = Math.min(totalPages, paginated.page + 1)"
+            class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
+            :disabled="paginated.page === totalPages"
+          >
+            Siguiente
+          </button>
+        </div>
       </div>
     </div>
-
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
-      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
-        <h2 class="text-xl font-bold flex items-center justify-center">🩸 A+</h2>
-        <p class="text-gray-800 text-3xl font-bold">{{ totalAmas }}</p>
-        <p class="mt-1 text-sm text-gray-500">Total registrados</p>
-      </div>
-
-      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
-        <h2 class="text-xl font-bold flex items-center justify-center">🩸 A-</h2>
-        <p class="text-gray-800 text-3xl font-bold">{{ totalAmenos }}</p>
-        <p class="mt-1 text-sm text-gray-500">Total registrados</p>
-      </div>
-
-      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
-        <h2 class="text-xl font-bold flex items-center justify-center">🩸 B+</h2>
-        <p class="text-gray-800 text-3xl font-bold">{{ totalBmas }}</p>
-        <p class="mt-1 text-sm text-gray-500">Total registrados</p>
-      </div>
-
-      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
-        <h2 class="text-xl font-bold flex items-center justify-center">🩸 B-</h2>
-        <p class="text-gray-800 text-3xl font-bold">{{ totalBmenos }}</p>
-        <p class="mt-1 text-sm text-gray-500">Total registrados</p>
-      </div>
-
-      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
-        <h2 class="text-xl font-bold flex items-center justify-center">🩸 AB+</h2>
-        <p class="text-gray-800 text-3xl font-bold">{{ totalABmas }}</p>
-        <p class="mt-1 text-sm text-gray-500">Total registrados</p>
-      </div>
-
-      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
-        <h2 class="text-xl font-bold flex items-center justify-center">🩸 AB-</h2>
-        <p class="text-gray-800 text-3xl font-bold">{{ totalABmenos }}</p>
-        <p class="mt-1 text-sm text-gray-500">Total registrados</p>
-      </div>
-
-      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
-        <h2 class="text-xl font-bold flex items-center justify-center">🩸 O+</h2>
-        <p class="text-gray-800 text-3xl font-bold">{{ totalOmas }}</p>
-        <p class="mt-1 text-sm text-gray-500">Total registrados</p>
-      </div>
-
-      <div class="bg-white text-blue-600 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 overflow-hidden">
-        <h2 class="text-xl font-bold flex items-center justify-center">🩸 O-</h2>
-        <p class="text-gray-800 text-3xl font-bold">{{ totalOmenos }}</p>
-        <p class="mt-1 text-sm text-gray-500">Total registrados</p>
-      </div>
-    </div>
-
-    <div class="w-full max-h-[400px] bg-white rounded-lg shadow-lg p-6 mt-8 overflow-hidden" id="capture">
-      <Bar :data="chartData" :options="chartOptions" :key="chartDataKey"/>
-    </div>
-
-    <button @click="captureScreen" class="mt-8 bg-blue-600 text-white py-2 px-4 rounded-lg">
-      Descargar Informe
-    </button>
   </div>
 </template>
+
+
+<style scoped>
+html {
+  scroll-behavior: smooth;
+}
+</style>

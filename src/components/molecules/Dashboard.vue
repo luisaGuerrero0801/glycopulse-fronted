@@ -89,7 +89,7 @@ const chartDataPie = computed(() => ({
   labels: ['Administradores', 'Pacientes'],
   datasets: [
     {
-      label: 'Distribución por rol',
+      label: 'Distribución por Roles',
       backgroundColor: ['#22c55e', '#f97316'],
       data: [totalAdmins.value, totalPacientes.value]
     }

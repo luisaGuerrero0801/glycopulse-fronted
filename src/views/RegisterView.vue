@@ -3,7 +3,9 @@
 import { ref } from 'vue'
 import router from "@/router";
 import {useRoute} from "vue-router";
-import Register from '@/components/molecules/RegisterUser.vue';
+import Register from '@/components/molecules/login/RegisterUser.vue';
+
+
 </script>
 <template>
   <div>

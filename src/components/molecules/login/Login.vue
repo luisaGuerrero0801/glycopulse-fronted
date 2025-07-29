@@ -55,26 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-import { LabelForm, InputForm } from '../atoms/index.js'
-import { loginStore } from '@/stores/login.js'
-import { reactive } from 'vue'
-import ButtonUno from '../atoms/ButtonUno.vue'
-import { toast } from 'vue3-toastify'
-
-const login = loginStore()
-const formData = reactive({ correoUser: '', pass: '' })
-const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com)$/;
-
-const handleClick = () => {
-  if (!formData.correoUser || !emailRegex.test(formData.correoUser)) {
-    return toast.warning('Ingrese un correo válido')
-  }
-
-  if (!formData.pass) {
-    return toast.warning('Ingrese una contraseña')
-  }
-
-
-  login.validateUser(formData.correoUser, formData.pass)
-}
+import { InputForm, ButtonUno, LabelForm } from '../../atoms'
+import { useLogin } from '@/composables/auth/useLogin.js'
+const { formData, handleClick } = useLogin()
 </script>

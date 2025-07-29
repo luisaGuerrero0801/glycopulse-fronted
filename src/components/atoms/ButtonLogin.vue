@@ -14,14 +14,11 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 <template>
   <section>
-    
     <button
-    :class="`w-full ${colorButton} text-white py-2 text-sm rounded-lg ${colorButtonHover} transition`"
-      @click = "$emit('OnClick')"
+      :class="`w-full ${colorButton} text-white py-2 text-sm rounded-lg ${colorButtonHover} transition`"
+      @click="$emit('OnClick')"
     >
       {{ text }}
     </button>
   </section>
 </template>
-
-

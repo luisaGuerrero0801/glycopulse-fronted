@@ -1,25 +1,8 @@
 <script lang="ts" setup>
-import { useRouter } from 'vue-router'
-import { useRecoverAccountStore } from '@/stores/recoverAccount'
-import ButtonLogin from '../atoms/ButtonLogin.vue'
-import { LabelForm, InputForm } from '../atoms'
-import { watch } from 'vue'
+import { useRecover } from '@/composables/auth/useRecover'
+import { InputForm, ButtonLogin, LabelForm } from '../../atoms'
 
-const store = useRecoverAccountStore()
-const router = useRouter()
-
-// Redirige si ya fue enviado
-watch(() => store.enviado, (enviado) => {
-  if (enviado) {
-    store.limpiarEstado()
-    router.push('/')
-  }
-})
-
-const cancelarRecuperacion = () => {
-  store.limpiarEstado()
-  router.push('/')
-}
+const { cancelarRecuperacion, store, router } = useRecover()
 </script>
 
 <template>
@@ -40,11 +23,7 @@ const cancelarRecuperacion = () => {
         </p>
 
         <LabelForm nameForm="Correo de recuperación" />
-        <InputForm
-          namePlaceholder="correo@ejemplo.com"
-          inputType="email"
-          v-model="store.correo"
-        />
+        <InputForm namePlaceholder="correo@ejemplo.com" inputType="email" v-model="store.correo" />
 
         <div class="flex justify-between gap-4 mt-6">
           <ButtonLogin

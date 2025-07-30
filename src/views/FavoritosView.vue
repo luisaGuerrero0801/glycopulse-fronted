@@ -19,6 +19,7 @@
     <!-- Contenido principal -->
     <div class="w-full flex flex-col">
       <Favoritos />
+      <h1>sss</h1>
     </div>
   </div>
 </template>

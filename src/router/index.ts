@@ -121,7 +121,7 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/GlucometryView.vue'),
       meta: {
-        requiresAuth: false /**cambiar a true */
+        requiresAuth: true /**cambiar a true */
       }
     },
     {
@@ -129,7 +129,7 @@ const router = createRouter({
       name: 'recetasSaludables',
       component: () => import('../views/RecetasSaludablesView.vue'),
       meta: {
-        requiresAuth: false /**cambiar a true */
+        requiresAuth: true /**cambiar a true */
       }
     },
     {
@@ -137,7 +137,7 @@ const router = createRouter({
       name: 'glucometrias',
       component: () => import('../views/GlucometriasPaciente.vue'),
       meta: {
-        requiresAuth: false /**cambiar a true */
+        requiresAuth: true /**cambiar a true */
       }
     },
     {
@@ -148,7 +148,7 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/DonantesView.vue'),
       meta: {
-        requiresAuth: false /**cambiar a true */
+        requiresAuth: true /**cambiar a true */
       }
     }
   ]

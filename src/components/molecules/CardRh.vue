@@ -1,35 +1,22 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue'
-import { useUsuariosStore } from '@/stores/donantes'
-import { storeToRefs } from 'pinia'
 import Paginate from 'vuejs-paginate-next'
+import { useUsuariosPagination } from '@/composables/utils/usePagination'
+import { onMounted } from 'vue'
 
-// Paginación
-const currentPage = ref(1)
-const itemsPerPage = 5 // no es necesario que sea ref porque no cambia en runtime
 
-const usuariosStore = useUsuariosStore()
-const { usuariosFiltrados, loading, error } = storeToRefs(usuariosStore)
-
-// Datos paginados
-const paginatedUsuarios = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return usuariosFiltrados.value.slice(start, end)
-})
-
-// Total de páginas
-const totalPages = computed(() =>
-  Math.max(Math.ceil(usuariosFiltrados.value.length / itemsPerPage), 1)
-)
-
-// Cambiar de página
-const goToPage = (page: number) => {
-  currentPage.value = page
-}
+const {
+  currentPage,
+  paginatedUsuarios,
+  totalPages,
+  goToPage,
+  loading,
+  error,
+  usuariosFiltrados,
+  fetchUsuarios
+} = useUsuariosPagination()
 
 onMounted(() => {
-  usuariosStore.fetchUsuarios()
+  fetchUsuarios()
 })
 </script>
 
@@ -73,7 +60,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Paginación siempre visible -->
+      <!-- Paginación -->
       <div class="flex justify-center mt-6">
         <paginate
           :page-count="totalPages"

@@ -33,8 +33,11 @@
 
 <script setup lang="ts">
 import { type PropType } from 'vue';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
 import GlucoseForm from '@/components/molecules/FormGlucos.vue';
-import GlucoseInfo from '@/components/molecules/GlucoInfo.vue'
+import GlucoseInfo from '@/components/molecules/GlucoInfo.vue';
 
 const props = defineProps({
   isVisible: Boolean,
@@ -48,14 +51,30 @@ const props = defineProps({
   isEdit: Boolean,
   closeModal: Function,
   submitForm: Function
-})
+});
 
-const emit = defineEmits(['closeModal', 'update:form'])
+const emit = defineEmits(['closeModal', 'update:form']);
 
+const handleCloseModal = () => emit('closeModal');
 
-const handleCloseModal = () => emit('closeModal')
-const updateForm = (newForm: typeof props.form) => emit('update:form', newForm)
-const handleSubmit = () => props.submitForm?.()
+const updateForm = (newForm: typeof props.form) => emit('update:form', newForm);
+
+const handleSubmit = () => {
+  if (!props.form?.fecha || !props.form?.hora) {
+    toast.error('La fecha y la hora son requeridas.');
+    return;
+  }
+
+  const selectedDateTime = new Date(`${props.form.fecha}T${props.form.hora}`);
+  const now = new Date();
+
+  if (selectedDateTime > now) {
+    toast.error('La fecha y hora no pueden ser mayores a la actual.');
+    return;
+  }
+
+  props.submitForm?.();
+};
 </script>
 
 <style scoped>

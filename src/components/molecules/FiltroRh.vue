@@ -49,5 +49,17 @@ const gruposSanguineos = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
         </option>
       </select>
     </div>
+
+    <!-- Botón para limpiar filtros -->
+    <button
+      @click="() => {
+        filtros.busqueda = ''
+        filtros.ubicacion = ''
+        filtros.grupoSanguineo = ''
+      }"
+      class="bg-red-500 text-white px-2 py-1 text-sm rounded-lg hover:bg-red-600 transition"
+    >
+      Restablecer filtros
+    </button>
   </div>
 </template>

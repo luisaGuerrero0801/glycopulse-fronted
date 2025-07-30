@@ -1,9 +1,10 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-indigo-50">
-    <div class="w-full max-w-3xl bg-white shadow-xl rounded-3xl p-8">
-      <h1 class="text-2xl font-bold text-gray-700 mb-6 text-center">Crear Receta</h1>
+  <div class="flex min-h-screen items-center justify-center bg-indigo-50 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-lg bg-white shadow-xl rounded-3xl p-6 overflow-auto">
+      <h1 class="text-xl font-bold text-gray-700 mb-5 text-center">Crear Receta</h1>
 
-      <div class="space-y-5">
+      <div class="space-y-4">
+     
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la Receta</label>
           <input
@@ -13,6 +14,7 @@
           />
         </div>
 
+      
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
           <textarea
@@ -21,7 +23,8 @@
           ></textarea>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Porciones</label>
             <input
@@ -31,7 +34,6 @@
             />
           </div>
 
-        
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Tiempo</label>
             <select
@@ -51,6 +53,7 @@
           </div>
         </div>
 
+       
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Imagen URL</label>
           <input
@@ -72,6 +75,7 @@
           </select>
         </div>
 
+      
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Ingredientes</label>
           <textarea
@@ -80,6 +84,7 @@
           ></textarea>
         </div>
 
+    
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Preparación</label>
           <textarea
@@ -88,7 +93,7 @@
           ></textarea>
         </div>
 
-       
+   
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Categorías</label>
           <Multiselect
@@ -105,6 +110,7 @@
           />
         </div>
 
+      
         <div class="text-right">
           <button
             @click="handleSubmit"

@@ -26,7 +26,7 @@
       <template v-else-if="recetasStore.recetas.length">
         <ul class="grid sm:grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <li
-            v-for="receta in recetasStore.recetas"
+            v-for="receta in recetasStore.paginatedRecetas"
             :key="receta.id"
             class="gap-4 text-blue-800 font-semibold rounded-lg w-52"
           >
@@ -40,6 +40,20 @@
             </div>
           </li>
         </ul>
+        
+        <div class="flex justify-center mt-6">
+          <paginate
+            :page-count="totalPages"
+            :click-handler="goToPage"
+            :prev-text="'Anterior'"
+            :next-text="'Siguiente'"
+            :container-class="'flex space-x-2'"
+            :page-class="'px-3 py-1 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+            :active-class="'bg-indigo-600 text-white border-indigo-600 font-semibold'"
+            :prev-class="'px-3 py-1 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+            :next-class="'px-3 py-1 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+          />
+        </div>
       </template>
 
       <template v-else>
@@ -50,12 +64,28 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useRecetasStore } from '@/stores/recetasTodas'
+import Paginate from 'vuejs-paginate-next'
 
 const recetasStore = useRecetasStore()
 
+const currentPage = ref(1)
+const itemsPerPage = 8
+
+const totalPages = computed(() => {
+  return Math.ceil(recetasStore.recetas.length / itemsPerPage)
+})
+
+const goToPage = (page: number) => {
+  currentPage.value = page
+  const startIndex = (currentPage.value - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  recetasStore.paginatedRecetas = recetasStore.recetas.slice(startIndex, endIndex)
+}
+
 onMounted(async () => {
   await recetasStore.verTodasRecetas()
+  goToPage(currentPage.value)
 })
 </script>

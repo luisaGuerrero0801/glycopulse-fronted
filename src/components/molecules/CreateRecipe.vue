@@ -4,7 +4,6 @@
       <h1 class="text-xl font-bold text-gray-700 mb-5 text-center">Crear Receta</h1>
 
       <div class="space-y-4">
-     
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la Receta</label>
           <input
@@ -14,7 +13,6 @@
           />
         </div>
 
-      
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
           <textarea
@@ -23,7 +21,6 @@
           ></textarea>
         </div>
 
-      
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Porciones</label>
@@ -53,7 +50,6 @@
           </div>
         </div>
 
-       
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Imagen URL</label>
           <input
@@ -75,7 +71,6 @@
           </select>
         </div>
 
-      
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Ingredientes</label>
           <textarea
@@ -84,7 +79,6 @@
           ></textarea>
         </div>
 
-    
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Preparación</label>
           <textarea
@@ -93,7 +87,6 @@
           ></textarea>
         </div>
 
-   
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Categorías</label>
           <Multiselect
@@ -110,7 +103,6 @@
           />
         </div>
 
-      
         <div class="text-right">
           <button
             @click="handleSubmit"
@@ -131,19 +123,19 @@ import { useRecetasStore } from '@/stores/recetasTodas'
 import { useCategoriasStore } from '@/stores/categoriasStore'
 import Multiselect from 'vue-multiselect'
 import 'vue-multiselect/dist/vue-multiselect.min.css'
-import type { receta, Categoria } from '@/types/recetas'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
 
 const recetasStore = useRecetasStore()
 const categoriasStore = useCategoriasStore()
 const { categorias } = storeToRefs(categoriasStore)
 const router = useRouter()
 
-const form = ref<receta>({
+const form = ref({
   nombreReceta: '',
   descripcionReceta: '',
   porcionesReceta: 0,
-  tiempoReceta: '1 minuto', 
+  tiempoReceta: '1 minuto',
   imagenReceta: '',
   nivelReceta: 'Fácil',
   ingredientesReceta: '',
@@ -152,6 +144,21 @@ const form = ref<receta>({
 })
 
 const handleSubmit = async () => {
+  // Validar si todos los campos están completos
+  if (
+    !form.value.nombreReceta ||
+    !form.value.descripcionReceta ||
+    form.value.porcionesReceta <= 0 ||
+    !form.value.imagenReceta ||
+    !form.value.ingredientesReceta ||
+    !form.value.preparacionReceta ||
+    form.value.categoriaReceta.length === 0
+  ) {
+    toast.error("Por favor, complete todos los campos obligatorios.")
+    return
+  }
+
+  // Enviar receta a la tienda
   await recetasStore.crearReceta({
     nombreReceta: form.value.nombreReceta,
     descripcionReceta: form.value.descripcionReceta,
@@ -164,18 +171,23 @@ const handleSubmit = async () => {
     categoriaReceta: form.value.categoriaReceta.map(c => c.nombreCategoria)
   })
 
+  // Limpiar el formulario después de enviar
   form.value = {
     nombreReceta: '',
     descripcionReceta: '',
     porcionesReceta: 0,
-    tiempoReceta: '1 minuto', 
+    tiempoReceta: '1 minuto',
     imagenReceta: '',
-    nivelReceta: 'Fácil', 
+    nivelReceta: 'Fácil',
     ingredientesReceta: '',
     preparacionReceta: '',
     categoriaReceta: []
   }
 
+  // Mostrar mensaje de éxito
+  toast.success("Receta creada con éxito.")
+
+  // Redirigir a la página de administración
   router.push({ name: 'AdminFav' })
 }
 

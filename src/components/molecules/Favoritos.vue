@@ -24,23 +24,23 @@
         <p class="text-red-500">{{ errorFavoritos }}</p>
       </template>
       <template v-else-if="paginatedFavoritos.length">
-        <ul class="grid sm:grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ul class="grid sm:grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <li
             v-for="favorito in paginatedFavoritos"
             :key="favorito.id"
-            class="gap-4 text-blue-800 font-semibold rounded-lg w-full max-w-[300px] cursor-pointer hover:shadow-lg transition-shadow"
+            class="gap-2 text-blue-800 font-semibold rounded-lg w-full max-w-[220px] cursor-pointer hover:shadow-md transition-shadow"
             @click="openModal(favorito)"
           >
             <div class="overflow-hidden rounded-xl">
               <img
                 :src="favorito.imagenReceta"
                 alt="Imagen de receta"
-                class="w-full h-64 object-cover"
+                class="w-full h-48 object-cover"
               />
             </div>
-            <div class="p-3">
+            <div class="p-2">
               <div class="flex justify-between items-start">
-                <h3 class="text-lg font-bold">{{ favorito.nombreReceta }}</h3>
+                <h3 class="text-base font-bold">{{ favorito.nombreReceta }}</h3>
                 <span
                   class="material-icons text-red-600"
                   @click.stop="recetasStore.toggleFavorito(favorito.id)"
@@ -48,11 +48,11 @@
                   {{ isFavorito(favorito.id) ? 'favorite' : 'favorite_border' }}
                 </span>
               </div>
-              <div class="flex items-center mt-2 text-sm text-gray-600">
+              <div class="flex items-center mt-1 text-xs text-gray-600">
                 <span class="material-icons text-sm mr-1">schedule</span>
                 <span>{{ favorito.tiempoReceta }}</span>
               </div>
-              <div class="flex items-center mt-1 text-sm text-gray-600">
+              <div class="flex items-center mt-1 text-xs text-gray-600">
                 <span class="material-icons text-sm mr-1">restaurant</span>
                 <span>{{ favorito.porcionesReceta }} porciones</span>
               </div>

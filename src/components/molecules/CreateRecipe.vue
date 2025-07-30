@@ -31,13 +31,23 @@
             />
           </div>
 
+        
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Tiempo</label>
-            <input
-              type="text"
+            <select
               v-model="form.tiempoReceta"
               class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
-            />
+            >
+              <option value="1 minuto">1 minuto</option>
+              <option value="5 minutos">5 minutos</option>
+              <option value="10 minutos">10 minutos</option>
+              <option value="15 minutos">15 minutos</option>
+              <option value="30 minutos">30 minutos</option>
+              <option value="1 hora">1 hora</option>
+              <option value="2 horas">2 horas</option>
+              <option value="3 horas">3 horas</option>
+              <option value="Más de 3 horas">Más de 3 horas</option>
+            </select>
           </div>
         </div>
 
@@ -52,11 +62,14 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Nivel</label>
-          <input
-            type="text"
+          <select
             v-model="form.nivelReceta"
             class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
-          />
+          >
+            <option value="Fácil">Fácil</option>
+            <option value="Intermedio">Intermedio</option>
+            <option value="Difícil">Difícil</option>
+          </select>
         </div>
 
         <div>
@@ -75,7 +88,7 @@
           ></textarea>
         </div>
 
-        <!-- ✅ NUEVO MULTISELECT -->
+       
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Categorías</label>
           <Multiselect
@@ -105,7 +118,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
@@ -125,9 +137,9 @@ const form = ref<receta>({
   nombreReceta: '',
   descripcionReceta: '',
   porcionesReceta: 0,
-  tiempoReceta: '',
+  tiempoReceta: '1 minuto', 
   imagenReceta: '',
-  nivelReceta: '',
+  nivelReceta: 'Fácil',
   ingredientesReceta: '',
   preparacionReceta: '',
   categoriaReceta: []
@@ -150,9 +162,9 @@ const handleSubmit = async () => {
     nombreReceta: '',
     descripcionReceta: '',
     porcionesReceta: 0,
-    tiempoReceta: '',
+    tiempoReceta: '1 minuto', 
     imagenReceta: '',
-    nivelReceta: '',
+    nivelReceta: 'Fácil', 
     ingredientesReceta: '',
     preparacionReceta: '',
     categoriaReceta: []

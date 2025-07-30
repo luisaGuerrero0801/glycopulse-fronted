@@ -26,26 +26,14 @@ onMounted(() => {
 const modalVisible = ref(false)
 const usuarioSeleccionado = ref<Usuario | null>(null)
 
-function editarUsuario(donante: Usuario) {
-  usuarioSeleccionado.value = donante
+function editarUsuario(usuario: Usuario) {
+  usuarioSeleccionado.value = usuario
   modalVisible.value = true
 }
 
 async function guardarCambios(usuarioEditado: Usuario) {
   try {
-    const response = await fetch(`http://localhost:3000/api/v1/usuarios/${usuarioEditado.idUsuario}`, {
-      method: 'PUT',
-      body: JSON.stringify(usuarioEditado),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (!response.ok) {
-      throw new Error(`Error al guardar los cambios: ${response.statusText}`)
-    }
-
-    await usuariosStore.fetchUsuarios()  
+    await usuariosStore.editarUsuario(usuarioEditado)  // Usamos la acción de store aquí
     modalVisible.value = false
   } catch (err) {
     console.error('Error al guardar cambios:', err)
@@ -53,13 +41,19 @@ async function guardarCambios(usuarioEditado: Usuario) {
   }
 }
 
-async function toggleEstadoUsuario(donante: Usuario) {
+async function toggleEstadoUsuario(usuario: Usuario) {
   try {
-    await usuariosStore.cambiarEstadoUsuario(donante.idUsuario, !donante.activo)
-    await usuariosStore.fetchUsuarios()
+    await usuariosStore.cambiarEstadoUsuario(usuario.idUsuario, !usuario.activo)
+    // Optimización: actualizar el estado después de cambiar el estado del usuario
   } catch (err) {
     console.error('Error al cambiar estado del usuario:', err)
   }
+}
+
+function estadoBotonClass(activo: boolean) {
+  return activo
+    ? 'text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100'
+    : 'text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100'
 }
 </script>
 
@@ -97,7 +91,7 @@ async function toggleEstadoUsuario(donante: Usuario) {
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="donante in usuariosFiltrados" :key="donante.idUsuario" class="hover:bg-gray-50 transition-colors">
+          <tr v-for="usuario in usuariosFiltrados" :key="usuario.idUsuario" class="hover:bg-gray-50 transition-colors">
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
                 <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -105,27 +99,27 @@ async function toggleEstadoUsuario(donante: Usuario) {
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ donante.nombresUsuario }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ donante.apellidosUsuario }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ donante.correoUsuario }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.nombresUsuario }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.apellidosUsuario }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.correoUsuario }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{{ donante.rhUsuario }}</span>
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{{ usuario.rhUsuario }}</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">{{ donante.rol.nombreRol }}</span>
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">{{ usuario.rol.nombreRol }}</span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span :class="donante.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                {{ donante.activo ? 'Activo' : 'Inhabilitado' }}
+              <span :class="usuario.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                {{ usuario.activo ? 'Activo' : 'Inhabilitado' }}
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
               <div class="flex space-x-2 justify-end">
-                <button @click="editarUsuario(donante)" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-sm transition-colors">Editar</button>
-                <button @click="toggleEstadoUsuario(donante)"
-                        :class="donante.activo ? 'text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100' : 'text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100'"
+                <button @click="editarUsuario(usuario)" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-md text-sm transition-colors">Editar</button>
+                <button @click="toggleEstadoUsuario(usuario)"
+                        :class="estadoBotonClass(usuario.activo)"
                         class="px-3 py-1 rounded-md text-sm transition-colors">
-                  {{ donante.activo ? 'Inactivar' : 'Reactivar' }}
+                  {{ usuario.activo ? 'Inactivar' : 'Reactivar' }}
                 </button>
               </div>
             </td>

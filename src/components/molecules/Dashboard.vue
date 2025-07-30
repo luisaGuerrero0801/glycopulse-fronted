@@ -1,3 +1,92 @@
+<template>
+  <div class="min-h-screen bg-gray-100 p-2" id="capture">
+    <!-- Botón flotante de descarga arriba a la derecha -->
+    <div class="fixed top-4 right-4 z-50">
+      <button @click="captureScreen" class="bg-blue-600 text-white px-3 py-1 rounded-lg shadow" aria-label="Descargar Informe">
+        Descargar Informe
+      </button>
+    </div>
+
+    <!-- Contenedor central alineado con sidebar -->
+    <div class="max-w-5xl mx-auto space-y-6">
+      <div class="text-center">
+        <h1 class="text-2xl font-bold">📊 Dashboard</h1>
+        <p class="text-gray-600 text-sm">Resumen de información actual</p>
+      </div>
+
+      <!-- Tarjetas Resumen -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
+        <div class="bg-white text-blue-600 rounded-lg shadow p-3">
+          <h2 class="text-md font-semibold">👥 Usuarios</h2>
+          <p class="text-xl font-bold">{{ totalUsuarios }}</p>
+        </div>
+        <div class="bg-white text-green-600 rounded-lg shadow p-3">
+          <h2 class="text-md font-semibold">🛠️ Administradores</h2>
+          <p class="text-xl font-bold">{{ totalAdmins }}</p>
+        </div>
+        <div class="bg-white text-orange-600 rounded-lg shadow p-3">
+          <h2 class="text-md font-semibold">🤱🏻 Pacientes</h2>
+          <p class="text-xl font-bold">{{ totalPacientes }}</p>
+        </div>
+      </div>
+
+      <!-- Gráficos -->
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-white p-3 rounded-lg shadow h-[300px]">
+          <Bar :data="chartData" :options="chartOptions" />
+        </div>
+        <div class="bg-white p-3 rounded-lg shadow h-[300px]">
+          <Pie :data="chartDataPie" :options="{ responsive: true }" />
+        </div>
+      </div>
+
+      <!-- Tabla con paginación -->
+      <div class="bg-white rounded-lg shadow p-4 overflow-x-auto">
+        <h2 class="text-lg font-semibold mb-4">📋 Tabla de usuarios</h2>
+        <table class="w-full text-left table-auto border-collapse">
+          <thead class="bg-blue-100">
+            <tr>
+              <th class="px-2 py-1 text-sm">Nombre</th>
+              <th class="px-2 py-1 text-sm">Email</th>
+              <th class="px-2 py-1 text-sm">Rol</th>
+              <th class="px-2 py-1 text-sm">Tipo de Sangre</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="usuario in usuariosPaginados" :key="usuario.idUsuario" class="border-b hover:bg-gray-50">
+              <td class="px-2 py-1 text-sm">{{ usuario.nombreUsuario }}</td>
+              <td class="px-2 py-1 text-sm">{{ usuario.emailUsuario }}</td>
+              <td class="px-2 py-1 text-sm">{{ usuario.rol.nombreRol }}</td>
+              <td class="px-2 py-1 text-sm">{{ usuario.rhUsuario }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Paginación -->
+        <div class="flex justify-between items-center mt-4">
+          <button
+            @click="paginated.page = Math.max(1, paginated.page - 1)"
+            class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
+            :disabled="paginated.page === 1"
+            v-if="paginated.page > 1"
+          >
+            Anterior
+          </button>
+          <span class="text-sm">Página {{ paginated.page }} de {{ totalPages }}</span>
+          <button
+            @click="paginated.page = Math.min(totalPages, paginated.page + 1)"
+            class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
+            :disabled="paginated.page === totalPages"
+            v-if="paginated.page < totalPages"
+          >
+            Siguiente
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script lang="ts" setup>
 import { useUsuariosStore } from '@/stores/donantes'
 import { graficosStore } from '@/stores/graficosAdmin'
@@ -35,6 +124,7 @@ const { usuariosFiltrados } = storeToRefs(usuariosStore)
 const { conteoRolRh } = storeToRefs(graficos)
 
 let intervalId: number | undefined
+let isLoading = ref(false)
 
 onMounted(() => {
   graficos.cargarConteoRolRh()
@@ -42,7 +132,7 @@ onMounted(() => {
   intervalId = setInterval(() => {
     graficos.cargarConteoRolRh()
     usuariosStore.fetchUsuarios()
-  }, 1000)
+  }, 5000) // Cambié el intervalo a 5 segundos
 })
 
 onUnmounted(() => {
@@ -108,7 +198,7 @@ const chartOptions = {
       font: {
         family: 'Poppins',
         weight: 'bold',
-        size: 18
+        size: 16
       }
     },
     datalabels: {
@@ -119,115 +209,30 @@ const chartOptions = {
       font: {
         family: 'Poppins',
         weight: 'bold',
-        size: 14
+        size: 12
       },
       formatter: Math.round
     }
   }
 }
+
 const chartDataKey = 'chart-key'
 
 function captureScreen() {
   const element = document.getElementById('capture')
   if (element) {
+    isLoading.value = true
     html2canvas(element).then((canvas) => {
       const img = canvas.toDataURL('image/png')
       const link = document.createElement('a')
       link.href = img
       link.download = 'informe.png'
       link.click()
+      isLoading.value = false
     })
   }
 }
 </script>
-
-<template>
-  <div class="min-h-screen bg-gray-100 p-4" id="capture">
-    <!-- Botón flotante de descarga arriba a la derecha -->
-    <div class="fixed top-4 right-4 z-50">
-      <button @click="captureScreen" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow">
-        Descargar Informe
-      </button>
-    </div>
-
-    <!-- Contenedor central alineado con sidebar -->
-    <div class="max-w-6xl mx-auto space-y-8">
-      <div class="text-center">
-        <h1 class="text-3xl font-bold">📊 Dashboard</h1>
-        <p class="text-gray-600">Resumen de información actual</p>
-      </div>
-
-      <!-- Tarjetas Resumen -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
-        <div class="bg-white text-blue-600 rounded-lg shadow p-4">
-          <h2 class="text-lg font-semibold">👥 Usuarios</h2>
-          <p class="text-2xl font-bold">{{ totalUsuarios }}</p>
-        </div>
-        <div class="bg-white text-green-600 rounded-lg shadow p-4">
-          <h2 class="text-lg font-semibold">🛠️ Administradores</h2>
-          <p class="text-2xl font-bold">{{ totalAdmins }}</p>
-        </div>
-        <div class="bg-white text-orange-600 rounded-lg shadow p-4">
-          <h2 class="text-lg font-semibold">🤱🏻 Pacientes</h2>
-          <p class="text-2xl font-bold">{{ totalPacientes }}</p>
-        </div>
-      </div>
-
-      <!-- Gráficos -->
-      <div class="grid md:grid-cols-2 gap-4">
-        <div class="bg-white p-4 rounded-lg shadow h-[360px]">
-          <Bar :data="chartData" :options="chartOptions" />
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow h-[360px]">
-          <Pie :data="chartDataPie" :options="{ responsive: true }" />
-        </div>
-      </div>
-
-      <!-- Tabla con paginación -->
-      <div class="bg-white rounded-lg shadow p-4 overflow-x-auto">
-        <h2 class="text-lg font-semibold mb-4">📋 Tabla de usuarios</h2>
-        <table class="w-full text-left table-auto border-collapse">
-          <thead class="bg-blue-100">
-            <tr>
-              <th class="px-3 py-2">Nombre</th>
-              <th class="px-3 py-2">Email</th>
-              <th class="px-3 py-2">Rol</th>
-              <th class="px-3 py-2">Tipo de Sangre</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="usuario in usuariosPaginados" :key="usuario.idUsuario" class="border-b hover:bg-gray-50">
-              <td class="px-3 py-2">{{ usuario.nombreUsuario }}</td>
-              <td class="px-3 py-2">{{ usuario.emailUsuario }}</td>
-              <td class="px-3 py-2">{{ usuario.rol.nombreRol }}</td>
-              <td class="px-3 py-2">{{ usuario.rhUsuario }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Paginación -->
-        <div class="flex justify-between items-center mt-4">
-          <button
-            @click="paginated.page = Math.max(1, paginated.page - 1)"
-            class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
-            :disabled="paginated.page === 1"
-          >
-            Anterior
-          </button>
-          <span class="text-sm">Página {{ paginated.page }} de {{ totalPages }}</span>
-          <button
-            @click="paginated.page = Math.min(totalPages, paginated.page + 1)"
-            class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
-            :disabled="paginated.page === totalPages"
-          >
-            Siguiente
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 
 <style scoped>
 html {

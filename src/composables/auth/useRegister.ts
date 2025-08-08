@@ -4,12 +4,16 @@ import { useRouter } from 'vue-router'
 import { useRegisterStore } from '@/stores/register'
 import { useNotificacionesStore } from '@/stores/notificaciones'
 import { toast } from 'vue3-toastify'
+import { computed } from 'vue'
 
 export function useRegister() {
   const router = useRouter()
   const registerStore = useRegisterStore()
   const notificaciones = useNotificacionesStore()
-
+  const soloNumeros = (texto: string) => /^[0-9]+$/.test(texto)
+    const availableCities = computed(() => {
+    return regionMap['CO']
+  })
   const form = ref({
     nombresUsuario: '',
     apellidosUsuario: '',
@@ -18,17 +22,13 @@ export function useRegister() {
     rhUsuario: '',
     correoUsuario: '',
     contrasenaUsuario: '',
-    country: 'CO',
+    telefonoUsuario: '',
     region: ''
   })
 
   const idRol = ref(1)
   const isLoading = ref(false)
   const successMessage = ref('')
-
-  const countryMap: Record<string, string> = {
-    CO: 'Colombia'
-  }
 
   const regionMap: Record<string, Record<string, string>> = {
     CO: {
@@ -55,20 +55,12 @@ export function useRegister() {
     }
   }
 
-  const paisesDisponibles = [{ code: 'CO', name: 'Colombia' }]
-
   const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const validarContrasena = (password: string) => password.length >= 8
 
   const formatDate = (dateString: string) => {
     if (!dateString) return ''
     return new Date(dateString).toISOString().split('T')[0]
-  }
-
-  const obtenerNombreCompletoPais = (codigoPais: string) => {
-    return codigoPais.length > 4 || codigoPais.includes(' ')
-      ? codigoPais
-      : countryMap[codigoPais] || codigoPais
   }
 
   const obtenerNombreCompletoCiudad = (codigoCiudad: string, codigoPais: string) => {
@@ -83,8 +75,7 @@ export function useRegister() {
     form.value[campo] = limpio
   }
 
-  const soloLetrasValidas = (texto: string) =>
-    /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(texto.trim())
+  const soloLetrasValidas = (texto: string) => /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(texto.trim())
 
   const onlyLetters = (e: KeyboardEvent) => {
     const char = String.fromCharCode(e.keyCode)
@@ -117,10 +108,12 @@ export function useRegister() {
     const camposRequeridos = [
       { value: form.value.nombresUsuario, message: 'El nombre es obligatorio' },
       { value: form.value.apellidosUsuario, message: 'El apellido es obligatorio' },
-      { value: form.value.fechaNacimientoUsuario, message: 'La fecha de nacimiento es obligatoria' },
+      {
+        value: form.value.fechaNacimientoUsuario,
+        message: 'La fecha de nacimiento es obligatoria'
+      },
       { value: form.value.generoUsuario, message: 'Por favor selecciona tu género' },
       { value: form.value.rhUsuario, message: 'Por favor selecciona tu tipo de sangre' },
-      { value: form.value.country, message: 'Por favor selecciona tu país' },
       { value: form.value.region, message: 'Por favor selecciona tu ciudad' }
     ]
 
@@ -156,14 +149,16 @@ export function useRegister() {
       toast.error('La contraseña debe tener al menos 8 caracteres')
       return false
     }
-
-    const paisCompleto = obtenerNombreCompletoPais(form.value.country)
-    if (paisCompleto.length < 4) {
-      toast.error('El nombre del país es demasiado corto')
+    if (
+      !form.value.telefonoUsuario ||
+      form.value.telefonoUsuario.length < 10 ||
+      !soloNumeros(form.value.telefonoUsuario)
+    ) {
+      toast.error('El número de teléfono debe tener al menos 10 dígitos y solo números')
       return false
     }
 
-    const ciudadCompleta = obtenerNombreCompletoCiudad(form.value.region, form.value.country)
+    const ciudadCompleta = obtenerNombreCompletoCiudad(form.value.region, 'CO')
     if (ciudadCompleta.length < 4) {
       toast.error('El nombre de la ciudad es demasiado corto')
       return false
@@ -181,7 +176,7 @@ export function useRegister() {
       rhUsuario: '',
       correoUsuario: '',
       contrasenaUsuario: '',
-      country: '',
+      telefonoUsuario: '',
       region: ''
     }
     successMessage.value = ''
@@ -193,8 +188,7 @@ export function useRegister() {
       isLoading.value = true
       successMessage.value = ''
 
-      const paisCompleto = obtenerNombreCompletoPais(form.value.country)
-      const ciudadCompleta = obtenerNombreCompletoCiudad(form.value.region, form.value.country)
+      const ciudadCompleta = obtenerNombreCompletoCiudad(form.value.region, 'CO')
 
       const usuario = {
         nombresUsuario: form.value.nombresUsuario.trim(),
@@ -205,7 +199,7 @@ export function useRegister() {
         correoUsuario: form.value.correoUsuario.trim().toLowerCase(),
         contrasenaUsuario: form.value.contrasenaUsuario,
         ciudadUsuario: ciudadCompleta,
-        paisUsuario: paisCompleto,
+        telefonoUsuario: form.value.telefonoUsuario,
         idRol: idRol.value
       }
 
@@ -222,7 +216,10 @@ export function useRegister() {
       console.dir(error)
 
       const msg =
-        error.response?.data?.message || error.response?.data?.error || error.message || String(error)
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        String(error)
 
       if (typeof msg === 'string' && msg.toLowerCase().includes('correo')) {
         toast.error('El correo ya está en uso. Por favor, usa otro correo.')
@@ -240,9 +237,9 @@ export function useRegister() {
     resetForm,
     isLoading,
     successMessage,
-    paisesDisponibles,
     validarFormulario,
     soloLetras,
-    onlyLetters
+    onlyLetters,
+    availableCities
   }
 }

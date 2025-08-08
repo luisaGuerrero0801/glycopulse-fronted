@@ -1,19 +1,15 @@
 <script lang="ts" setup>
-
 import { InputForm, ButtonLogin, LabelForm } from '../../atoms'
-import { CountrySelect, RegionSelect } from 'vue3-country-region-select'
-
 import _ from 'lodash'
 
 import { useRegister } from '@/composables/auth/useRegister'
-
+const { availableCities } = useRegister()
 const {
   form,
   registrarUsuario,
   resetForm,
   isLoading,
   successMessage,
-  paisesDisponibles,
   validarFormulario,
   soloLetras,
   onlyLetters
@@ -146,32 +142,34 @@ const {
             />
           </div>
 
-          <!-- País -->
+          <!-- Teléfono -->
           <div>
-            <LabelForm nameForm="País" />
-            <select
-              v-model="form.country"
-              class="border border-gray-300 rounded-2xl w-full p-2 mt-0.5 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              @change="validarFormulario"
-            >
-              <option disabled value="">Seleccione país</option>
-              <option v-for="pais in paisesDisponibles" :key="pais.code" :value="pais.code">
-                {{ pais.name }}
-              </option>
-            </select>
+            <LabelForm nameForm="Celular" />
+            <InputForm
+              namePlaceholder="Número de teléfono"
+              inputType="tel"
+              v-model="form.telefonoUsuario"
+              @blur="validarFormulario"
+            />
           </div>
 
           <!-- Ciudad -->
           <div>
             <LabelForm nameForm="Ciudad" />
-            <RegionSelect
+            <select
               v-model="form.region"
-              :country="form.country"
-              placeholder="Seleccione ciudad"
               class="border border-gray-300 rounded-2xl w-full p-2 mt-0.5 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              regionName
               @change="validarFormulario"
-            />
+            >
+              <option value="">Seleccione ciudad</option>
+              <option
+                v-for="(cityName, cityCode) in availableCities"
+                :key="cityCode"
+                :value="cityCode"
+              >
+                {{ cityName }}
+              </option>
+            </select>
           </div>
 
           <!-- Botón de registro -->

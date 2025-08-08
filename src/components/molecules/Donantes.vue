@@ -1,6 +1,22 @@
 <script lang="ts" setup>
 import CardRh from '@/components/molecules/CardRh.vue';
 import FiltroRh from '@/components/molecules/FiltroRh.vue';
+import {ref} from 'vue';
+import ModalDonantes from '@/components/molecules/ModalDonantes.vue';
+
+
+const mostrarModal = ref(false);
+const donanteSeleccionado = ref(null);
+
+const handleDonanteSeleccionado = (donante: any) => {
+  donanteSeleccionado.value = donante;
+  mostrarModal.value = true;
+};
+
+const cerrarModal = () => {
+  mostrarModal.value = false;
+  donanteSeleccionado.value = null;
+};
 
 </script>
 
@@ -25,8 +41,12 @@ import FiltroRh from '@/components/molecules/FiltroRh.vue';
     <hr class="border-t-2 border-gray-200 mb-8" />
 
     <div class="flex justify-center">
-       <HeaderApp pagename="Glucometrías" />
-      <CardRh />
+      <CardRh @donante-seleccionado="handleDonanteSeleccionado"/>
     </div>
+    <ModalDonantes 
+      v-if="mostrarModal" 
+      :donante="donanteSeleccionado" 
+      @cerrar="cerrarModal"
+      />
   </section>
 </template>

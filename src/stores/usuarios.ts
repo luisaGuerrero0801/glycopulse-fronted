@@ -39,7 +39,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
     }
   }
 
-  // ✏️ Editar usuario (usa PUT general)
+  // ✏️ Editar usuario
   const editarUsuario = async (usuarioEditado: any) => {
     try {
       const datosActualizados = {
@@ -51,10 +51,12 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
         generoUsuario: usuarioEditado.generoUsuario,
         ciudadUsuario: usuarioEditado.ciudadUsuario,
         paisUsuario: usuarioEditado.paisUsuario,
-        activo: usuarioEditado.activo // será ignorado si backend usa "estado"
+        activo: usuarioEditado.activo, // será ignorado si backend usa "estado"
+        idRol: usuarioEditado.rol.idRol //  el idRol se envía correctamente
       }
 
-      const response = await axios.put(
+      // **CAMBIO AQUÍ: de axios.put a axios.patch**
+      const response = await axios.patch(
         `http://localhost:3000/api/v1/usuarios/${usuarioEditado.idUsuario}`,
         datosActualizados
       )
@@ -78,7 +80,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
     }
   }
 
-  // ✅ Cambiar estado usando el endpoint PATCH /usuarios/:idUsuario/estado
+  
   const cambiarEstadoUsuario = async (idUsuario: number, nuevoEstado: boolean) => {
     try {
       const response = await axios.patch(

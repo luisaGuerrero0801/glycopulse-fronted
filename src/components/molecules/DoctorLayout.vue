@@ -9,7 +9,8 @@
       <nav class="space-y-4">
         <RouterLink to="/doctor/search" class="block hover:text-blue-200"> Buscar</RouterLink>
         <RouterLink to="/doctor/pacientes" class="block hover:text-blue-200"> Pacientes</RouterLink>
-        <RouterLink to="/doctor/perfil" class="block hover:text-blue-200"> Glucometrias</RouterLink>
+        <RouterLink to="/doctor/glucometria" class="block hover:text-blue-200"> Glucometrias</RouterLink>
+        <RouterLink to="/doctor/recetas" class="block hover:text-blue-200">Recetas</RouterLink>
         <RouterLink to="/logout" class="block hover:text-red-300">Cerrar sesión</RouterLink>
       </nav>
     </aside>

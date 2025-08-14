@@ -146,6 +146,28 @@ const router = createRouter({
       component: () => import('@/views/DoctorPacientesView.vue'),
       meta: { requiresAuth: false, role: 'doctor' }
     },
+    {
+  path: '/doctor/glucometrias',
+  name: 'DoctorGlucometrias',
+  component: () => import('@/views/DoctorGlucometriasView.vue'),
+  meta: { requiresAuth: true, role: 'doctor' }
+},
+ {
+      path: '/doctor/recetas',
+      name: 'DoctorRecetasHome',
+      component: () => import('@/views/DoctorRecetasHomeView.vue'),
+      meta: { requiresAuth: false, role: 'doctor' }
+    },
+
+    // 🔹 Vista de creación de receta (Card)
+    {
+      path: '/doctor/recetas/crear',
+      name: 'DoctorRecetaCard',
+      component: () => import('@/views/DoctorRecetaCardView.vue'),
+      meta: { requiresAuth: false, role: 'doctor' }
+    },
+
+
 
     {
       path: '/donantes',

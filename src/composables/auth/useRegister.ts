@@ -1,4 +1,3 @@
-// src/composables/auth/useRegister.ts
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRegisterStore } from '@/stores/register'
@@ -11,9 +10,10 @@ export function useRegister() {
   const registerStore = useRegisterStore()
   const notificaciones = useNotificacionesStore()
   const soloNumeros = (texto: string) => /^[0-9]+$/.test(texto)
-    const availableCities = computed(() => {
+  const availableCities = computed(() => {
     return regionMap['CO']
   })
+
   const form = ref({
     nombresUsuario: '',
     apellidosUsuario: '',
@@ -199,6 +199,7 @@ export function useRegister() {
         correoUsuario: form.value.correoUsuario.trim().toLowerCase(),
         contrasenaUsuario: form.value.contrasenaUsuario,
         ciudadUsuario: ciudadCompleta,
+        paisUsuario: 'Colombia', // 👈 agregado fijo aquí
         telefonoUsuario: form.value.telefonoUsuario,
         idRol: idRol.value
       }

@@ -13,6 +13,7 @@ const register = (usuario: {
   contrasenaUsuario: string
   ciudadUsuario: string
   paisUsuario: string
+  celularUsuario: string 
   idRol: number
 }) => {
   return axios.post(BASE_URL, usuario)

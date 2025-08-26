@@ -60,6 +60,8 @@ const router = createRouter({
           name: 'AdminFav',
           component: () => import('../views/FavoritosView.vue')
         }
+
+       
       ]
     },
     {
@@ -166,9 +168,6 @@ const router = createRouter({
       component: () => import('@/views/DoctorRecetaCardView.vue'),
       meta: { requiresAuth: false, role: 'doctor' }
     },
-
-
-
     {
       path: '/donantes',
       name: 'donantes',
@@ -179,7 +178,14 @@ const router = createRouter({
       meta: {
         requiresAuth: true /**cambiar a true */
       }
-    }
+    },
+
+    {
+      path: '/asignar',
+      name: 'Asignar',
+      component: () => import('../views/UsuarioDoctorAsignarView.vue'),
+      meta: { requiresAuth: false }
+    },
   ]
 })
 

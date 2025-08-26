@@ -41,14 +41,6 @@
         </router-link>
 
 
-        <router-link to="/admin/recipe">
-          <div class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300">
-            <h2 class="text-xl font-bold flex items-center">
-              <span class="material-icons mr-3">add_circle</span> Crear Receta
-            </h2>
-            <p class="mt-2 text-sm text-gray-500">Crear Receta.</p>
-          </div>
-        </router-link>
       </div>
     </div>
   </div>

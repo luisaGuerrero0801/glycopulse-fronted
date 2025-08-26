@@ -22,7 +22,7 @@ export function useRegister() {
     rhUsuario: '',
     correoUsuario: '',
     contrasenaUsuario: '',
-    telefonoUsuario: '',
+    celularUsuario: '',
     region: ''
   })
 
@@ -150,9 +150,9 @@ export function useRegister() {
       return false
     }
     if (
-      !form.value.telefonoUsuario ||
-      form.value.telefonoUsuario.length < 10 ||
-      !soloNumeros(form.value.telefonoUsuario)
+      !form.value.celularUsuario ||
+      form.value.celularUsuario.length < 10 ||
+      !soloNumeros(form.value.celularUsuario)
     ) {
       toast.error('El número de teléfono debe tener al menos 10 dígitos y solo números')
       return false
@@ -176,7 +176,7 @@ export function useRegister() {
       rhUsuario: '',
       correoUsuario: '',
       contrasenaUsuario: '',
-      telefonoUsuario: '',
+      celularUsuario: '',
       region: ''
     }
     successMessage.value = ''
@@ -200,7 +200,7 @@ export function useRegister() {
         contrasenaUsuario: form.value.contrasenaUsuario,
         ciudadUsuario: ciudadCompleta,
         paisUsuario: 'Colombia', // 👈 agregado fijo aquí
-        telefonoUsuario: form.value.telefonoUsuario,
+        celularUsuario: form.value.celularUsuario,
         idRol: idRol.value
       }
 

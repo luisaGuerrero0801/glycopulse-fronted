@@ -146,9 +146,9 @@ const {
           <div>
             <LabelForm nameForm="Celular" />
             <InputForm
-              namePlaceholder="Número de teléfono"
+              namePlaceholder="Número de celular"
               inputType="tel"
-              v-model="form.telefonoUsuario"
+              v-model="form.celularUsuario"
               @blur="validarFormulario"
             />
           </div>

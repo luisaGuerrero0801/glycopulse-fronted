@@ -6,21 +6,19 @@ import PopUp from '@/components/molecules/PopUp.vue'
 import { useGlucometriasStore } from '@/stores/AllGlucometrias'
 import { toast } from 'vue3-toastify'
 import Paginate from 'vuejs-paginate-next'
+import { usePagination } from '@/composables/pagination/usePagination'
 
 const storeGluco = useGlucometriasStore()
+
+// Usa el composable pasándole la lista de glucometrías
+const { currentPage, itemsPerPage, paginatedItems, totalPages, goToPage } = usePagination(
+  computed(() => storeGluco.glucometrias),
+  5 
+)
 
 const isModalVisible = ref(false)
 const modalType = ref<'form' | 'info'>('form')
 
-const currentPage = ref(1)  // Página actual
-const itemsPerPage = ref(5)  // Items por página
-
-// Lista paginada de glucometrías
-const paginatedGlucometrias = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value
-  const end = start + itemsPerPage.value
-  return storeGluco.glucometrias.slice(start, end)
-})
 
 /** Convierte la fecha de API a formato YYYY-MM-DD */
 function parseApiFecha(fechaApi: string): string {
@@ -172,17 +170,6 @@ const handleSubmit = async () => {
     console.error(error)
   }
 }
-
-/** Cambia de página */
-const goToPage = (page: number) => {
-  if (page < 1 || page > totalPages.value) return
-  currentPage.value = page
-}
-
-/** Calcula el número total de páginas */
-const totalPages = computed(() => {
-  return Math.ceil(storeGluco.glucometrias.length / itemsPerPage.value)
-})
 </script>
 
 <template>
@@ -197,18 +184,16 @@ const totalPages = computed(() => {
     <div v-if="storeGluco.loading" class="text-gray-600">Cargando glucometrías...</div>
     <div v-else-if="storeGluco.error" class="text-red-600">{{ storeGluco.error }}</div>
 
-    <div
-      v-else
-     
-    >
+    <div v-else>
+      <!-- Usa paginatedItems del composable en lugar de paginatedGlucometrias -->
       <CardGlucometria
-        v-for="(g) in paginatedGlucometrias"
+        v-for="(g) in paginatedItems"
         :key="g.idGlucometria"
         :id="g.idGlucometria"
         :fecha="g.fechaGlucometria"
-        :hora="g.hora"
+        :hora="g.hora || ''"
         :glucosa="g.nivelGlucometria"
-        :comentario="g.recomendacionGlucometria"
+        :comentario="g.recomendacionGlucometria || ''"
         @verGluco="verDetalleGlucometria(g.idGlucometria)"
         @editarGluco="editarGlucometria(g.idGlucometria)"
       />
@@ -222,8 +207,8 @@ const totalPages = computed(() => {
         :prev-text="'Anterior'"
         :next-text="'Siguiente'"
         :container-class="'flex space-x-2'"
-        :page-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
-        :active-class="'bg-indigo-600 text-white border-indigo-600 font-semibold'"
+        :page-class="'px-4 py-2 border rounded cursor-pointer text-sm text-[var(--colorBlanco)] font-bold hover:bg-[var(--colorSecundarioButton)] transition'"
+        :active-class="'bg-[var(--colorPrimarioButton)] text-[var(--colorBlanco)] font-semibold'"
         :prev-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
         :next-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
       />
@@ -238,4 +223,3 @@ const totalPages = computed(() => {
     />
   </section>
 </template>
-

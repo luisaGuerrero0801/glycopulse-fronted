@@ -8,9 +8,7 @@
           </span>
         </div>
         <div>
-          <span class="text-2xl font-normal text-gray-600">
-            Recetas Completas
-          </span>
+          <span class="text-2xl font-normal text-gray-600"> Recetas Completas </span>
         </div>
       </div>
     </div>
@@ -60,7 +58,7 @@
           </li>
         </ul>
 
-        <RecetaModal 
+        <RecetaModal
           v-if="selectedReceta"
           :receta="selectedReceta"
           :is-open="isModalOpen"
@@ -74,10 +72,10 @@
             :prev-text="'Anterior'"
             :next-text="'Siguiente'"
             :container-class="'flex space-x-2'"
-            :page-class="'px-3 py-1 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
-            :active-class="'bg-indigo-600 text-white border-indigo-600 font-semibold'"
-            :prev-class="'px-3 py-1 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
-            :next-class="'px-3 py-1 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+            :page-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-[var(--colorSecundarioButton)] transition'"
+            :active-class="'bg-[var(--colorPrimarioButton)] text-[var(--colorBlanco)] font-semibold'"
+            :prev-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+            :next-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
           />
         </div>
       </template>
@@ -109,7 +107,7 @@ const {
   totalPages: favTotalPages,
   goToPage: goToFavPage,
   loading: loadingFavoritos,
-  error: errorFavoritos,
+  error: errorFavoritos
 } = useUsuariosPagination(8, pagFavoritos)
 
 const selectedReceta = ref(null)

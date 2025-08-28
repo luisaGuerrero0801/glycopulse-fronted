@@ -1,22 +1,57 @@
 <script lang="ts" setup>
+import { useUsuariosPagination } from '@/composables/utils/usePagination'
 import { usePatientStore } from '@/stores/PatientForm'
 import { storeToRefs } from 'pinia'
 const patientStore = usePatientStore()
 const { patients } = storeToRefs(patientStore)
-import { onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+const emits = defineEmits(['donante-seleccionado'])
 
 onMounted(() => {
   patientStore.loadFromLocalStorage()
 })
+
+const {
+  paginatedUsuarios: todosLosUsuarios,
+  currentPage,
+  totalPages,
+  goToPage,
+  loading,
+  error,
+  fetchUsuarios
+} = useUsuariosPagination()
+
+const seleccionarDonante = (donante: any) => {
+  emits('donante-seleccionado', donante)
+}
+
+const idRolDeseado = 1
+const idUsuarioActual = ref<number | null>(null)
+const donantesFiltrados = computed(() => {
+  // Filtra por rol y excluye al usuario actual si el ID está disponible
+  if (idUsuarioActual.value !== null) {
+    return todosLosUsuarios.value.filter(
+      (d: any) => d.rol?.idRol === idRolDeseado && d.idUsuario !== idUsuarioActual.value
+    )
+  }
+  // Si no tenemos el ID del usuario actual, solo filtramos por rol
+  return todosLosUsuarios.value.filter((d: any) => d.rol?.idRol === idRolDeseado)
+})
 </script>
 
 <template>
-  <div class="md:w-1/2 lg:w-2/5 mx-5">
+ 
+  <div class="md:w-3/4 lg:w-4/5 mx-auto">
+  <div
+    v-for="donante in donantesFiltrados"
+    :key="donante.idUsuario"
+    @click="seleccionarDonante(donante)"
+  >
     <h2 class="font-black text-3xl text-center">Consulta Agendadas</h2>
 
     <p class="text-lg mt-5 text-center mb-10">
       Revisa y
-      <span class="text-indigo-600 font-bold">haz seguimiento</span>
+      <span class="text-[var(--colorPrimarioTexto)] font-bold">haz seguimiento</span>
     </p>
 
     <div
@@ -39,9 +74,11 @@ onMounted(() => {
         </thead>
         <tbody>
           <tr v-for="patient in patients" :key="patient.id" class="hover:bg-gray-50">
-            <td class="px-4 py-2 border-b">{{ patient.name }}</td>
-            <td class="px-4 py-2 border-b">{{ patient.email }}</td>
-            <td class="px-4 py-2 border-b">{{ patient.status }}</td>
+            <td class="px-4 py-2 border-b">
+              {{ donante.nombresUsuario }} {{ donante.apellidosUsuario }}
+            </td>
+            <td class="px-4 py-2 border-b">{{ donante.correoUsuario }}</td>
+            <td class="px-4 py-2 border-b">{{ donante.estado }}</td>
             <td class="px-4 py-2 border-b">{{ patient.specialist }}</td>
             <td class="px-4 py-2 border-b">
               {{ new Date(patient.date).toLocaleDateString() }}
@@ -51,4 +88,6 @@ onMounted(() => {
       </table>
     </div>
   </div>
+</div>
+
 </template>

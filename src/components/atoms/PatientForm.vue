@@ -6,7 +6,7 @@
       
       <p className="text-lg mt-5 text-center mb-10">
         Agenda tu cita y
-        <span className="text-indigo-600 font-bold">Administrala</span>
+        <span className="text-[var(--colorPrimarioTexto) font-bold">Administrala</span>
       </p>
       <form
       @submit.prevent="handleSubmit"
@@ -70,7 +70,7 @@
       
       <input
       type="submit"
-      class="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors"
+      class="bg-[var(--colorPrimarioButton)] w-full p-3 text-white uppercase font-bold hover:bg-[var(--colorSecundarioButton)] cursor-pointer transition-colors"
       value="Asignar"
       />
     </form>

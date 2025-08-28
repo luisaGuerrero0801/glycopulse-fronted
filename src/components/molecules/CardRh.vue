@@ -24,12 +24,12 @@ onMounted(() => {
     const storedId = sessionStorage.getItem('idUsuario')
     if (storedId) {
       idUsuarioActual.value = Number(storedId)
-      console.log("ID del usuario actual obtenido de sessionStorage:", idUsuarioActual.value)
+      console.log('ID del usuario actual obtenido de sessionStorage:', idUsuarioActual.value)
     } else {
-      console.log("No se encontró el ID del usuario en sessionStorage.")
+      console.log('No se encontró el ID del usuario en sessionStorage.')
     }
   } catch (e) {
-    console.error("Error al obtener el ID del usuario de sessionStorage:", e)
+    console.error('Error al obtener el ID del usuario de sessionStorage:', e)
   }
   fetchUsuarios()
 })
@@ -52,14 +52,10 @@ const seleccionarDonante = (donante: any) => {
 
 <template>
   <div class="space-y-4 overflow-y-auto max-h-[600px]">
-    
     <div v-if="loading" class="text-center py-4 text-gray-600">Cargando usuarios...</div>
     <div v-else-if="error" class="text-center py-4 text-red-500">{{ error }}</div>
 
-    <div
-      v-else-if="donantesFiltrados.length === 0"
-      class="text-center py-8 text-gray-500"
-    >
+    <div v-else-if="donantesFiltrados.length === 0" class="text-center py-8 text-gray-500">
       No se encontraron donantes con el rol seleccionado
     </div>
 
@@ -103,10 +99,10 @@ const seleccionarDonante = (donante: any) => {
           :prev-text="'Anterior'"
           :next-text="'Siguiente'"
           :container-class="'flex space-x-2'"
-          :page-class="'px-3 py-1 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
-          :active-class="'bg-indigo-600 text-white border-indigo-600 font-semibold'"
-          :prev-class="'px-3 py-1 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
-          :next-class="'px-3 py-1 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+          :page-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-[var(--colorSecundarioButton)] transition'"
+          :active-class="'bg-[var(--colorPrimarioButton)] text-[var(--colorBlanco)] font-semibold'"
+          :prev-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+          :next-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
         />
       </div>
     </template>

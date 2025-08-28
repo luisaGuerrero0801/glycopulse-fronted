@@ -82,6 +82,7 @@ const donantesFiltrados = computed(() => {
               <td class="px-4 py-2 border-b">{{ donante.estado }}</td>
               <td class="px-4 py-2 border-b">
                 <!-- {{ new Date(patient.date).toLocaleDateString() }} -->
+                  <!--otro-->
               </td>
             </tr>
           </tbody>

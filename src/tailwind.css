@@ -17,6 +17,7 @@
     /**Color Texto**/
 
     --colorPrimarioTexto: #000000;
-    --colorBlanco: #ffffffff
+    --colorBlanco: #ffffffff;
+    --colorNegro: black;
  
 }

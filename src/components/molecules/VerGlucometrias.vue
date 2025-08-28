@@ -5,12 +5,12 @@ import CardGlucometria from './CardGlucometria.vue'
 import PopUp from '@/components/molecules/PopUp.vue'
 import { useGlucometriasStore } from '@/stores/AllGlucometrias'
 import { toast } from 'vue3-toastify'
-import Paginate from 'vuejs-paginate-next'
+import Paginate from 'vuejs-paginate-next'   /** esto se importa para paginado */
 import { usePagination } from '@/composables/pagination/usePagination'
 
 const storeGluco = useGlucometriasStore()
 
-// Usa el composable pasándole la lista de glucometrías
+// Usa el composable pasándole la lista de glucometrías   esto es para paginado tambien
 const { currentPage, itemsPerPage, paginatedItems, totalPages, goToPage } = usePagination(
   computed(() => storeGluco.glucometrias),
   5 

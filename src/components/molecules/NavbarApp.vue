@@ -101,7 +101,7 @@ const filteredLinks = computed(() => {
           type="text"
           placeholder="Search..."
           v-model="searchQuery"
-          class="w-full bg-transparent border-b border-white text-white text-base placeholder-white focus:outline-none"
+          class="w-full bg-transparent border-b border-white  text-[var(--colorBlanco)] text-base placeholder-white focus:outline-none"
           aria-label="Search navigation links"
         />
       </div>

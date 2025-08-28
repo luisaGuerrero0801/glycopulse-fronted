@@ -17,6 +17,7 @@ import {
   BookOpenIcon,
   ChartBarIcon,
 } from '@heroicons/vue/24/outline';
+import { FolderIcon, FolderPlusIcon } from '@heroicons/vue/20/solid';
 
 const sidebarOpen = ref(false);
 const searchQuery = ref('');
@@ -57,12 +58,12 @@ watch(sidebarOpen, (isOpen) => {
 
 // Lista con íconos
 const links = [
+  { name: 'Asignar Consulta', to: '/asignar', icon: FolderPlusIcon },
   { name: 'Donantes', to: '/Donantes', icon: UserIcon },
   { name: 'Glucometría', to: '/glucometrias', icon: BeakerIcon },
   { name: 'Recetas Saludables', to: '/recetas-saludables', icon: BookOpenIcon },
   { name: 'Reportes', to: '#', icon: ChartBarIcon },
 ];
-
 // Filtro para la búsqueda
 const filteredLinks = computed(() => {
   if (!searchQuery.value) return links;
@@ -88,7 +89,7 @@ const filteredLinks = computed(() => {
     <section
       role="navigation"
       aria-label="Sidebar navigation"
-      class="fixed top-0 left-0 z-50 w-72 h-screen bg-blue-950 transition-transform duration-300 ease-in-out
+      class="fixed top-0 left-0 z-50 w-72 h-screen bg-[var(--colorPrimarioVentanas)] transition-transform duration-300 ease-in-out
              md:translate-x-0 md:static md:block"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     >

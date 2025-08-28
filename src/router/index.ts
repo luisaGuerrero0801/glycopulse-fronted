@@ -9,7 +9,7 @@ const router = createRouter({
       name: 'admin',
       component: () => import('../views/AdminPageView.vue'),
       meta: {
-        requiresAuth: false /**cambiar a true */
+        requiresAuth: true /**cambiar a true */
       },
       children: [
         {
@@ -187,8 +187,8 @@ const router = createRouter({
       path: '/asignar',
       name: 'Asignar',
       component: () => import('../views/UsuarioDoctorAsignarView.vue'),
-      meta: { requiresAuth: false }
-    }
+      meta: { requiresAuth: true }
+    },
   ]
 })
 

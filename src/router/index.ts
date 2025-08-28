@@ -184,7 +184,7 @@ const router = createRouter({
       path: '/asignar',
       name: 'Asignar',
       component: () => import('../views/UsuarioDoctorAsignarView.vue'),
-      meta: { requiresAuth: false }
+      meta: { requiresAuth: true }
     },
   ]
 })

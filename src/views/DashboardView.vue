@@ -7,5 +7,5 @@
 </template>
 
 <script setup lang="ts">
-import Dashboard from '@/components/molecules/Dashboard.vue'
+import Dashboard from '@/components/admin/Dashboard.vue'
 </script>

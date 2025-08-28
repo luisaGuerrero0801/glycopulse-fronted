@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useUsuariosStore as useUsuariosGestionStore } from '@/stores/usuarios'
 import { storeToRefs } from 'pinia'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import EditUsuarioModal from '../molecules/EditUsuarioModal.vue'
 import { useRouter } from 'vue-router'
 
@@ -34,7 +34,9 @@ function editarUsuario(usuario: Usuario) {
 
 async function guardarCambios(usuarioEditado: Usuario) {
   try {
+
     await usuariosStore.editarUsuario(usuarioEditado) // Usamos la acción de store aquí
+
     modalVisible.value = false
   } catch (err) {
     console.error('Error al guardar cambios:', err)
@@ -45,7 +47,6 @@ async function guardarCambios(usuarioEditado: Usuario) {
 async function toggleEstadoUsuario(usuario: Usuario) {
   try {
     await usuariosStore.cambiarEstadoUsuario(usuario.idUsuario, !usuario.activo)
-    // Optimización: actualizar el estado después de cambiar el estado del usuario
   } catch (err) {
     console.error('Error al cambiar estado del usuario:', err)
   }
@@ -56,29 +57,37 @@ function estadoBotonClass(activo: boolean) {
     ? 'text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100'
     : 'text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100'
 }
-const showDropdown = ref(false)
 
+
+const showDropdown = ref(false)
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value
 }
-const router = useRouter()
 
+const router = useRouter()
 const goToDoctorForm = () => {
   showDropdown.value = false
-  router.push({ name: 'FormDoctorAdmin' }) // 👈 navega a la ruta
+  router.push({ name: 'FormDoctorAdmin' })
 }
+
+// 🔹 Computed para filtrar el usuario Admin Principal
+const usuariosVisibles = computed(() =>
+  usuariosFiltrados.value.filter(
+    (usuario) => usuario.correoUsuario !== 'glycopulse@gmail.com'
+  )
+)
+
 </script>
 
 <template>
   <!-- Header -->
   <div class="relative py-8 bg-white rounded-t-xl shadow-sm px-6 text-center">
-    <!-- Título centrado -->
+
     <div>
       <h1 class="text-4xl font-bold text-gray-800">👥 Gestión de Usuarios</h1>
       <p class="text-gray-600 mt-2">Administra los usuarios del sistema</p>
     </div>
 
-    <!-- Botón con Dropdown, posicionado a la derecha -->
     <div class="absolute top-1/2 right-6 transform -translate-y-1/2">
       <div class="relative">
         <button
@@ -88,7 +97,7 @@ const goToDoctorForm = () => {
           ➕ Añadir
         </button>
 
-        <!-- Dropdown -->
+
         <div
           v-if="showDropdown"
           class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-50"
@@ -120,7 +129,7 @@ const goToDoctorForm = () => {
       <p class="text-red-500 font-medium">⚠️ {{ error }}</p>
     </div>
 
-    <div v-else-if="usuariosFiltrados.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+    <div v-else-if="usuariosVisibles.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
       <p class="text-gray-500">No se encontraron usuarios con los filtros aplicados</p>
     </div>
 
@@ -172,7 +181,9 @@ const goToDoctorForm = () => {
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr
-            v-for="usuario in usuariosFiltrados"
+
+            v-for="usuario in usuariosVisibles"
+
             :key="usuario.idUsuario"
             class="hover:bg-gray-50 transition-colors"
           >

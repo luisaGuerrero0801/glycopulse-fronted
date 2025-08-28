@@ -40,7 +40,7 @@ const donantesFiltrados = computed(() => {
 </script>
 
 <template>
-  <div class="md:w-3/4 lg:w-4/5 mx-auto">
+  <div class="w-full sm:w-full md:w-3/4 lg:w-4/5 xl:w-3/4 2xl:w-2/3 mx-auto">
     <div>
       <h2 class="font-black text-3xl text-center">Consulta Agendadas</h2>
 
@@ -79,7 +79,7 @@ const donantesFiltrados = computed(() => {
               </td>
               <td class="px-4 py-2 border-b">{{ donante.correoUsuario }}</td>
               <td class="px-4 py-2 border-b">{{ donante.estado }}</td>
-              <td class="px-4 py-2 border-b">{{donante.estado   }}</td>
+              <td class="px-4 py-2 border-b">{{ donante.estado }}</td>
               <td class="px-4 py-2 border-b">
                 <!-- {{ new Date(patient.date).toLocaleDateString() }} -->
               </td>

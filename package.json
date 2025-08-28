@@ -36,6 +36,7 @@
     "pinia": "^2.1.3",
     "rtsp-relay": "^1.7.0",
     "spin-wheel": "^4.3.0",
+    "toastify-js": "^1.12.0",
     "uspin": "^1.3.0",
     "vite-plugin-svgr": "^4.0.0",
     "vue": "^3.3.4",

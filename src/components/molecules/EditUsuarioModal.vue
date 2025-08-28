@@ -52,11 +52,6 @@
         <input v-model="form.ciudadUsuario" class="w-full border rounded p-2" />
       </div>
 
-      <div>
-        <label>País</label>
-        <input v-model="form.paisUsuario" class="w-full border rounded p-2" />
-      </div>
-
       <div class="flex justify-end space-x-2">
         <button @click="cancelar" class="bg-gray-300 px-4 py-2 rounded">Cancelar</button>
         <button @click="guardar" class="bg-blue-500 text-white px-4 py-2 rounded">Guardar</button>
@@ -66,33 +61,35 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, reactive } from 'vue';
-import axios from 'axios';
+import { watch, reactive } from "vue";
+import axios from "axios";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 const props = defineProps<{
   visible: boolean;
   usuario: any;
 }>();
 
-const emit = defineEmits(['close', 'save']);
+const emit = defineEmits(["close", "save"]);
 
 const form = reactive({
-  nombresUsuario: '',
-  apellidosUsuario: '',
-  correoUsuario: '',
-  rhUsuario: '',
-  fechaNacimientoUsuario: '',
-  generoUsuario: '',
-  ciudadUsuario: '',
-  paisUsuario: '',
-  rolUsuario: '',
+  nombresUsuario: "",
+  apellidosUsuario: "",
+  correoUsuario: "",
+  rhUsuario: "",
+  fechaNacimientoUsuario: "",
+  generoUsuario: "",
+  ciudadUsuario: "",
+  paisUsuario: "",
+  rolUsuario: "",
 });
 
 watch(
   () => props.usuario,
   (nuevoUsuario) => {
     if (nuevoUsuario) {
-      console.log('Datos del usuario a editar recibidos:', nuevoUsuario);
+      console.log("Datos del usuario a editar recibidos:", nuevoUsuario);
       form.nombresUsuario = nuevoUsuario.nombresUsuario;
       form.apellidosUsuario = nuevoUsuario.apellidosUsuario;
       form.correoUsuario = nuevoUsuario.correoUsuario;
@@ -108,21 +105,24 @@ watch(
 );
 
 function cancelar() {
-  emit('close');
+  emit("close");
 }
 
 async function guardar() {
   try {
     const usuarioId = props.usuario.idUsuario;
-    
-    // ** La URL correcta según tu `main.ts` **
     const urlApi = `http://localhost:3000/api/v1/usuarios/${usuarioId}`;
-    
-    const token = localStorage.getItem('token'); 
+    const token = localStorage.getItem("token");
 
     if (!usuarioId) {
-      console.error('El ID del usuario no está definido.');
-      alert('No se pudo obtener el ID del usuario para actualizar.');
+      Toastify({
+        text: "⚠️ No se pudo obtener el ID del usuario para actualizar.",
+        backgroundColor: "#ff9800",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        close: true,
+      }).showToast();
       return;
     }
 
@@ -135,42 +135,56 @@ async function guardar() {
       generoUsuario: form.generoUsuario,
       ciudadUsuario: form.ciudadUsuario,
       paisUsuario: form.paisUsuario,
-      idRol: Number(form.rolUsuario), 
+      idRol: Number(form.rolUsuario),
     };
 
-    console.log(`Enviando PATCH a ${urlApi} con los datos:`, datosActualizados);
-
-    const response = await axios.patch(
-      urlApi,
-      datosActualizados,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.patch(urlApi, datosActualizados, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (response.status === 200) {
-      alert('Usuario actualizado correctamente!');
-      emit('save', response.data); 
-      emit('close');
+      Toastify({
+        text: "✅ Usuario actualizado correctamente!",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#4CAF50",
+        close: true,
+        stopOnFocus: true,
+      }).showToast();
+
+      emit("save", response.data);
+      emit("close");
     }
   } catch (error) {
-    console.error('Error al actualizar el usuario:', error);
+    console.error("Error al actualizar el usuario:", error);
     if (axios.isAxiosError(error) && error.response) {
       if (error.response.status === 400) {
-        alert('Datos de la solicitud incorrectos. Verifique el formato.');
+        showToast("⚠️ Datos de la solicitud incorrectos. Verifique el formato.", "#ff9800");
       } else if (error.response.status === 403) {
-        alert('No tienes permisos para realizar esta acción.');
+        showToast("🚫 No tienes permisos para realizar esta acción.", "#f44336");
       } else if (error.response.status === 404) {
-        alert('El usuario no fue encontrado. Verifique la URL y el ID.');
+        showToast("❌ El usuario no fue encontrado.", "#f44336");
       } else {
-        alert('Ocurrió un error en el servidor.');
+        showToast("⚠️ Ocurrió un error en el servidor.", "#f44336");
       }
     } else {
-      alert('Ocurrió un error de red o desconocido.');
+      showToast("❌ Ocurrió un error de red o desconocido.", "#f44336");
     }
   }
+}
+
+function showToast(message: string, color: string) {
+  Toastify({
+    text: message,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    backgroundColor: color,
+    close: true,
+  }).showToast();
 }
 </script>

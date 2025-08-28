@@ -20,7 +20,7 @@ export const graficosStore = defineStore('GRAFICOS', {
         this.conteoRolRh = response.data
         // console.log('Conteo obtenido:', this.conteoRolRh)
       } catch (err) {
-        this.error = 'Error al obtener conteo de usuarios por rol y RH'
+        this.error = 'Error al obtener conteo de usuarios por rol'
         toast.error(this.error)
         // console.error(err)
       } finally {

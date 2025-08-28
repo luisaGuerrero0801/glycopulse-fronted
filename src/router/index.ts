@@ -59,9 +59,12 @@ const router = createRouter({
           path: 'favoritos',
           name: 'AdminFav',
           component: () => import('../views/FavoritosView.vue')
+        },
+        {
+          path: 'doctores/nuevo', 
+          name: 'FormDoctorAdmin',
+          component: () => import('../views/FormDoctorAdminView.vue') 
         }
-
-       
       ]
     },
     {
@@ -149,12 +152,12 @@ const router = createRouter({
       meta: { requiresAuth: false, role: 'doctor' }
     },
     {
-  path: '/doctor/glucometrias',
-  name: 'DoctorGlucometrias',
-  component: () => import('@/views/DoctorGlucometriasView.vue'),
-  meta: { requiresAuth: true, role: 'doctor' }
-},
- {
+      path: '/doctor/glucometrias',
+      name: 'DoctorGlucometrias',
+      component: () => import('@/views/DoctorGlucometriasView.vue'),
+      meta: { requiresAuth: true, role: 'doctor' }
+    },
+    {
       path: '/doctor/recetas',
       name: 'DoctorRecetasHome',
       component: () => import('@/views/DoctorRecetasHomeView.vue'),
@@ -185,7 +188,7 @@ const router = createRouter({
       name: 'Asignar',
       component: () => import('../views/UsuarioDoctorAsignarView.vue'),
       meta: { requiresAuth: false }
-    },
+    }
   ]
 })
 

@@ -9,7 +9,7 @@ const router = createRouter({
       name: 'admin',
       component: () => import('../views/AdminPageView.vue'),
       meta: {
-        requiresAuth: false /**cambiar a true */
+        requiresAuth: true /**cambiar a true */
       },
       children: [
         {
@@ -59,6 +59,11 @@ const router = createRouter({
           path: 'favoritos',
           name: 'AdminFav',
           component: () => import('../views/FavoritosView.vue')
+        },
+        {
+          path: 'doctores/nuevo', 
+          name: 'FormDoctorAdmin',
+          component: () => import('../views/FormDoctorAdminView.vue') 
         }
       ]
     },
@@ -147,12 +152,12 @@ const router = createRouter({
       meta: { requiresAuth: false, role: 'doctor' }
     },
     {
-  path: '/doctor/glucometrias',
-  name: 'DoctorGlucometrias',
-  component: () => import('@/views/DoctorGlucometriasView.vue'),
-  meta: { requiresAuth: true, role: 'doctor' }
-},
- {
+      path: '/doctor/glucometrias',
+      name: 'DoctorGlucometrias',
+      component: () => import('@/views/DoctorGlucometriasView.vue'),
+      meta: { requiresAuth: true, role: 'doctor' }
+    },
+    {
       path: '/doctor/recetas',
       name: 'DoctorRecetasHome',
       component: () => import('@/views/DoctorRecetasHomeView.vue'),
@@ -166,9 +171,6 @@ const router = createRouter({
       component: () => import('@/views/DoctorRecetaCardView.vue'),
       meta: { requiresAuth: false, role: 'doctor' }
     },
-
-
-
     {
       path: '/donantes',
       name: 'donantes',
@@ -179,7 +181,14 @@ const router = createRouter({
       meta: {
         requiresAuth: true /**cambiar a true */
       }
-    }
+    },
+
+    {
+      path: '/asignar',
+      name: 'Asignar',
+      component: () => import('../views/UsuarioDoctorAsignarView.vue'),
+      meta: { requiresAuth: true }
+    },
   ]
 })
 

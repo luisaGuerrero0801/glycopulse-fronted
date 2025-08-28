@@ -57,7 +57,7 @@ const gruposSanguineos = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
         filtros.ubicacion = ''
         filtros.grupoSanguineo = ''
       }"
-      class="bg-red-500 text-white px-2 py-1 text-sm rounded-lg hover:bg-red-600 transition"
+      class="bg-[var(--colorPrimarioButton)] text-white px-2 py-1 text-sm rounded-lg hover:bg-[var(--colorSecundarioButton)] transition"
     >
       Restablecer filtros
     </button>

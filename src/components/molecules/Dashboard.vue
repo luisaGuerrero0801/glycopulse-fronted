@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-100 p-2" id="capture">
     <!-- Botón flotante de descarga arriba a la derecha -->
     <div class="fixed top-4 right-4 z-50">
-      <button @click="captureScreen" class="bg-blue-600 text-white px-3 py-1 rounded-lg shadow" aria-label="Descargar Informe">
+      <button @click="captureScreen" class="bg-[var(--colorPrimarioButton)] hover:bg-[var(--colorSecundarioButton)] text-white px-3 py-1 rounded-lg shadow" aria-label="Descargar Informe">
         Descargar Informe
       </button>
     </div>

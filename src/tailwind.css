@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🎨 Aquí defines tus colores como variables globales */
+:root {
+  /** Color ventanas**/
+  --colorPrimarioVentanas: #172554;
+
+
+  /**Color Botones**/
+
+  --colorPrimarioButton: #1e3a8a;
+   --colorSecundarioButton: #2b4ab8;
+  
+
+    /**Color Texto**/
+
+    --colorPrimarioTexto: #000000;
+    --colorBlanco: #ffffffff;
+    --colorNegro: black;
+ 
+}

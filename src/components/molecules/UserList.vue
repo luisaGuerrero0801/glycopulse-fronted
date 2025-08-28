@@ -34,7 +34,9 @@ function editarUsuario(usuario: Usuario) {
 
 async function guardarCambios(usuarioEditado: Usuario) {
   try {
-    await usuariosStore.editarUsuario(usuarioEditado)
+
+    await usuariosStore.editarUsuario(usuarioEditado) // Usamos la acción de store aquí
+
     modalVisible.value = false
   } catch (err) {
     console.error('Error al guardar cambios:', err)
@@ -56,6 +58,7 @@ function estadoBotonClass(activo: boolean) {
     : 'text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100'
 }
 
+
 const showDropdown = ref(false)
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value
@@ -73,11 +76,13 @@ const usuariosVisibles = computed(() =>
     (usuario) => usuario.correoUsuario !== 'glycopulse@gmail.com'
   )
 )
+
 </script>
 
 <template>
   <!-- Header -->
   <div class="relative py-8 bg-white rounded-t-xl shadow-sm px-6 text-center">
+
     <div>
       <h1 class="text-4xl font-bold text-gray-800">👥 Gestión de Usuarios</h1>
       <p class="text-gray-600 mt-2">Administra los usuarios del sistema</p>
@@ -91,6 +96,7 @@ const usuariosVisibles = computed(() =>
         >
           ➕ Añadir
         </button>
+
 
         <div
           v-if="showDropdown"
@@ -131,40 +137,91 @@ const usuariosVisibles = computed(() =>
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Perfil</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombres</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apellidos</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correo</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RH</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Perfil
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Nombres
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Apellidos
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Correo
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              RH
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Rol
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Estado
+            </th>
+            <th
+              class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Acciones
+            </th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr
+
             v-for="usuario in usuariosVisibles"
+
             :key="usuario.idUsuario"
             class="hover:bg-gray-50 transition-colors"
           >
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
-                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                <div
+                  class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center"
+                >
                   <span class="text-blue-600 text-lg">👤</span>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.nombresUsuario }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.apellidosUsuario }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.correoUsuario }}</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">{{ usuario.rhUsuario }}</span>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ usuario.nombresUsuario }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ usuario.apellidosUsuario }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ usuario.correoUsuario }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">{{ usuario.rol.nombreRol }}</span>
+              <span
+                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"
+                >{{ usuario.rhUsuario }}</span
+              >
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span :class="usuario.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+              <span
+                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800"
+                >{{ usuario.rol.nombreRol }}</span
+              >
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                :class="usuario.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+              >
                 {{ usuario.activo ? 'Activo' : 'Inhabilitado' }}
               </span>
             </td>

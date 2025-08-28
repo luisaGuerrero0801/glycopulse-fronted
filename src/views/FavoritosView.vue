@@ -7,7 +7,7 @@
 
       <RouterLink
         to="/admin/recipe"
-        class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md shadow-md transition"
+        class="mt-4 bg-[var(--colorPrimarioButton)]  hover:bg-[var(--colorSecundarioButton)]  text-white px-4 py-2 rounded-md shadow-md transition"
       >
         Agregar Favorito
       </RouterLink>
@@ -23,3 +23,5 @@
 import { RouterLink } from 'vue-router'
 import Favoritos from '@/components/molecules/verTodasRecetas.vue'
 </script>
+
+

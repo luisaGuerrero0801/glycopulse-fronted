@@ -8,7 +8,7 @@ interface Props {
 defineEmits<{ OnClick: [] }>()
 
 const props = withDefaults(defineProps<Props>(), {
-  colorButton: 'bg-blue-800',
+  colorButton: 'bg-[var(--colorPrimarioButton)]',
   colorButtonHover: 'hover:bg-blue-700'
 })
 </script>

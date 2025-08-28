@@ -2,9 +2,11 @@
 import { useUsuariosPagination } from '@/composables/utils/usePagination'
 import { usePatientStore } from '@/stores/PatientForm'
 import { storeToRefs } from 'pinia'
+import { computed, onMounted, ref } from 'vue'
+
 const patientStore = usePatientStore()
 const { patients } = storeToRefs(patientStore)
-import { computed, onMounted, ref } from 'vue'
+
 const emits = defineEmits(['donante-seleccionado'])
 
 onMounted(() => {
@@ -40,13 +42,7 @@ const donantesFiltrados = computed(() => {
 </script>
 
 <template>
- 
   <div class="md:w-3/4 lg:w-4/5 mx-auto">
-  <div
-    v-for="donante in donantesFiltrados"
-    :key="donante.idUsuario"
-    @click="seleccionarDonante(donante)"
-  >
     <h2 class="font-black text-3xl text-center">Consulta Agendadas</h2>
 
     <p class="text-lg mt-5 text-center mb-10">
@@ -54,6 +50,7 @@ const donantesFiltrados = computed(() => {
       <span class="text-[var(--colorPrimarioTexto)] font-bold">haz seguimiento</span>
     </p>
 
+    <!-- Si no hay citas -->
     <div
       v-if="patients.length === 0"
       class="text-lg mt-5 text-center mb-10 bg-white shadow-md rounded-lg py-10 px-5"
@@ -61,6 +58,7 @@ const donantesFiltrados = computed(() => {
       No hay citas registradas
     </div>
 
+    <!-- Tabla de pacientes -->
     <div v-else class="bg-white shadow-md rounded-lg py-10 px-5 mb-10 overflow-x-auto">
       <table class="min-w-full text-sm text-left border border-gray-200">
         <thead class="bg-gray-100 uppercase text-gray-600 text-xs">
@@ -73,12 +71,16 @@ const donantesFiltrados = computed(() => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="patient in patients" :key="patient.id" class="hover:bg-gray-50">
+          <tr
+            v-for="patient in patients"
+            :key="patient.id"
+            class="hover:bg-gray-50"
+          >
             <td class="px-4 py-2 border-b">
-              {{ donante.nombresUsuario }} {{ donante.apellidosUsuario }}
+              {{ patient.nombre }}
             </td>
-            <td class="px-4 py-2 border-b">{{ donante.correoUsuario }}</td>
-            <td class="px-4 py-2 border-b">{{ donante.estado }}</td>
+            <td class="px-4 py-2 border-b">{{ patient.email }}</td>
+            <td class="px-4 py-2 border-b">{{ patient.estado }}</td>
             <td class="px-4 py-2 border-b">{{ patient.specialist }}</td>
             <td class="px-4 py-2 border-b">
               {{ new Date(patient.date).toLocaleDateString() }}
@@ -88,6 +90,4 @@ const donantesFiltrados = computed(() => {
       </table>
     </div>
   </div>
-</div>
-
 </template>

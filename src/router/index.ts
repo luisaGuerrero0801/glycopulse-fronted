@@ -151,12 +151,12 @@ const router = createRouter({
       component: () => import('@/views/DoctorPacientesView.vue'),
       meta: { requiresAuth: false, role: 'doctor' }
     },
-    {
-      path: '/doctor/glucometrias',
-      name: 'DoctorGlucometrias',
-      component: () => import('@/views/DoctorGlucometriasView.vue'),
-      meta: { requiresAuth: true, role: 'doctor' }
-    },
+    // {
+    //   path: '/doctor/glucometrias',
+    //   name: 'DoctorGlucometrias',
+    //   component: () => import('@/views/DoctorGlucometriasView.vue'),
+    //   meta: { requiresAuth: true, role: 'doctor' }
+    // },
     {
       path: '/doctor/recetas',
       name: 'DoctorRecetasHome',

@@ -45,7 +45,7 @@ export const loginStore = defineStore('login', {
         if (this.rol === 'Paciente') {
           router.push('/recetas-saludables')
         } else if (this.rol === 'Doctor') {
-          router.push('/register')
+          router.push('/doctor/pacientes')
         } else if (this.rol === 'Admin') {
           router.push('/admin/panel')
         }

@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia'
 import { ref, onMounted, computed } from 'vue'
 import EditUsuarioModal from '../molecules/EditUsuarioModal.vue'
 import { useRouter } from 'vue-router'
-
+import FormDoctorAdmin from '../molecules/FormDoctorAdmin.vue' // 👈 importa tu modal de registro
 interface Usuario {
   idUsuario: number
   nombresUsuario: string
@@ -32,9 +32,11 @@ function editarUsuario(usuario: Usuario) {
   modalVisible.value = true
 }
 
+// --- Modal de registro (FormDoctorAdmin)
+const modalRegistroVisible = ref(false) // 👈 nuevo estado para abrir la modal
+
 async function guardarCambios(usuarioEditado: Usuario) {
   try {
-
     await usuariosStore.editarUsuario(usuarioEditado) // Usamos la acción de store aquí
 
     modalVisible.value = false
@@ -58,7 +60,6 @@ function estadoBotonClass(activo: boolean) {
     : 'text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100'
 }
 
-
 const showDropdown = ref(false)
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value
@@ -72,17 +73,13 @@ const goToDoctorForm = () => {
 
 // 🔹 Computed para filtrar el usuario Admin Principal
 const usuariosVisibles = computed(() =>
-  usuariosFiltrados.value.filter(
-    (usuario) => usuario.correoUsuario !== 'glycopulse@gmail.com'
-  )
+  usuariosFiltrados.value.filter((usuario) => usuario.correoUsuario !== 'glycopulse@gmail.com')
 )
-
 </script>
 
 <template>
   <!-- Header -->
   <div class="relative py-8 bg-white rounded-t-xl shadow-sm px-6 text-center">
-
     <div>
       <h1 class="text-4xl font-bold text-gray-800">👥 Gestión de Usuarios</h1>
       <p class="text-gray-600 mt-2">Administra los usuarios del sistema</p>
@@ -92,11 +89,10 @@ const usuariosVisibles = computed(() =>
       <div class="relative">
         <button
           @click="toggleDropdown"
-          class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
         >
-          ➕ Añadir
+          Añadir
         </button>
-
 
         <div
           v-if="showDropdown"
@@ -105,10 +101,15 @@ const usuariosVisibles = computed(() =>
           <ul class="py-2">
             <li>
               <button
-                @click="goToDoctorForm"
+                @click="
+                  () => {
+                    showDropdown = false
+                    modalRegistroVisible = true
+                  }
+                "
                 class="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
               >
-                🩺 Añadir Doctor
+                Añadir Usuario
               </button>
             </li>
           </ul>
@@ -181,9 +182,7 @@ const usuariosVisibles = computed(() =>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr
-
             v-for="usuario in usuariosVisibles"
-
             :key="usuario.idUsuario"
             class="hover:bg-gray-50 transition-colors"
           >
@@ -246,12 +245,28 @@ const usuariosVisibles = computed(() =>
         </tbody>
       </table>
     </div>
-
     <EditUsuarioModal
       :visible="modalVisible"
       :usuario="usuarioSeleccionado"
       @close="modalVisible = false"
       @save="guardarCambios"
     />
-  </div>
+
+    <!-- Modal de registro -->
+    <div
+      v-if="modalRegistroVisible"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="relative bg-white rounded-xl shadow-lg w-full max-w-3xl p-6">
+        <button
+          @click="modalRegistroVisible = false"
+          class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl"
+        >
+          ✕
+        </button>
+        <FormDoctorAdmin />
+      </div>
+    </div>
+  </div> <!-- 👈 este cierra el contenedor bg-white rounded-xl shadow-md p-6 -->
 </template>
+

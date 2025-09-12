@@ -1,88 +1,81 @@
 <template>
   <div class="min-h-screen bg-gray-100 p-2" id="capture">
-    <!-- Botón flotante de descarga -->
     <div class="fixed top-4 right-4 z-50">
       <button
         @click="captureScreen"
         class="bg-[var(--colorPrimarioButton)] hover:bg-[var(--colorSecundarioButton)] text-white px-3 py-1 rounded-lg shadow"
-        aria-label="Descargar Informe"
       >
         Descargar Informe
       </button>
     </div>
 
-    <!-- Contenedor central -->
     <div class="max-w-6xl mx-auto space-y-6">
       <div class="text-center">
         <h1 class="text-2xl font-bold">📊 Dashboard</h1>
         <p class="text-gray-600 text-sm">Resumen de información actual</p>
       </div>
 
-      <!-- Tarjetas Resumen -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
-        <!-- Admins -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
         <div class="bg-white shadow rounded-xl p-4 flex flex-col items-center">
-          <span class="text-green-600 font-semibold flex items-center gap-2">
-            🛠️ Administradores
-          </span>
-          <p class="text-2xl font-bold text-green-600">{{ totalAdmins }}</p>
-        </div>
-
-        <!-- Pacientes -->
-        <div class="bg-white shadow rounded-xl p-4 flex flex-col items-center">
-          <span class="text-orange-600 font-semibold flex items-center gap-2">
-            🤱🏻 Pacientes
-          </span>
+          <span class="text-orange-600 font-semibold">🤱🏻 Pacientes</span>
           <p class="text-2xl font-bold text-orange-600">{{ totalPacientes }}</p>
         </div>
-
-        <!-- Doctores -->
         <div class="bg-white shadow rounded-xl p-4 flex flex-col items-center">
-          <span class="text-purple-600 font-semibold flex items-center gap-2">
-            👨‍⚕️ Doctores
-          </span>
+          <span class="text-purple-600 font-semibold">👨‍⚕️ Doctores</span>
           <p class="text-2xl font-bold text-purple-600">{{ totalDoctores }}</p>
         </div>
-      </div>
-
-      <!-- Gráficos principales -->
-      <div class="grid md:grid-cols-2 gap-4">
-        <!-- Activos/Inactivos -->
-        <div class="bg-white p-3 rounded-lg shadow h-[300px]">
-          <Bar :data="chartData" :options="chartOptions" />
+        <div class="bg-white shadow rounded-xl p-4 flex flex-col items-center">
+          <span class="text-blue-600 font-semibold">⚖️ Promedio Pacientes/Doctor</span>
+          <p class="text-2xl font-bold text-blue-600">{{ pacientesPromedioPorDoctor }}%</p>
         </div>
-
-        <!-- Roles -->
-        <div class="bg-white p-3 rounded-lg shadow h-[300px]">
-          <Pie :data="chartDataPie" :options="{ responsive: true }" />
+        <div class="bg-white shadow rounded-xl p-4 flex flex-col items-center">
+          <span class="text-green-600 font-semibold"> Pacientes con Doctor </span>
+          <p class="text-2xl font-bold text-green-600">{{ porcentajeConDoctor }}%</p>
         </div>
       </div>
 
-      <!-- Doctores activos en el tiempo -->
-      <div class="bg-white p-3 rounded-lg shadow h-[300px]">
-        <Line :data="chartDataLine" :options="chartOptionsLine" />
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-white p-3 rounded-lg shadow h-[300px]">
+          <Pie :data="chartDataRoles" :options="{ responsive: true }" />
+        </div>
+
+        <div class="bg-white p-3 rounded-lg shadow h-[300px]">
+          <Bar :data="chartDataPacientesPorDoctor" :options="chartOptionsPacientesPorDoctor" />
+        </div>
+
+        <div class="bg-white p-3 rounded-lg shadow h-[300px]">
+          <Pie :data="chartDataPacientesAsignacion" :options="chartOptionsPacientesAsignacion" />
+        </div>
+
+        <div class="bg-white p-3 rounded-lg shadow h-[300px]">
+          <Pie :data="chartDataDoctoresPacientes" :options="chartOptionsDoctoresPacientes" />
+        </div>
       </div>
 
-      <!-- Uso de la plataforma (logins diarios) -->
-      <div class="bg-white p-3 rounded-lg shadow h-[300px]">
-        <Line :data="chartDataLogins" :options="chartOptionsLogins" />
-      </div>
-
-      <!-- Historial de registros (Altas y Bajas) -->
-      <div class="bg-white p-3 rounded-lg shadow h-[300px]">
-        <Bar :data="chartDataAltasBajas" :options="chartOptionsAltasBajas" />
+      <div class="bg-white p-3 rounded-lg shadow h-[400px]">
+        <LMap
+          ref="map"
+          style="height: 100%"
+          :zoom="mapZoom"
+          :center="mapCenter"
+          @ready="onMapReady"
+        >
+          <LTileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          />
+        </LMap>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useUsuariosStore } from '@/stores/donantes'
-import { graficosStore } from '@/stores/graficosAdmin'
-import { storeToRefs } from 'pinia'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { Bar, Pie, Line } from 'vue-chartjs'
-import ChartDataLabels from 'chartjs-plugin-datalabels'
+import { useUsuariosStore } from '@/stores/donantes';
+import { storeToRefs } from 'pinia';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { Bar, Pie } from 'vue-chartjs';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {
   Chart as ChartJS,
   Title,
@@ -90,255 +83,218 @@ import {
   Legend,
   ArcElement,
   BarElement,
-  LineElement,
-  PointElement,
-  CategoryScale,
-  LinearScale
-} from 'chart.js'
-import html2canvas from 'html2canvas'
-
-ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
-  ArcElement,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-  Legend,
-  ChartDataLabels
-)
+} from 'chart.js';
+import html2canvas from 'html2canvas';
 
-const usuariosStore = useUsuariosStore()
-const graficos = graficosStore()
+// Importaciones para el mapa
+import { LMap, LTileLayer, LPopup } from '@vue-leaflet/vue-leaflet';
+import L from 'leaflet';
+import 'leaflet.markercluster';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
-const { usuariosFiltrados } = storeToRefs(usuariosStore)
+// Solución para el error de los íconos de los marcadores
+// eslint-disable-next-line
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+});
 
-let intervalId: number | undefined
-let isLoading = ref(false)
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend, ChartDataLabels);
 
-onMounted(() => {
-  usuariosStore.fetchUsuarios()
-  intervalId = setInterval(() => {
-    usuariosStore.fetchUsuarios()
-  }, 5000)
-})
+const usuariosStore = useUsuariosStore();
+const { usuariosFiltrados } = storeToRefs(usuariosStore);
 
-onUnmounted(() => {
-  if (intervalId) clearInterval(intervalId)
-})
+let intervalId: number | undefined;
+const isLoading = ref(false);
 
-function contarPorRol(rol: string) {
-  return usuariosFiltrados.value.filter((usuario) => usuario.rol.nombreRol === rol).length
+// Variables para el mapa
+const mapCenter = ref([4.711, -74.0721]);
+const mapZoom = ref(6);
+const map = ref(null);
+let markerClusterLayer: any = null;
+
+const pacientesConCoordenadas = computed(() => {
+  return usuariosFiltrados.value.filter(u => u.rol.nombreRol === 'Paciente' && u.latitud && u.longitud);
+});
+
+function onMapReady() {
+  if (map.value) {
+    markerClusterLayer = (L as any).markerClusterGroup();
+    (map.value as any).leafletObject.addLayer(markerClusterLayer);
+    updateMarkers();
+  }
 }
 
-// Totales
-const totalAdmins = computed(() => contarPorRol('Admin'))
-const totalPacientes = computed(() => contarPorRol('Paciente'))
-const totalDoctores = computed(() => contarPorRol('Doctor'))
+function updateMarkers() {
+  if (!markerClusterLayer || !pacientesConCoordenadas.value) return;
 
-// Activos / Inactivos
-const totalActivos = computed(() => usuariosFiltrados.value.filter((u) => u.estado === true).length)
-const totalInactivos = computed(() => usuariosFiltrados.value.filter((u) => u.estado === false).length)
+  markerClusterLayer.clearLayers();
+  pacientesConCoordenadas.value.forEach(paciente => {
+    const marker = L.marker([paciente.latitud, paciente.longitud]);
+    marker.bindPopup(`
+      <div>
+        <h3>${paciente.nombre}</h3>
+        <p>ID: ${paciente.id}</p>
+      </div>
+    `);
+    markerClusterLayer.addLayer(marker);
+  });
+}
 
-// Doctores activos (ejemplo agrupado por semanas/meses)
-const doctoresActivosPorPeriodo = computed(() => {
-  return [
-    { periodo: 'Semana 1', cantidad: 5 },
-    { periodo: 'Semana 2', cantidad: 8 },
-    { periodo: 'Semana 3', cantidad: 6 },
-    { periodo: 'Semana 4', cantidad: 10 }
-  ]
-})
+watch(pacientesConCoordenadas, () => {
+  updateMarkers();
+});
 
-// Logins diarios (ejemplo simulado)
-const loginsDiarios = computed(() => {
-  return [
-    { fecha: 'Lun', cantidad: 20 },
-    { fecha: 'Mar', cantidad: 35 },
-    { fecha: 'Mié', cantidad: 25 },
-    { fecha: 'Jue', cantidad: 40 },
-    { fecha: 'Vie', cantidad: 30 },
-    { fecha: 'Sáb', cantidad: 15 },
-    { fecha: 'Dom', cantidad: 10 }
-  ]
-})
+onMounted(() => {
+  usuariosStore.fetchUsuarios();
+  intervalId = setInterval(() => {
+    usuariosStore.fetchUsuarios();
+  }, 5000);
+});
 
-// Historial de altas y bajas (ejemplo simulado)
-const historialAltasBajas = computed(() => {
-  return [
-    { periodo: 'Enero', altas: 30, bajas: 5 },
-    { periodo: 'Febrero', altas: 25, bajas: 8 },
-    { periodo: 'Marzo', altas: 40, bajas: 12 },
-    { periodo: 'Abril', altas: 35, bajas: 6 }
-  ]
-})
+onUnmounted(() => {
+  if (intervalId) clearInterval(intervalId);
+  if (map.value && markerClusterLayer) {
+    (map.value as any).leafletObject.removeLayer(markerClusterLayer);
+  }
+});
 
-// Gráfico de Activos/Inactivos
-const chartData = computed(() => ({
-  labels: ['Usuarios Activos', 'Usuarios Inactivos'],
+function contarPorRol(rol: string) {
+  return usuariosFiltrados.value.filter((usuario) => usuario.rol.nombreRol === rol).length;
+}
+
+const totalPacientes = computed(() => contarPorRol('Paciente'));
+const totalDoctores = computed(() => contarPorRol('Doctor'));
+const pacientesConDoctor = computed(() =>
+  usuariosFiltrados.value.filter((u) => u.rol.nombreRol === 'Paciente' && u.usuarioResponsable).length
+);
+const pacientesSinDoctor = computed(() =>
+  usuariosFiltrados.value.filter((u) => u.rol.nombreRol === 'Paciente' && !u.usuarioResponsable).length
+);
+const pacientesPromedioPorDoctor = computed(() => {
+  return totalDoctores.value > 0 ? (totalPacientes.value / totalDoctores.value).toFixed(1) : 0;
+});
+const porcentajeConDoctor = computed(() => {
+  return totalPacientes.value > 0 ? ((pacientesConDoctor.value / totalPacientes.value) * 100).toFixed(1) : 0;
+});
+
+const chartDataRoles = computed(() => ({
+  labels: ['Pacientes', 'Doctores', 'Admins'],
   datasets: [
     {
       label: 'Usuarios',
-      backgroundColor: ['#22c55e', '#ef4444'],
-      borderColor: ['#16a34a', '#dc2626'],
-      borderWidth: 1,
-      borderRadius: 5,
-      data: [totalActivos.value, totalInactivos.value]
+      backgroundColor: ['#f97316', '#a855f7', '#22c55e'],
+      data: [totalPacientes.value, totalDoctores.value, contarPorRol('Admin')]
     }
   ]
-}))
+}));
 
-// Gráfico de Roles
-const chartDataPie = computed(() => ({
-  labels: ['Administradores', 'Pacientes', 'Doctores'],
-  datasets: [
-    {
-      label: 'Distribución por Roles',
-      backgroundColor: ['#22c55e', '#f97316', '#a855f7'],
-      data: [totalAdmins.value, totalPacientes.value, totalDoctores.value]
-    }
-  ]
-}))
+const chartDataPacientesPorDoctor = computed(() => {
+  const doctores = usuariosFiltrados.value.filter((u) => u.rol.nombreRol === 'Doctor');
+  const labels = doctores.map((d) => d.nombre || `Doctor ${d.id}`);
+  const data = doctores.map(
+    (doc) => usuariosFiltrados.value.filter((p) => p.usuarioResponsable === doc.id).length
+  );
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Pacientes asignados',
+        backgroundColor: '#6366f1',
+        data
+      }
+    ]
+  };
+});
 
-// Gráfico de Doctores Activos por semana/mes
-const chartDataLine = computed(() => ({
-  labels: doctoresActivosPorPeriodo.value.map((d) => d.periodo),
-  datasets: [
-    {
-      label: 'Doctores Activos',
-      data: doctoresActivosPorPeriodo.value.map((d) => d.cantidad),
-      borderColor: '#6366f1',
-      backgroundColor: '#a5b4fc',
-      fill: true,
-      tension: 0.3,
-      pointRadius: 5,
-      pointBackgroundColor: '#4f46e5'
-    }
-  ]
-}))
-
-// Gráfico de Logins diarios
-const chartDataLogins = computed(() => ({
-  labels: loginsDiarios.value.map((d) => d.fecha),
-  datasets: [
-    {
-      label: 'Inicios de Sesión',
-      data: loginsDiarios.value.map((d) => d.cantidad),
-      borderColor: '#10b981',
-      backgroundColor: '#6ee7b7',
-      fill: true,
-      tension: 0.3,
-      pointRadius: 5,
-      pointBackgroundColor: '#059669'
-    }
-  ]
-}))
-
-// Gráfico de Historial Altas y Bajas
-const chartDataAltasBajas = computed(() => ({
-  labels: historialAltasBajas.value.map((d) => d.periodo),
-  datasets: [
-    {
-      label: 'Altas',
-      data: historialAltasBajas.value.map((d) => d.altas),
-      backgroundColor: '#3b82f6'
-    },
-    {
-      label: 'Bajas',
-      data: historialAltasBajas.value.map((d) => d.bajas),
-      backgroundColor: '#ef4444'
-    }
-  ]
-}))
-
-// Opciones del gráfico Activos/Inactivos
-const chartOptions = {
+const chartOptionsPacientesPorDoctor = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { display: true },
+    legend: { display: false },
     title: {
       display: true,
-      text: 'Usuarios Activos vs Inactivos',
-      color: '#000',
-      font: { family: 'Poppins', weight: 'bold', size: 16 }
+      text: 'Pacientes por Doctor',
+      font: { weight: 'bold', size: 16 }
+    }
+  }
+};
+
+const chartDataPacientesAsignacion = computed(() => ({
+  labels: ['Con Doctor', 'Sin Doctor'],
+  datasets: [
+    {
+      backgroundColor: ['#22c55e', '#ef4444'],
+      data: [pacientesConDoctor.value, pacientesSinDoctor.value]
+    }
+  ]
+}));
+
+const chartOptionsPacientesAsignacion = {
+  responsive: true,
+  maintainAspectRatio: false,
+  cutout: '60%',
+  plugins: {
+    legend: { display: true, position: 'bottom' as const },
+    title: {
+      display: true,
+      text: 'Asignación de Pacientes',
+      font: { weight: 'bold', size: 16 }
     },
     datalabels: {
-      anchor: 'center',
-      align: 'center',
-      clamp: true,
-      color: '#FFF',
-      font: { family: 'Poppins', weight: 'bold', size: 12 },
-      formatter: Math.round
+      color: '#fff',
+      formatter: (value: number) => `${value}`,
+      font: { weight: 'bold', size: 12 }
     }
   }
-}
+};
 
-// Opciones gráfico Doctores Activos
-const chartOptionsLine = {
+const chartDataDoctoresPacientes = computed(() => ({
+  labels: ['Pacientes', 'Doctores'],
+  datasets: [
+    {
+      backgroundColor: ['#f97316', '#a855f7'],
+      data: [totalPacientes.value, totalDoctores.value],
+    },
+  ],
+}));
+
+const chartOptionsDoctoresPacientes = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { display: true },
+    legend: { display: true, position: 'bottom' as const },
     title: {
       display: true,
-      text: 'Doctores Activos por Semana/Mes',
-      color: '#000',
-      font: { family: 'Poppins', weight: 'bold', size: 16 }
+      text: 'Relación Doctores con Pacientes',
+      font: { weight: 'bold', size: 16 }
+    },
+    datalabels: {
+      color: '#fff',
+      formatter: (value: number) => `${value}`,
+      font: { weight: 'bold', size: 12 }
     }
   }
-}
-
-// Opciones gráfico Logins
-const chartOptionsLogins = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: true },
-    title: {
-      display: true,
-      text: 'Uso de la Plataforma (Logins Diarios)',
-      color: '#000',
-      font: { family: 'Poppins', weight: 'bold', size: 16 }
-    }
-  }
-}
-
-// Opciones gráfico Altas y Bajas
-const chartOptionsAltasBajas = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: true },
-    title: {
-      display: true,
-      text: 'Historial de Registros (Altas vs Bajas)',
-      color: '#000',
-      font: { family: 'Poppins', weight: 'bold', size: 16 }
-    }
-  }
-}
+};
 
 function captureScreen() {
-  const element = document.getElementById('capture')
+  const element = document.getElementById('capture');
   if (element) {
-    isLoading.value = true
+    isLoading.value = true;
     html2canvas(element).then((canvas) => {
-      const img = canvas.toDataURL('image/png')
-      const link = document.createElement('a')
-      link.href = img
-      link.download = 'informe.png'
-      link.click()
-      isLoading.value = false
-    })
+      const img = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = img;
+      link.download = 'informe.png';
+      link.click();
+      isLoading.value = false;
+    });
   }
 }
 </script>
-
-<style scoped>
-html {
-  scroll-behavior: smooth;
-}
-</style>

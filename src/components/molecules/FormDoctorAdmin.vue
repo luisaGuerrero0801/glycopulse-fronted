@@ -1,9 +1,7 @@
 <template>
   <div class="flex justify-center items-center w-full">
     <div class="bg-white shadow-md rounded-2xl p-6 w-full max-w-3xl">
-      <h1 class="text-xl font-bold text-gray-700 mb-0.5 text-center">
-        Registrar Usuario
-      </h1>
+      <h1 class="text-xl font-bold text-gray-700 mb-0.5 text-center">Registrar Usuario</h1>
 
       <!-- Mensaje de éxito -->
       <div
@@ -14,16 +12,17 @@
       </div>
 
       <form @submit.prevent="registrarUsuario" class="flex flex-col gap-0.5 flex-grow">
-        
         <!-- Nombre -->
         <LabelForm nameForm="Nombre" />
         <InputForm
           namePlaceholder="Nombre"
           v-model="form.nombresUsuario"
-          @input="() => {
-            form.nombresUsuario = startCase(toLower(form.nombresUsuario))
-            soloLetras('nombresUsuario')
-          }"
+          @input="
+            () => {
+              form.nombresUsuario = startCase(toLower(form.nombresUsuario))
+              soloLetras('nombresUsuario')
+            }
+          "
           @keypress="onlyLetters($event)"
           @blur="validarFormulario"
         />
@@ -33,63 +32,75 @@
         <InputForm
           namePlaceholder="Apellido"
           v-model="form.apellidosUsuario"
-          @input="() => {
-            form.apellidosUsuario = startCase(toLower(form.apellidosUsuario))
-            soloLetras('apellidosUsuario')
-          }"
+          @input="
+            () => {
+              form.apellidosUsuario = startCase(toLower(form.apellidosUsuario))
+              soloLetras('apellidosUsuario')
+            }
+          "
           @keypress="onlyLetters($event)"
           @blur="validarFormulario"
         />
 
-        <!-- Fecha de nacimiento -->
-        <LabelForm nameForm="Fecha de Nacimiento" />
-        <InputForm
-          namePlaceholder="Fecha de nacimiento"
-          inputType="date"
-          v-model="form.fechaNacimientoUsuario"
-          @blur="validarFormulario"
-        />
+        <!-- Fecha de Nacimiento y Tipo de Sangre en la misma fila -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <LabelForm nameForm="Fecha de Nacimiento" />
+            <InputForm
+              namePlaceholder="Fecha de nacimiento"
+              inputType="date"
+              v-model="form.fechaNacimientoUsuario"
+              @blur="validarFormulario"
+            />
+          </div>
 
-        <!-- Tipo de sangre -->
-        <LabelForm nameForm="Tipo de Sangre" />
-        <select
-          v-model="form.rhUsuario"
-          class="border border-gray-300 rounded-2xl w-full p-2 mt-0.5 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="" disabled>Selecciona tu tipo de sangre</option>
-          <option value="A+">A+</option>
-          <option value="O+">O+</option>
-          <option value="B+">B+</option>
-          <option value="AB+">AB+</option>
-          <option value="A-">A-</option>
-          <option value="O-">O-</option>
-          <option value="B-">B-</option>
-          <option value="AB-">AB-</option>
-        </select>
+          <div>
+            <LabelForm nameForm="Tipo de Sangre" />
+            <select
+              v-model="form.rhUsuario"
+              class="border border-gray-300 rounded-2xl w-full p-2 mt-0.5 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="" disabled>Selecciona tu tipo de sangre</option>
+              <option value="A+">A+</option>
+              <option value="O+">O+</option>
+              <option value="B+">B+</option>
+              <option value="AB+">AB+</option>
+              <option value="A-">A-</option>
+              <option value="O-">O-</option>
+              <option value="B-">B-</option>
+              <option value="AB-">AB-</option>
+            </select>
+          </div>
+        </div>
 
         <!-- Género -->
-        <LabelForm nameForm="Género" />
-        <select
-          v-model="form.generoUsuario"
-          class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option disabled value="">Selecciona género</option>
-          <option value="Hombre">Hombre</option>
-          <option value="Mujer">Mujer</option>
-          <option value="Otro">Otro</option>
-          <option value="Prefiero no decirlo">Prefiero no decirlo</option>
-        </select>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <LabelForm nameForm="Género" />
+            <select
+              v-model="form.generoUsuario"
+              class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option disabled value="">Selecciona género</option>
+              <option value="Hombre">Hombre</option>
+              <option value="Mujer">Mujer</option>
+              <option value="Otro">Otro</option>
+              <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+            </select>
+          </div>
 
-        <!-- Rol -->
-        <LabelForm nameForm="Rol" />
-        <select
-          v-model="form.idRol"
-          class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option disabled value="">Selecciona rol</option>
-          <option value="2">Administrador</option>
-          <option value="3">Doctor</option>
-        </select>
+          <div>
+            <LabelForm nameForm="Rol" />
+            <select
+              v-model="form.idRol"
+              class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option disabled value="">Selecciona rol</option>
+              <option value="2">Administrador</option>
+              <option value="3">Doctor</option>
+            </select>
+          </div>
+        </div>
 
         <!-- Correo -->
         <LabelForm nameForm="Correo" />
@@ -125,18 +136,17 @@
           class="border border-gray-300 rounded-2xl w-full p-2 mt-0.5 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Seleccione ciudad</option>
-          <option
-            v-for="(cityName, cityCode) in availableCities"
-            :key="cityCode"
-            :value="cityCode"
-          >
+          <option v-for="(cityName, cityCode) in availableCities" :key="cityCode" :value="cityCode">
             {{ cityName }}
           </option>
         </select>
 
         <!-- Botón de registro -->
         <div class="pt-4">
-          <button type="submit" class="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          <button
+            type="submit"
+            class="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
             Registrar Usuario
           </button>
         </div>
@@ -276,10 +286,14 @@ const registrarUsuario = async () => {
     await registerStore.registerUser(usuario)
 
     notificaciones.agregar(
-      `Nuevo ${usuario.idRol === 2 ? 'Administrador' : 'Doctor'} registrado: ${usuario.nombresUsuario} ${usuario.apellidosUsuario}`
+      `Nuevo ${usuario.idRol === 2 ? 'Administrador' : 'Doctor'} registrado: ${
+        usuario.nombresUsuario
+      } ${usuario.apellidosUsuario}`
     )
 
-    successMessage.value = `¡${usuario.idRol === 2 ? 'Administrador' : 'Doctor'} registrado con éxito!`
+    successMessage.value = `¡${
+      usuario.idRol === 2 ? 'Administrador' : 'Doctor'
+    } registrado con éxito!`
     resetForm()
   } catch (error: any) {
     console.error('Error completo:', error)

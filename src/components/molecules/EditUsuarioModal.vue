@@ -9,7 +9,7 @@
       :class="{ 'scale-100': visible }"
     >
       <div class="bg-blue-600 px-6 py-4 flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-white">Editar Usuario</h2>
+        <h2 class="text-3xl font-bold text-white">Editar Usuario</h2>
         <button @click="cancelar" class="text-blue-200 hover:text-white transition-colors">
           <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -22,52 +22,52 @@
           <h3 class="text-lg leading-6 font-medium text-gray-900 mb-3">Información Personal</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label for="nombres" class="block text-sm font-medium text-gray-700">Nombres</label>
+              <label for="nombres" class="block text-lg font-medium text-gray-700">Nombres</label>
               <input
                 id="nombres"
                 v-model="form.nombresUsuario"
                 type="text"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm: text-lg  p-2"
                 placeholder="Nombres del usuario"
               />
             </div>
             <div>
-              <label for="apellidos" class="block text-sm font-medium text-gray-700">Apellidos</label>
+              <label for="apellidos" class="block  text-lg  font-medium text-gray-700">Apellidos</label>
               <input
                 id="apellidos"
                 v-model="form.apellidosUsuario"
                 type="text"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm: text-lg  p-2"
                 placeholder="Apellidos del usuario"
               />
             </div>
             <div class="md:col-span-2">
-              <label for="correo" class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+              <label for="correo" class="block  text-lg  font-medium text-gray-700">Correo Electrónico</label>
               <input
                 id="correo"
                 v-model="form.correoUsuario"
                 type="email"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm: text-lg  p-2"
                 placeholder="correo@ejemplo.com"
               />
             </div>
             <div>
-              <label for="rh" class="block text-sm font-medium text-gray-700">Tipo de Sangre (RH)</label>
+              <label for="rh" class="block  text-lg  font-medium text-gray-700">Tipo de Sangre (RH)</label>
               <input
                 id="rh"
                 v-model="form.rhUsuario"
                 type="text"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm: text-lg  p-2"
                 placeholder="Ej: A+, O-"
               />
             </div>
             <div>
-              <label for="fechaNacimiento" class="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
+              <label for="fechaNacimiento" class="block  text-lg  font-medium text-gray-700">Fecha de Nacimiento</label>
               <input
                 id="fechaNacimiento"
                 v-model="form.fechaNacimientoUsuario"
                 type="date"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm: text-lg  p-2"
               />
             </div>
           </div>
@@ -77,11 +77,11 @@
           <h3 class="text-lg leading-6 font-medium text-gray-900 mb-3">Otros Detalles</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label for="genero" class="block text-sm font-medium text-gray-700">Género</label>
+              <label for="genero" class="block  text-lg  font-medium text-gray-700">Género</label>
               <select
                 id="genero"
                 v-model="form.generoUsuario"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm: text-lg  p-2"
               >
                 <option value="">Selecciona</option>
                 <option value="Masculino">Masculino</option>
@@ -90,21 +90,21 @@
               </select>
             </div>
             <div>
-              <label for="ciudad" class="block text-sm font-medium text-gray-700">Ciudad</label>
+              <label for="ciudad" class="block  text-lg  font-medium text-gray-700">Ciudad</label>
               <input
                 id="ciudad"
                 v-model="form.ciudadUsuario"
                 type="text"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm: text-lg  p-2"
                 placeholder="Ciudad"
               />
             </div>
             <div>
-              <label for="rol" class="block text-sm font-medium text-gray-700">Rol del Usuario</label>
+              <label for="rol" class="block  text-lg  font-medium text-gray-700">Rol del Usuario</label>
               <select
                 id="rol"
                 v-model="form.rolUsuario"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm: text-lg  p-2"
               >
                 <option value="">Selecciona un rol</option>
                 <option value="1">Paciente</option>
@@ -119,13 +119,13 @@
           <button
             type="button"
             @click="cancelar"
-            class="px-5 py-2 border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors sm:text-sm"
+            class="px-5 py-2 border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors sm: text-lg "
           >
             Cancelar
           </button>
           <button
             type="submit"
-            class="px-5 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors sm:text-sm"
+            class="px-5 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors sm: text-lg "
           >
             Guardar Cambios
           </button>

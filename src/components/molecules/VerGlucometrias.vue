@@ -175,7 +175,7 @@ const handleSubmit = async () => {
 <template>
   <section class="px-12 py-6 max-w-7xl mx-auto">
     <div class="flex justify-between items-center mb-4">
-      <h1 class="text-3xl font-semibold text-gray-800">Glucometrías</h1>
+      <h1 class="titulo font-semibold text-gray-800">Glucometrías</h1>
       <ButtomNew nameButton="Nuevo" iconButton="add_circle" @click="openModal" />
     </div>
 

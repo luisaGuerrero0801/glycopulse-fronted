@@ -62,7 +62,7 @@ const links = [
   { name: 'Inicio', to: '/admin/panel', icon:  HomeIcon },
   { name: 'Dashboard', to: '/admin/dashboard', icon: ChartBarIcon },
   { name: 'Usuarios', to: '/admin/users', icon: UsersIcon },
-  { name: 'Recetas', to: '/admin/favoritos', icon: BookOpenIcon },
+  // { name: 'Recetas', to: '/admin/favoritos', icon: BookOpenIcon },
   { name: 'Salir', to: '/', icon:  ArrowRightOnRectangleIcon  },
 ];
 // Filtro para la búsqueda
@@ -115,7 +115,7 @@ const filteredLinks = computed(() => {
             :key="link.name"
             class="mb-1"
           >
-            <RouterLink
+            <RouterLink 
               v-if="link.to !== '#'"
               :to="link.to"
               class="flex items-center gap-2 px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md"
@@ -123,7 +123,7 @@ const filteredLinks = computed(() => {
               exact-active-class="bg-blue-800 font-bold"
               @click="sidebarOpen = false"
             >
-              <component :is="link.icon" class="w-5 h-5 text-white" />
+              <component :is="link.icon" class="w-12 h-11 text-red" />
               {{ link.name }}
             </RouterLink>
 

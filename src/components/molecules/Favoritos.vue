@@ -1,19 +1,15 @@
 <template>
-  <section>
-    <div class="w-full flex justify-between items-center pt-4 pr-40 pb-2 pl-12">
-      <div class="grid grid-cols-2 gap-32">
-        <div>
-          <span class="text-2xl font-normal text-blue-800 border-b-4 border-blue-800 p-2">
-            Favoritos
-          </span>
-        </div>
-        <div>
-          <span class="text-2xl font-normal text-gray-600"> Recetas Completas </span>
-        </div>
-      </div>
+  <section class="w-full">
+    <!-- Encabezado -->
+    <div class="flex flex-col sm:flex-row justify-center items-center gap-12 pt-4 pb-2 px-4">
+      <span class="text-2xl font-normal text-blue-800 border-b-4 border-blue-800 p-2">
+        Favoritos
+      </span>
+      <span class="text-2xl font-normal text-gray-600">Recetas Completas</span>
     </div>
-    <hr class="border-t-4 border-gray-200 mx-12" />
+    <hr class="border-t-4 border-gray-200 mx-4 md:mx-12" />
 
+    <!-- Contenido principal -->
     <div class="flex flex-col items-center justify-center min-h-[400px] p-5 w-full">
       <template v-if="loadingFavoritos">
         <p>Cargando favoritos...</p>
@@ -22,25 +18,25 @@
         <p class="text-red-500">{{ errorFavoritos }}</p>
       </template>
       <template v-else-if="paginatedFavoritos.length">
-        <ul class="grid sm:grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-[1200px]">
           <li
             v-for="favorito in paginatedFavoritos"
             :key="favorito.id"
-            class="gap-2 text-blue-800 font-semibold rounded-lg w-full max-w-[220px] cursor-pointer hover:shadow-md transition-shadow"
+            class="bg-white rounded-xl shadow hover:shadow-lg transition cursor-pointer overflow-hidden"
             @click="openModal(favorito)"
           >
-            <div class="overflow-hidden rounded-xl">
+            <div class="overflow-hidden h-48 w-full">
               <img
                 :src="favorito.imagenReceta"
                 alt="Imagen de receta"
-                class="w-full h-48 object-cover"
+                class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               />
             </div>
-            <div class="p-2">
+            <div class="p-3">
               <div class="flex justify-between items-start">
-                <h3 class="text-base font-bold">{{ favorito.nombreReceta }}</h3>
+                <h3 class="text-base font-bold text-blue-800">{{ favorito.nombreReceta }}</h3>
                 <span
-                  class="material-icons text-red-600"
+                  class="material-icons text-red-600 cursor-pointer"
                   @click.stop="recetasStore.toggleFavorito(favorito.id)"
                 >
                   {{ isFavorito(favorito.id) ? 'favorite' : 'favorite_border' }}
@@ -71,7 +67,7 @@
             :click-handler="goToFavPage"
             :prev-text="'Anterior'"
             :next-text="'Siguiente'"
-            :container-class="'flex space-x-2'"
+            :container-class="'flex space-x-2 flex-wrap justify-center'"
             :page-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-[var(--colorSecundarioButton)] transition'"
             :active-class="'bg-[var(--colorPrimarioButton)] text-[var(--colorBlanco)] font-semibold'"
             :prev-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
@@ -79,6 +75,7 @@
           />
         </div>
       </template>
+
       <template v-else>
         <p class="text-blue-800 font-semibold mb-6">¡Sin Favoritos!</p>
         <ButtomNew nameButton="Añadir" class="mx-auto" />

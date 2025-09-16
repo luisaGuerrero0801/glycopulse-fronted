@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import VistaInicial from '@/components/molecules/NavbarApp.vue'
-import DonantesRh from '@/components/molecules/Donantes.vue'
+import DonantesRh from '@/components/molecules/donors/Donantes.vue'
 import HeaderApp from '@/components/molecules/HeaderApp.vue';
 </script>
 

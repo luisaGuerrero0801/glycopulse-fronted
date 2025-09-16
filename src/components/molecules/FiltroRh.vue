@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import { useUsuariosStore } from '@/stores/donantes'
 import { ref } from 'vue'
 import CardRh from './CardRh.vue'
-import ModalDonantes from '@/components/molecules/ModalDonantes.vue'
+import ModalDonantes from '@/components/ui/ModalDonantes.vue'
 
 // Obtenemos el store
 const usuariosStore = useUsuariosStore()
@@ -51,7 +51,7 @@ const cerrarModal = () => {
     <div class="flex flex-col md:flex-row items-end gap-4 mb-6 p-4 rounded-lg bg-white shadow-md">
       <!-- Campo de búsqueda -->
       <div class="flex-1 w-full">
-        <label for="patient-search" class="text-sm font-medium text-gray-700">Paciente</label>
+        <label for="patient-search" class="text-lg font-medium text-gray-700">Paciente</label>
         <div class="relative mt-1">
           <input
             id="patient-search"
@@ -79,7 +79,7 @@ const cerrarModal = () => {
 
       <!-- Selector de ubicación -->
       <div class="flex-1 w-full">
-        <label for="location-select" class="text-sm font-medium text-gray-700">Ubicación</label>
+        <label for="location-select" class="text-lg font-medium text-gray-700">Ubicación</label>
         <select
           id="location-select"
           v-model="filtros.ubicacion"
@@ -94,7 +94,7 @@ const cerrarModal = () => {
 
       <!-- Selector de grupo sanguíneo -->
       <div class="flex-1 w-full">
-        <label for="rh-select" class="text-sm font-medium text-gray-700">Grupo Sanguíneo</label>
+        <label for="rh-select" class="text-lg font-medium text-gray-700">Grupo Sanguíneo</label>
         <select
           id="rh-select"
           v-model="filtros.grupoSanguineo"
@@ -110,7 +110,7 @@ const cerrarModal = () => {
       <!-- Botón restablecer -->
       <button
         @click="limpiarFiltros"
-        class="w-full md:w-auto bg-[var(--colorPrimarioButton)] text-white font-bold py-2 px-6 rounded-md hover:bg-[var(--colorSecundarioButton)] transition-colors flex items-center justify-center gap-2"
+        class="w-full text-lg md:w-auto bg-[var(--colorPrimarioButton)] text-white font-bold py-2 px-6 rounded-md hover:bg-[var(--colorSecundarioButton)] transition-colors flex items-center justify-center gap-2"
       >
         Restablecer
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24">

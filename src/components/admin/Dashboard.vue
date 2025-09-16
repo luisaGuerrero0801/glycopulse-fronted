@@ -180,8 +180,8 @@ const barChartOptions = {
 };
 
 const pieChartData = computed(() => {
-  const hombres = usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Paciente' && u.genero==='Hombre').length;
-  const mujeres = usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Paciente' && u.genero==='Mujer').length;
+  const hombres = usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Paciente' && u.generoUsuario==='Hombre').length;
+  const mujeres = usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Paciente' && u.generoUsuario==='Femenino').length;
   const otros = usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Paciente' && !['Hombre','Mujer'].includes(u.genero)).length;
   return {
     labels:['Hombres','Mujeres','Otros'],

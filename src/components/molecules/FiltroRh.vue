@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { useUsuariosStore } from '@/stores/donantes'
-import type { Ref } from 'vue'
+import { ref } from 'vue'
+import CardRh from './CardRh.vue'
+import ModalDonantes from '@/components/molecules/ModalDonantes.vue'
 
 // Obtenemos el store
 const usuariosStore = useUsuariosStore()
@@ -24,29 +26,64 @@ const limpiarFiltros = () => {
   filtros.value.ubicacion = ''
   filtros.value.grupoSanguineo = ''
 }
+
+// Estado para manejar el modal y el donante seleccionado
+const mostrarModal = ref(false)
+const donanteSeleccionado = ref(null)
+
+// Función para manejar la selección de un donante
+const handleDonanteSeleccionado = (donante: any) => {
+  donanteSeleccionado.value = donante
+  mostrarModal.value = true
+}
+
+// Función para cerrar el modal
+const cerrarModal = () => {
+  mostrarModal.value = false
+  donanteSeleccionado.value = null
+}
 </script>
 
 <template>
-  <div class="flex justify-center w-full mt-6 px-4">
-    <div class="bg-gray-50 p-4 rounded-xl shadow-md flex flex-col md:flex-row md:items-end md:justify-between gap-4 w-full max-w-[1200px]">
-      
+  <main class="container mx-auto py-4">
+
+    <!-- Filtros -->
+    <div class="flex flex-col md:flex-row items-end gap-4 mb-6 p-4 rounded-lg bg-white shadow-md">
       <!-- Campo de búsqueda -->
-      <div class="flex flex-col w-full md:w-1/3">
-        <label class="text-gray-500 text-sm mb-1">Search</label>
-        <input
-          v-model="filtros.busqueda"
-          type="text"
-          placeholder="Buscar paciente"
-          class="border rounded-lg px-3 py-2 w-full focus:ring focus:ring-blue-300 text-gray-700"
-        />
+      <div class="flex-1 w-full">
+        <label for="patient-search" class="text-sm font-medium text-gray-700">Paciente</label>
+        <div class="relative mt-1">
+          <input
+            id="patient-search"
+            type="text"
+            placeholder="Buscar paciente"
+            v-model="filtros.busqueda"
+            class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 pl-10"
+          />
+          <svg
+            class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            ></path>
+          </svg>
+        </div>
       </div>
 
       <!-- Selector de ubicación -->
-      <div class="flex flex-col w-full md:w-1/3">
-        <label class="text-gray-500 text-sm mb-1">Ubicacion</label>
+      <div class="flex-1 w-full">
+        <label for="location-select" class="text-sm font-medium text-gray-700">Ubicación</label>
         <select
+          id="location-select"
           v-model="filtros.ubicacion"
-          class="border rounded-lg px-3 py-2 w-full text-gray-700 text-center"
+          class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 mt-1"
         >
           <option value="">Todas las ubicaciones</option>
           <option v-for="ubicacion in ubicacionesUnicas" :key="ubicacion" :value="ubicacion">
@@ -56,11 +93,12 @@ const limpiarFiltros = () => {
       </div>
 
       <!-- Selector de grupo sanguíneo -->
-      <div class="flex flex-col w-full md:w-1/3">
-        <label class="text-gray-500 text-sm mb-1">Grupo Sanguineo</label>
+      <div class="flex-1 w-full">
+        <label for="rh-select" class="text-sm font-medium text-gray-700">Grupo Sanguíneo</label>
         <select
+          id="rh-select"
           v-model="filtros.grupoSanguineo"
-          class="border rounded-lg px-3 py-2 w-full text-gray-700 text-center"
+          class="w-full px-4 py-2 rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 mt-1"
         >
           <option value="">Todos los tipos</option>
           <option v-for="grupo in gruposSanguineos" :key="grupo" :value="grupo">
@@ -69,16 +107,29 @@ const limpiarFiltros = () => {
         </select>
       </div>
 
-      <!-- Botón para limpiar filtros -->
-      <div class="flex justify-center md:justify-end w-full md:w-auto">
-        <button
-          @click="limpiarFiltros"
-          class="bg-[var(--colorPrimarioButton)] text-white px-4 py-2 text-sm rounded-lg hover:bg-[var(--colorSecundarioButton)] transition"
-        >
-          Restablecer filtros
-        </button>
-      </div>
-
+      <!-- Botón restablecer -->
+      <button
+        @click="limpiarFiltros"
+        class="w-full md:w-auto bg-[var(--colorPrimarioButton)] text-white font-bold py-2 px-6 rounded-md hover:bg-[var(--colorSecundarioButton)] transition-colors flex items-center justify-center gap-2"
+      >
+        Restablecer
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M12 5V3L8 7l4 4V9c3.31 0 6 2.69 6 6a6 6 0 0 1-6 6c-2.21 0-4.15-1.2-5.19-3H4.62A8.001 8.001 0 0 0 20 15c0-4.42-3.58-8-8-8z"
+          />
+        </svg>
+      </button>
     </div>
-  </div>
+
+    <!-- CardRh y ModalDonantes -->
+    <CardRh @donante-seleccionado="handleDonanteSeleccionado"/>
+    
+    <ModalDonantes 
+      v-if="mostrarModal" 
+      :donante="donanteSeleccionado" 
+      @cerrar="cerrarModal"
+    />
+
+  </main>
 </template>

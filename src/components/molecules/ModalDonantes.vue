@@ -51,7 +51,7 @@ const datosContacto = [
 
       <!-- Avatar + nombre -->
       <div class="flex flex-col items-center text-center mb-8">
-        <div class="bg-gradient-to-tr from-indigo-200 to-indigo-400 text-indigo-800 w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-3xl sm:text-4xl font-bold mb-3 shadow-lg">
+<div class="bg-gradient-to-tr from-[#D4E1FC] to-[#D4E1FC] text-indigo-800 w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-3xl sm:text-4xl font-bold mb-3 shadow-lg">
           {{ donante.nombresUsuario.charAt(0) }}
         </div>
         <div class="font-semibold text-xl sm:text-2xl md:text-3xl text-center">
@@ -65,16 +65,16 @@ const datosContacto = [
       <!-- Datos personales -->
       <div class="border border-gray-200 rounded-2xl flex flex-col sm:flex-row text-center overflow-hidden my-6 divide-y sm:divide-y-0 sm:divide-x divide-gray-200 text-sm sm:text-base">
         <div class="flex-1 py-4 px-4">
-          <p class="font-bold text-[#2D3E74] mb-1">EDAD</p>
-          <p class="font-semibold text-gray-800">{{ calcularEdad(donante.fechaNacimientoUsuario) }}</p>
+          <p class="font-bold text-[#2D3E74] mb-1 text-2xl">EDAD</p>
+          <p class="text-gray-400 text-2xl text-gray-800">{{ calcularEdad(donante.fechaNacimientoUsuario) }}</p>
         </div>
         <div class="flex-1 py-4 px-4">
-          <p class="font-bold text-[#2D3E74] mb-1">GRUPO RH</p>
-          <p class="font-semibold text-gray-800">{{ donante.rhUsuario }}</p>
+          <p class="font-bold text-[#2D3E74] mb-1 text-2xl">GRUPO RH</p>
+          <p class="text-gray-400 text-2xl text-gray-800">{{ donante.rhUsuario }}</p>
         </div>
         <div class="flex-1 py-4 px-4">
-          <p class="font-bold text-[#2D3E74] mb-1">GENERO</p>
-          <p class="font-semibold text-gray-800">{{ donante.generoUsuario }}</p>
+          <p class="font-bold text-[#2D3E74] mb-1 text-2xl">GENERO</p>
+          <p class="text-gray-400 text-2xl text-gray-800">{{ donante.generoUsuario }}</p>
         </div>
       </div>
 

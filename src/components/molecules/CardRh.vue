@@ -62,13 +62,21 @@ const seleccionarDonante = (donante: any) => {
         @click="seleccionarDonante(donante)"
         class="bg-white shadow rounded-xl p-4 sm:p-5 md:p-6 flex flex-col sm:flex-row items-center justify-between cursor-pointer w-full transition hover:bg-gray-50"
       >
-        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-4 items-center w-full text-center sm:text-left">
+        <div
+          class="grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-4 items-center w-full text-center sm:text-left"
+        >
           <div class="flex flex-col items-center sm:items-start">
-            <p class="text-black font-bold">Perfil</p>
+            <div
+              class="bg-[#D4E1FC] text-indigo-800 w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-3xl sm:text-4xl font-bold mb-3 shadow-lg"
+            >
+              <p class="text-black font-bold">{{ donante.nombresUsuario.charAt(0) }}</p>
+            </div>
           </div>
           <div class="flex flex-col items-center sm:items-start">
             <p class="text-black font-bold">Nombre</p>
-            <p class="text-gray-500 text-sm sm:text-base">{{ donante.nombresUsuario }} {{ donante.apellidosUsuario }}</p>
+            <p class="text-gray-500 text-sm sm:text-base">
+              {{ donante.nombresUsuario }} {{ donante.apellidosUsuario }}
+            </p>
           </div>
           <div class="flex flex-col items-center sm:items-start">
             <p class="text-black font-bold">Ubicación</p>

@@ -8,14 +8,16 @@
       class="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-lg max-h-[95vh] transform transition-transform duration-300 scale-95"
       :class="{ 'scale-100': visible }"
     >
-      <div class="bg-blue-600 px-6 py-4 flex items-center justify-between">
-        <h2 class="text-3xl font-bold text-white">Editar Usuario</h2>
-        <button @click="cancelar" class="text-blue-200 hover:text-white transition-colors">
-          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
+   <div class="bg-blue-600 px-6 py-4 flex items-center justify-center relative">
+  <h2 class="text-4xl font-bold text-white text-center">
+    Datos <br> de <br> <span class="text-white text-2xl">{{ form.nombresUsuario }}</span>
+  </h2>
+  <button @click="cancelar" class="absolute top-4 right-6 text-blue-200 hover:text-white transition-colors">
+    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+    </svg>
+  </button>
+</div>
 
       <form @submit.prevent="guardar" class="p-6 sm:p-8 space-y-6 overflow-y-auto">
         <div class="border-b border-gray-200 pb-5">

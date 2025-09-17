@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue'
-import ButtomNew from '../atoms/ButtomNew.vue'
+import ButtomNew from '../../atoms/ButtomNew.vue'
 import CardGlucometria from './CardGlucometria.vue'
-import PopUp from '@/components/molecules/PopUp.vue'
+import PopUp from '@/components/molecules/glucometries/PopUp.vue'
 import { useGlucometriasStore } from '@/stores/AllGlucometrias'
 import { toast } from 'vue3-toastify'
 import Paginate from 'vuejs-paginate-next'   /** esto se importa para paginado */

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePacientesDoctorStore } from '@/stores/usePacientesDoctorStore'
 import PacientesLista from '@/components/molecules/PacientesLista.vue'
 import DoctorLayout from '@/components/molecules/DoctorLayout.vue'
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import iconoUsuario from '@/assets/iconoC.png'
 
@@ -39,10 +38,11 @@ onMounted(() => {
 
       <!-- Search + Icono usuario -->
       <div class="flex items-center gap-4">
-        <!-- Input de búsqueda general -->
+        <!-- Input de búsqueda general (CONEXIÓN AL STORE) -->
         <input
           type="text"
-          placeholder="Buscar"
+          v-model="searchQuery"
+          placeholder="Buscar paciente..."
           class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 "
         />
 
@@ -74,6 +74,8 @@ onMounted(() => {
     <div class="mb-6">
       <h1 class="text-4xl font-bold text-[#374473] mb-2">Pacientes</h1>
     </div>
+
+    <!-- Filtros -->
     <div class="bg-white p-4 rounded shadow mb-6">
       <div class="flex flex-wrap gap-4 items-end">
         <!-- Campo Paciente -->

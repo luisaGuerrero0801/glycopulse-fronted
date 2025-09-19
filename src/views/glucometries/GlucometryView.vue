@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import VistaInicial from '@/components/molecules/NavbarApp.vue'
 import HeaderApp from '@/components/molecules/HeaderApp.vue'
-import VerGlucometrias from '@/components/molecules/VerGlucometrias.vue'
+import VerGlucometrias from '@/components/molecules/glucometries/VerGlucometrias.vue'
 </script>
 
 <template>

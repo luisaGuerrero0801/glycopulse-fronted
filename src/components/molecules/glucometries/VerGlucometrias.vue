@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { ref, onMounted, computed } from 'vue'
-import ButtomNew from '../atoms/ButtomNew.vue'
+import ButtomNew from '../../atoms/ButtomNew.vue'
 import CardGlucometria from './CardGlucometria.vue'
-import PopUp from '@/components/molecules/PopUp.vue'
+import PopUp from '@/components/molecules/glucometries/PopUp.vue'
 import { useGlucometriasStore } from '@/stores/AllGlucometrias'
 import { toast } from 'vue3-toastify'
 import Paginate from 'vuejs-paginate-next'   /** esto se importa para paginado */
@@ -175,7 +175,7 @@ const handleSubmit = async () => {
 <template>
   <section class="px-12 py-6 max-w-7xl mx-auto">
     <div class="flex justify-between items-center mb-4">
-      <h1 class="text-3xl font-semibold text-gray-800">Glucometrías</h1>
+      <h1 class="titulo font-semibold text-gray-800">Glucometrías</h1>
       <ButtomNew nameButton="Nuevo" iconButton="add_circle" @click="openModal" />
     </div>
 

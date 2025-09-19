@@ -1,19 +1,22 @@
 <template>
   <div class="min-h-screen bg-gray-100">
     <div class="flex justify-center items-center flex-col py-8">
-      <h1 class="text-4xl font-bold">
-        👋 
+      <h1 class="text-6xl font-bold titulo">
         <span v-if="loading">Cargando usuario...</span>
-        <span v-else>¡Hola, {{ nombreUsuario }}!</span>
+        ¡Hola, <span>{{ nombreUsuario }}</span
+        >!
+      
       </h1>
-      <p class="text-gray-600 mt-2">Elige una opción para gestionar el sistema:</p>
+      <p class="text-gray-600 mt-2 sub-text">Elige una opción para gestionar el sistema:</p>
     </div>
 
     <div class="flex items-center justify-center px-6 py-11">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <router-link to="/admin/users">
-          <div class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300">
-            <h2 class="text-xl font-bold flex items-center">
+          <div
+            class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300"
+          >
+            <h2 class="text-xl font-bold flex items-center text-admin">
               <span class="material-icons mr-3">group</span> Usuarios
             </h2>
             <p class="mt-2 text-sm text-gray-500">Gestiona todos los usuarios registrados.</p>
@@ -21,26 +24,31 @@
         </router-link>
 
         <router-link to="/admin/notification">
-          <div class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300">
-            <h2 class="text-xl font-bold flex items-center">
+          <div
+            class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300"
+          >
+            <h2 class="text-xl font-bold flex items-center text-admin">
               <span class="material-icons mr-3">notifications</span> Notificaciones
             </h2>
             <p class="mt-2 text-sm text-gray-500">
-              Tienes <span class="font-bold text-red-600">{{ notificaciones }}</span> nuevas notificaciones.
+              Tienes <span class="font-bold text-red-600">{{ notificaciones }}</span> nuevas
+              notificaciones.
             </p>
           </div>
         </router-link>
 
         <router-link to="/admin/dashboard">
-          <div class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300">
-            <h2 class="text-xl font-bold flex items-center">
+          <div
+            class="bg-white text-blue-600 p-6 rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all duration-300"
+          >
+            <h2 class="text-xl font-bold flex items-center text-admin">
               <span class="material-icons mr-3">dashboard</span> Dashboard
             </h2>
-            <p class="mt-2 text-sm text-gray-500">Visión general de las estadísticas del sistema.</p>
+            <p class="mt-2 text-sm text-gray-500">
+              Visión general de las estadísticas del sistema.
+            </p>
           </div>
         </router-link>
-
-
       </div>
     </div>
   </div>
@@ -52,7 +60,6 @@ import { useUsuariosStore } from '../../stores/donantes'
 import { storeToRefs } from 'pinia'
 import { useNotificacionesStore } from '@/stores/notificaciones'
 import { toast } from 'vue3-toastify'
-
 
 const token = sessionStorage.getItem('token')
 const rol = sessionStorage.getItem('rol')
@@ -81,19 +88,16 @@ onMounted(async () => {
       }
     }
   })
-  
+
   if (rol === 'Admin') {
-    setTimeout(() => {
-    }, 7000)
+    setTimeout(() => {}, 7000)
   }
 })
 
 const nombreUsuario = computed(() => {
-  const usuarioEncontrado = usuariosFiltrados.value.find(u => u.idUsuario === idUsuario)
+  const usuarioEncontrado = usuariosFiltrados.value.find((u) => u.idUsuario === idUsuario)
   return usuarioEncontrado ? usuarioEncontrado.nombresUsuario : 'Usuario'
 })
 
-const notificaciones = computed(() => 
-  notificacionesStore.lista.filter(n => !n.leido).length
-)
+const notificaciones = computed(() => notificacionesStore.lista.filter((n) => !n.leido).length)
 </script>

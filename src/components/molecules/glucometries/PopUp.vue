@@ -12,13 +12,14 @@
       </div>
 
       <!-- Vista FORMULARIO -->
-      <GlucoseForm 
-        v-if="modalType === 'form'" 
-        :form="form" 
+      <GlucoseForm
+        v-if="modalType === 'form'"
+        :form="form"
         :submitForm="isEdit ? undefined : handleSubmit"
         :submitEdit="isEdit ? handleSubmit : undefined"
-        @update:form="updateForm"/>
-      
+        @update:form="updateForm"
+      />
+
       <!-- Vista INFORMACIÓN -->
       <GlucoseInfo
         v-else-if="modalType === 'info'"
@@ -32,49 +33,49 @@
 </template>
 
 <script setup lang="ts">
-import { type PropType } from 'vue';
-import { toast } from 'vue3-toastify';
-import 'vue3-toastify/dist/index.css';
+import { type PropType } from 'vue'
+import { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
 
-import GlucoseForm from '@/components/molecules/FormGlucos.vue';
-import GlucoseInfo from '@/components/molecules/GlucoInfo.vue';
+import GlucoseForm from '@/components/molecules/glucometries/FormGlucos.vue'
+import GlucoseInfo from '@/components/molecules/glucometries/GlucoInfo.vue'
 
 const props = defineProps({
   isVisible: Boolean,
   modalType: String as PropType<'form' | 'info'>,
   form: Object as PropType<{
-    fecha: string;
-    hora: string;
-    glucosa: number;
-    comentario: string;
+    fecha: string
+    hora: string
+    glucosa: number
+    comentario: string
   }>,
   isEdit: Boolean,
   closeModal: Function,
   submitForm: Function
-});
+})
 
-const emit = defineEmits(['closeModal', 'update:form']);
+const emit = defineEmits(['closeModal', 'update:form'])
 
-const handleCloseModal = () => emit('closeModal');
+const handleCloseModal = () => emit('closeModal')
 
-const updateForm = (newForm: typeof props.form) => emit('update:form', newForm);
+const updateForm = (newForm: typeof props.form) => emit('update:form', newForm)
 
 const handleSubmit = () => {
   if (!props.form?.fecha || !props.form?.hora) {
-    toast.error('La fecha y la hora son requeridas.');
-    return;
+    toast.error('La fecha y la hora son requeridas.')
+    return
   }
 
-  const selectedDateTime = new Date(`${props.form.fecha}T${props.form.hora}`);
-  const now = new Date();
+  const selectedDateTime = new Date(`${props.form.fecha}T${props.form.hora}`)
+  const now = new Date()
 
   if (selectedDateTime > now) {
-    toast.error('La fecha y hora no pueden ser mayores a la actual.');
-    return;
+    toast.error('La fecha y hora no pueden ser mayores a la actual.')
+    return
   }
 
-  props.submitForm?.();
-};
+  props.submitForm?.()
+}
 </script>
 
 <style scoped>

@@ -61,9 +61,9 @@ const router = createRouter({
           component: () => import('../views/FavoritosView.vue')
         },
         {
-          path: 'doctores/nuevo', 
+          path: 'doctores/nuevo',
           name: 'FormDoctorAdmin',
-          component: () => import('../views/FormDoctorAdminView.vue') 
+          component: () => import('../views/FormDoctorAdminView.vue')
         }
       ]
     },
@@ -124,7 +124,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (LoginView-[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/GlucometryView.vue'),
+      component: () => import('../views/glucometries/GlucometryView.vue'),
       meta: {
         requiresAuth: true /**cambiar a true */
       }
@@ -140,7 +140,7 @@ const router = createRouter({
     {
       path: '/glucometrias',
       name: 'glucometrias',
-      component: () => import('../views/GlucometriasPaciente.vue'),
+      component: () => import('../views/glucometries/GlucometriasPaciente.vue'),
       meta: {
         requiresAuth: true /**cambiar a true */
       }
@@ -188,7 +188,7 @@ const router = createRouter({
       name: 'Asignar',
       component: () => import('../views/UsuarioDoctorAsignarView.vue'),
       meta: { requiresAuth: true }
-    },
+    }
   ]
 })
 

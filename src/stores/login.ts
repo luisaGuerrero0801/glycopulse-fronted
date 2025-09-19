@@ -39,6 +39,11 @@ export const loginStore = defineStore('login', {
           console.warn('ID de usuario no definido, no se guardó en sessionStorage')
         }
 
+        // 👇 Guardar idDoctor si el usuario es Doctor
+        if (this.rol === 'Doctor' && this.idUsuario !== null) {
+          sessionStorage.setItem('idDoctor', this.idUsuario.toString())
+        }
+
         toast('Login correcto', { type: toast.TYPE.SUCCESS })
 
         // Redirección por rol
@@ -63,7 +68,6 @@ export const loginStore = defineStore('login', {
           })
         }
 
-        
         this.token = ''
         this.rol = ''
         this.idUsuario = null

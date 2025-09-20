@@ -65,6 +65,7 @@ export const usePacientesDoctorStore = defineStore('pacientesDoctor', {
           telefono: p.celularUsuario,
           rh: p.rhUsuario,
           ubicacion: p.ciudadUsuario,
+           fechaNacimiento: p.fechaNacimientoUsuario,
         }))
       } catch (err: any) {
         this.error = err.message

@@ -1,26 +1,78 @@
 <template>
-  <tr>
-    <td class="p-4">{{ paciente.nombre }}</td>
-    <td class="p-4">{{ calcularEdad(paciente.fechaNacimiento) }}</td>
-    <td class="p-4">{{ paciente.email }}</td>
-    <td class="p-4">{{ paciente.telefono }}</td>
-    <td class="p-4">{{ paciente.rh }}</td>
-  </tr>
+  <div
+    class="bg-white shadow rounded-xl p-4 sm:p-5 md:p-6 flex flex-col sm:flex-row items-center justify-between w-full transition hover:bg-gray-50"
+  >
+    <div
+      class="grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-4 items-center w-full text-center sm:text-left"
+    >
+      <!-- Avatar -->
+      <div class="flex flex-col items-center sm:items-start">
+        <div
+          class="bg-[#D4E1FC] text-indigo-800 w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center text-3xl sm:text-4xl font-bold mb-3 shadow-lg"
+        >
+          <p class="text-black font-bold">
+            {{ paciente.nombre.charAt(0) }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Nombre -->
+      <div class="flex flex-col items-center sm:items-start">
+        <p class="text-black text-2xl font-bold">Nombre</p>
+        <p class="text-gray-500 text-sm sm:text-base truncate">
+          {{ paciente.nombre }}
+        </p>
+      </div>
+
+      <!-- Ubicación -->
+      <div class="flex flex-col items-center sm:items-start">
+        <p class="text-black text-2xl font-bold">Ubicación</p>
+        <p class="text-gray-500 text-sm sm:text-base">
+          {{ paciente.ubicacion || 'No disponible' }}
+        </p>
+      </div>
+
+      <!-- Email -->
+      <div class="flex flex-col items-center sm:items-start">
+        <p class="text-black text-2xl font-bold">Email</p>
+        <p class="text-gray-500 text-sm sm:text-base truncate max-w-[160px]">
+          {{ paciente.email }}
+        </p>
+      </div>
+
+      <!-- RH -->
+      <div class="flex flex-col items-center sm:items-start">
+        <p class="text-black text-2xl font-bold">RH</p>
+        <p class="text-gray-500 text-sm sm:text-base">
+          {{ paciente.rh }}
+        </p>
+      </div>
+
+      <!-- Opciones -->
+      <div class="flex justify-center sm:justify-end">
+        <select
+          class="border rounded-md px-2 py-1 text-sm text-gray-600"
+        >
+          <option disabled selected>Selecciona</option>
+          <option>Reportes</option>
+          <option>Glucometrias</option>
+          <option>Recetas</option>
+        </select>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 defineProps<{
-  paciente: any
-}>()
-
-const calcularEdad = (fechaNacimiento: string): number => {
-  const nacimiento = new Date(fechaNacimiento)
-  const hoy = new Date()
-  let edad = hoy.getFullYear() - nacimiento.getFullYear()
-  const mes = hoy.getMonth() - nacimiento.getMonth()
-  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
-    edad--
+  paciente: {
+    id: number
+    nombre: string
+    email: string
+    telefono: string
+    rh: string
+    ubicacion: string
+    fechaNacimiento: string
   }
-  return edad
-}
+}>()
 </script>

@@ -15,14 +15,26 @@ const toggleMenu = () => {
 }
 
 const cerrarSesion = () => {
-  localStorage.removeItem('token') // o el que uses
-  router.push('/login') // Redirige al login
+  localStorage.removeItem('token')
+  router.push('/login')
 }
 
 const pacientesStore = usePacientesDoctorStore()
 const { pacientesFiltrados, ubicacionesUnicas, searchQuery, selectedUbicacion, loading, error } =
   storeToRefs(pacientesStore)
 const { fetchPacientesDoctor } = pacientesStore
+
+// 🔹 Nuevo ref para la opción seleccionada
+const selectedOption = ref('')
+
+const consultar = () => {
+  console.log("🔍 Ruta seleccionada:", selectedOption.value)
+  if (selectedOption.value) {
+    router.push({ path: selectedOption.value }) // ✅ ahora sí redirige
+  } else {
+    fetchPacientesDoctor()
+  }
+}
 
 onMounted(() => {
   fetchPacientesDoctor()
@@ -33,28 +45,20 @@ onMounted(() => {
   <DoctorLayout>
     <!-- Barra superior derecha -->
     <div class="flex justify-between items-center mb-2">
-      <!-- Espacio para alinear elementos -->
       <div></div>
-
-      <!-- Search + Icono usuario -->
       <div class="flex items-center gap-4">
-        <!-- Input de búsqueda general (CONEXIÓN AL STORE) -->
         <input
           type="text"
           v-model="searchQuery"
           placeholder="Buscar paciente..."
           class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 "
         />
-
-        <!-- Menú usuario -->
         <div class="relative" @click="toggleMenu">
           <img
             :src="iconoUsuario"
             alt="Usuario"
             class="w-10 h-10 rounded-lg object-cover cursor-pointer border border-gray-300"
           />
-
-          <!-- Menú desplegable -->
           <div
             v-if="showMenu"
             class="absolute right-0 mt-2 w-40 bg-white border rounded shadow z-50"
@@ -70,7 +74,6 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Título principal -->
     <div class="mb-6">
       <h1 class="text-4xl font-bold text-[#374473] mb-2">Pacientes</h1>
     </div>
@@ -78,11 +81,10 @@ onMounted(() => {
     <!-- Filtros -->
     <div class="bg-white p-4 rounded shadow mb-6">
       <div class="flex flex-wrap gap-4 items-end">
-        <!-- Campo Paciente -->
-        <div class="flex flex-col w-full md:w-1/2">
-          <label for="paciente" class="text-sm font-medium text-gray-700 mb-1">Paciente</label>
+        <!-- Paciente -->
+        <div class="flex flex-col w-full md:w-1/3">
+          <label class="text-sm font-medium text-gray-700 mb-1">Paciente</label>
           <input
-            id="paciente"
             v-model="searchQuery"
             type="text"
             placeholder="Buscar paciente..."
@@ -90,11 +92,10 @@ onMounted(() => {
           />
         </div>
 
-        <!-- Campo Ubicación -->
+        <!-- Ubicación -->
         <div class="flex flex-col w-full md:w-1/3">
-          <label for="ubicacion" class="text-sm font-medium text-gray-700 mb-1">Ubicación</label>
+          <label class="text-sm font-medium text-gray-700 mb-1">Ubicación</label>
           <select
-            id="ubicacion"
             v-model="selectedUbicacion"
             class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
@@ -105,10 +106,24 @@ onMounted(() => {
           </select>
         </div>
 
+        <!-- Selección de opción -->
+        <div class="flex flex-col w-full md:w-1/3">
+          <label class="text-sm font-medium text-gray-700 mb-1">Opción</label>
+          <select
+            v-model="selectedOption"
+            class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Seleccione...</option>
+            <option value="/glucometrias">Reportes</option>
+            <option value="/glucometrias">Glucometrías</option>
+            <option value="/doctor/recetas">Recetas</option>
+          </select>
+        </div>
+
         <!-- Botón -->
         <div>
           <button
-            @click="fetchPacientesDoctor"
+            @click="consultar"
             class="bg-blue-950 hover:bg-blue-800 text-white px-6 py-2 rounded-lg mt-5 md:mt-0"
           >
             Consultar 🔍
@@ -118,6 +133,15 @@ onMounted(() => {
     </div>
 
     <!-- Lista de pacientes -->
-    <PacientesLista :pacientes="pacientesFiltrados" :loading="loading" :error="error" />
+    <div>
+      <div v-if="loading" class="text-center py-6 text-gray-500">Cargando pacientes...</div>
+      <div v-else-if="error" class="text-center py-6 text-red-500">{{ error }}</div>
+      <div v-else-if="pacientesFiltrados.length === 0" class="text-center py-6 text-gray-500">
+        No se encontraron pacientes con los filtros seleccionados
+      </div>
+      <div v-else class="space-y-3">
+        <PacientesLista :pacientes="pacientesFiltrados" :loading="loading" />
+      </div>
+    </div>
   </DoctorLayout>
 </template>

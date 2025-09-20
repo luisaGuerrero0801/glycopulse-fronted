@@ -2,17 +2,26 @@
 defineProps(['donante'])
 const emit = defineEmits(['cerrar'])
 
-const calcularEdad = (fechaNacimiento: string) => {
+const calcularEdad = (fechaNacimiento: string | null | undefined) => {
   if (!fechaNacimiento) return 'No disponible'
-  const hoy = new Date()
+
   const nacimiento = new Date(fechaNacimiento)
+
+  if (isNaN(nacimiento.getTime())) {
+    return 'No disponible'
+  }
+
+  const hoy = new Date()
   let edad = hoy.getFullYear() - nacimiento.getFullYear()
   const mes = hoy.getMonth() - nacimiento.getMonth()
+
   if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
     edad--
   }
+
   return edad
 }
+
 
 const getCorreoLink = (correo: string) => {
   const dominio = correo.split("@")[1]?.toLowerCase()

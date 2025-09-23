@@ -15,6 +15,7 @@
         <!-- PASO 1 -->
         <div v-if="currentStep === 1">
           <div class="flex flex-col md:flex-row gap-6">
+<<<<<<< HEAD
             <div class="flex flex-col">
               <label for="imagenReceta" class="block text-sm font-medium text-gray-700">
                 URL de la imagen
@@ -34,6 +35,28 @@
                   class="w-40 h-40 object-cover rounded-lg border"
                 />
               </div>
+=======
+            <div class="flex-shrink-0">
+              <label
+                for="imagenReceta"
+                class="w-40 h-40 bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-500 cursor-pointer rounded-lg overflow-hidden"
+              >
+                <span v-if="!form.imagenPreview">Subir imagen</span>
+                <img
+                  v-else
+                  :src="form.imagenPreview"
+                  alt="Vista previa"
+                  class="w-full h-full object-cover"
+                />
+              </label>
+              <input
+                id="imagenReceta"
+                type="file"
+                accept="image/*"
+                class="hidden"
+                @change="cargarImagen"
+              />
+>>>>>>> 46124acc952598c766713dc72456300551ce6718
             </div>
 
             <div class="flex flex-col flex-1 gap-4">
@@ -79,11 +102,20 @@
               </option>
             </select>
           </div>
+<<<<<<< HEAD
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">nivel *</label>
               <select
                 v-model="form.nivel"
+=======
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Dificultad *</label>
+              <select
+                v-model="form.dificultad"
+>>>>>>> 46124acc952598c766713dc72456300551ce6718
                 required
                 class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500"
               >
@@ -243,7 +275,10 @@
                 Anterior
               </button>
               <button
+<<<<<<< HEAD
               @click="guardarReceta"
+=======
+>>>>>>> 46124acc952598c766713dc72456300551ce6718
                 type="submit"
                 class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
               >
@@ -273,6 +308,7 @@ const pacientes = ref<any[]>([]) // 👈 lista de pacientes cargados
 const form = reactive({
   nombre: '',
   descripcion: '',
+<<<<<<< HEAD
  nivel: '',
   porciones: 1,
   calorias: 1,
@@ -292,6 +328,20 @@ onMounted(async () => {
 
     pacientes.value = await usuariosStore.fetchPacientesByDoctor(idDoctor)
     console.log('✅ Pacientes cargados:', pacientes.value)
+=======
+  dificultad: '',
+  porciones: 1,
+  calorias: 1,
+  tiempo: '',
+  imagen: null as File | null,
+  imagenPreview: '',
+  idUsuario: 0 // 👈 paciente seleccionado (numérico)
+})
+
+onMounted(async () => {
+  try {
+    pacientes.value = await usuariosStore.obtenerPacientes()
+>>>>>>> 46124acc952598c766713dc72456300551ce6718
   } catch (error) {
     console.error('Error cargando pacientes:', error)
   }
@@ -310,11 +360,25 @@ const eliminarIngrediente = (index: number) => ingredientes.splice(index, 1)
 
 const agregarPaso = () => pasosPreparacion.push('')
 const eliminarPaso = (index: number) => pasosPreparacion.splice(index, 1)
+<<<<<<< HEAD
 
 const siguientePaso = () => (currentStep.value = 2)
 const pasoAnterior = () => (currentStep.value = 1)
 
 
+=======
+
+const siguientePaso = () => (currentStep.value = 2)
+const pasoAnterior = () => (currentStep.value = 1)
+
+const cargarImagen = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    form.imagen = target.files[0]
+    form.imagenPreview = URL.createObjectURL(target.files[0])
+  }
+}
+>>>>>>> 46124acc952598c766713dc72456300551ce6718
 
 const guardarReceta = async () => {
   try {
@@ -327,6 +391,7 @@ const guardarReceta = async () => {
       tiempo: form.tiempo,
       ingredientes,
       pasosPreparacion,
+<<<<<<< HEAD
       idUsuario: form.idUsuario,
       imagenReceta: form.imagenUrl   // 👈 aquí va la URL
 
@@ -335,6 +400,13 @@ console.log(guardarReceta)
 
     await recetasStore.crearReceta(recetaPayload)
 
+=======
+      idUsuario: form.idUsuario // 👈 paciente asignado
+    }
+
+    await recetasStore.crearReceta(recetaPayload, form.imagen || undefined)
+
+>>>>>>> 46124acc952598c766713dc72456300551ce6718
     alert('Receta guardada con éxito 🎉')
     router.push({ name: 'DoctorRecetasHome' })
     resetForm()
@@ -343,23 +415,39 @@ console.log(guardarReceta)
     alert('Ocurrió un error al guardar la receta')
   }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 46124acc952598c766713dc72456300551ce6718
 
 const resetForm = () => {
   form.nombre = ''
   form.descripcion = ''
+<<<<<<< HEAD
   form.nivel = ''
   form.porciones = 1
   form.calorias = 1
   form.tiempo = ''
   form.imagenUrl = ''   // 👈 limpia la URL
+=======
+  form.dificultad = ''
+  form.porciones = 1
+  form.calorias = 1
+  form.tiempo = ''
+  form.imagen = null
+  form.imagenPreview = ''
+>>>>>>> 46124acc952598c766713dc72456300551ce6718
   form.idUsuario = 0
   ingredientes.splice(0, ingredientes.length, { nombre: '', cantidad: null, unidad: '' })
   pasosPreparacion.splice(0, pasosPreparacion.length, '')
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 46124acc952598c766713dc72456300551ce6718
 
 const irARecetas = () => {
   router.push({ name: 'DoctorRecetasHome' })
 }
 </script>
+

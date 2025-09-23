@@ -37,7 +37,7 @@
             >¿Has olvidado la contraseña?</RouterLink
           >
           <div>
-            <ButtonUno text="Iniciar Sesión" type="submit" />
+            <ButtonUno text="Iniciar Sesión" @OnClick="handleClick" />
           </div>
         </form>
 

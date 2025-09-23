@@ -33,6 +33,8 @@ export const loginStore = defineStore('login', {
         sessionStorage.setItem('token', this.token)
         sessionStorage.setItem('rol', this.rol)
 
+        console.log('rol:', this.rol, 'token:', this.token)
+
         if (this.idUsuario !== null) {
           sessionStorage.setItem('idUsuario', this.idUsuario.toString())
         } else {

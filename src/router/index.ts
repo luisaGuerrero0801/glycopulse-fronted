@@ -74,9 +74,7 @@ const router = createRouter({
       // this generates a separate chunk (LoginView-[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/LoginView.vue'),
-      meta: {
-        requiresAuth: false
-      }
+      meta: { requiresAuth: true, allowedRoles: ['Paciente', 'Doctor', 'Admin'] }
     },
     {
       path: '/verify',
@@ -197,6 +195,8 @@ router.beforeEach((to, from, next) => {
   const rol = sessionStorage.getItem('rol') ?? ''
   const requiresAuth = to.meta.requiresAuth
   const allowedRoles = (to.meta.allowedRoles || []) as string[]
+
+  console.log('Guard: to=', to.path, 'rol=', rol, 'token=', token)
 
   if (requiresAuth && !token) {
     return next('/')

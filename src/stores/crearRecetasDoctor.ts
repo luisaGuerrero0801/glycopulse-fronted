@@ -72,11 +72,13 @@ export const useRecetasStore = defineStore('recetas', {
  // 👇 Aquí mostramos el JSON que realmente viaja al backend
     console.log("Payload que se envía a backend:", body)
 
+        
+
         const res = await fetch(`${import.meta.env.VITE_API_URL}recetas`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        })
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(body)
+})
 
         if (!res.ok) {
           const text = await res.text().catch(() => null)

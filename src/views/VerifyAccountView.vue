@@ -17,7 +17,7 @@ onMounted(async () => {
   }
 
   try {
-    const response = await axios.get(`http://localhost:3000/api/v1/auth/verify?token=${token}`)
+    const response = await axios.get(`https://glycopulse-back-production.up.railway.app/auth/verify?token=${token}`)
     mensaje.value = response.data.message || '✅ Cuenta verificada correctamente'
     exito.value = true
   } catch (error) {

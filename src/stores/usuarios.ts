@@ -24,7 +24,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
   const fetchUsuarios = async () => {
     loading.value = true
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/usuarios')
+      const response = await axios.get('https://glycopulse-back-production.up.railway.app/usuarios')
 
       // Transformamos estado: 'Activo' | 'Inactivo' a activo: boolean
       usuariosFiltrados.value = response.data.map((usuario: any) => ({
@@ -43,7 +43,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
     loading.value = true
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/usuarios/doctor/${idDoctor}/pacientes`
+        `https://glycopulse-back-production.up.railway.app/usuarios/doctor/${idDoctor}/pacientes`
       )
       usuariosFiltrados.value = response.data.map((usuario: any) => ({
         ...usuario,
@@ -77,7 +77,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
 
       // **CAMBIO AQUÍ: de axios.put a axios.patch**
       const response = await axios.patch(
-        `http://localhost:3000/api/v1/usuarios/${usuarioEditado.idUsuario}`,
+        `https://glycopulse-back-production.up.railway.app/usuarios/${usuarioEditado.idUsuario}`,
         datosActualizados
       )
 
@@ -104,7 +104,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
   const cambiarEstadoUsuario = async (idUsuario: number, nuevoEstado: boolean) => {
     try {
       const response = await axios.patch(
-        `http://localhost:3000/api/v1/usuarios/${idUsuario}/estado`,
+        `https://glycopulse-back-production.up.railway.app/usuarios/${idUsuario}/estado`,
         { activo: nuevoEstado }
       )
 

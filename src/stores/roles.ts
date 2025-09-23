@@ -16,7 +16,7 @@ export const useRolesStore = defineStore('roles', () => {
   const fetchRoles = async () => {
     loading.value = true
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/roles')
+      const response = await axios.get('https://glycopulse-back-production.up.railway.app/roles')
       roles.value = response.data
     } catch (err) {
       error.value = 'Error al cargar los roles.'

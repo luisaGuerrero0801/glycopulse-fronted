@@ -22,7 +22,7 @@ export const useRecetasStore = defineStore('recetas', {
 
         // console.log('Token que se enviará:', token); 
         
-        const response = await fetch('http://localhost:3000/api/v1/recetas', {
+        const response = await fetch('https://glycopulse-back-production.up.railway.app/recetas', {
           headers: {
             'Authorization': `Bearer ${token}`, 
             'Content-Type': 'application/json'

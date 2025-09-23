@@ -202,8 +202,6 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.meta.requiresAuth
   const allowedRoles = (to.meta.allowedRoles || []) as string[]
 
-  console.log('Guard: to=', to.path, 'rol=', rol, 'token=', token)
-
   if (requiresAuth && !token) {
     return next('/')
   }

@@ -3,6 +3,7 @@ import Login from '@/providers/LoginProvider'
 import { toast } from 'vue3-toastify'
 import router from '@/router'
 import jwtDecode from 'jwt-decode'
+import { response } from 'express'
 
 interface DecodedToken {
   sub: number
@@ -23,7 +24,7 @@ export const loginStore = defineStore('login', {
       const storedId = sessionStorage.getItem('idUsuario')
       this.idUsuario = storedId ? Number(storedId) : null
     },
-    
+
     async validateUser(correoUsuario: string, contrasenaUsuario: string) {
       try {
         const res = await Login.login({
@@ -40,7 +41,6 @@ export const loginStore = defineStore('login', {
         sessionStorage.setItem('token', this.token)
         sessionStorage.setItem('rol', this.rol)
 
-        console.log('rol:', this.rol, 'token:', this.token)
 
         if (this.idUsuario !== null) {
           sessionStorage.setItem('idUsuario', this.idUsuario.toString())
@@ -66,7 +66,6 @@ export const loginStore = defineStore('login', {
 
       } catch (e: any) {
         const mensaje = e?.response?.data?.message || 'Error al iniciar sesión. Verifica tus datos o intenta más tarde.'
-
         if (mensaje === 'El usuario está inactivo') {
           toast(' Tu cuenta está inhabilitada. Contacta al administrador.', {
             type: toast.TYPE.WARNING

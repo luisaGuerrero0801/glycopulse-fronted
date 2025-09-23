@@ -40,7 +40,7 @@ export const useUsuariosStore = defineStore('usuarios', {
       this.loading = true
       this.error = null
       try {
-        const resp = await fetch('https://glycopulse-back-production.up.railway.app/usuarios')
+        const resp = await fetch('https://glycopulse-back-production.up.railway.app/api/v1/usuarios')
         if (!resp.ok) {
           throw new Error('Error al obtener usuarios')
         }

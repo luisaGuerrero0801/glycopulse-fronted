@@ -188,7 +188,7 @@ function cancelar() {
 async function guardar() {
   try {
     const usuarioId = props.usuario.idUsuario;
-    const urlApi = `https://glycopulse-back-production.up.railway.app/usuarios/${usuarioId}`;
+    const urlApi = `https://glycopulse-back-production.up.railway.app/api/v1/usuarios/${usuarioId}/`;
     const token = localStorage.getItem("token");
 
     if (!usuarioId) {

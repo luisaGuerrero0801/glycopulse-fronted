@@ -1,6 +1,5 @@
 <template>
-  <!-- Modal que se controla con isVisible -->
-  <div v-if="isVisible" class="flex justify-center items-center w-full">
+  <div class="flex justify-center items-center w-full">
     <div class="bg-white shadow-md rounded-2xl p-6 w-full max-w-3xl">
       <h1 class="text-xl font-bold text-gray-700 mb-0.5 text-center">Registrar Usuario</h1>
 
@@ -18,7 +17,12 @@
         <InputForm
           namePlaceholder="Nombre"
           v-model="form.nombresUsuario"
-          @input="handleInput('nombresUsuario')"
+          @input="
+            () => {
+              form.nombresUsuario = startCase(toLower(form.nombresUsuario))
+              soloLetras('nombresUsuario')
+            }
+          "
           @keypress="onlyLetters($event)"
           @blur="validarFormulario"
         />
@@ -28,7 +32,12 @@
         <InputForm
           namePlaceholder="Apellido"
           v-model="form.apellidosUsuario"
-          @input="handleInput('apellidosUsuario')"
+          @input="
+            () => {
+              form.apellidosUsuario = startCase(toLower(form.apellidosUsuario))
+              soloLetras('apellidosUsuario')
+            }
+          "
           @keypress="onlyLetters($event)"
           @blur="validarFormulario"
         />
@@ -64,7 +73,7 @@
           </div>
         </div>
 
-        <!-- Género y Rol -->
+        <!-- Género -->
         <div class="grid grid-cols-2 gap-4">
           <div>
             <LabelForm nameForm="Género" />
@@ -93,7 +102,7 @@
           </div>
         </div>
 
-        <!-- Correo y Contraseña -->
+        <!-- Correo -->
         <LabelForm nameForm="Correo" />
         <InputForm
           namePlaceholder="Correo electrónico"
@@ -102,6 +111,7 @@
           @blur="validarFormulario"
         />
 
+        <!-- Contraseña -->
         <LabelForm nameForm="Contraseña" />
         <InputForm
           namePlaceholder="Contraseña"
@@ -110,7 +120,7 @@
           @blur="validarFormulario"
         />
 
-        <!-- Celular y Ciudad -->
+        <!-- Celular -->
         <LabelForm nameForm="Celular" />
         <InputForm
           namePlaceholder="Número de celular"
@@ -119,6 +129,7 @@
           @blur="validarFormulario"
         />
 
+        <!-- Ciudad -->
         <LabelForm nameForm="Ciudad" />
         <select
           v-model="form.region"
@@ -145,20 +156,19 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
-import { useNotificacionesStore } from '@/stores/notificaciones';
-import { toast } from 'vue3-toastify';
-import { useRegisterStore } from '@/stores/register';
-import LabelForm from '@/components/atoms/LabelForm.vue';
-import InputForm from '@/components/atoms/InputForm.vue';
-import { startCase, toLower } from 'lodash';
+import { ref, computed } from 'vue'
+import { useNotificacionesStore } from '@/stores/notificaciones'
+import { toast } from 'vue3-toastify'
+import { useRegisterStore } from '@/stores/register'
+import LabelForm from '@/components/atoms/LabelForm.vue'
+import InputForm from '@/components/atoms/InputForm.vue'
+import { startCase, toLower } from 'lodash'
 
-const registerStore = useRegisterStore();
-const notificaciones = useNotificacionesStore();
+const registerStore = useRegisterStore()
+const notificaciones = useNotificacionesStore()
 
-const isLoading = ref(false);
-const successMessage = ref('');
-const isVisible = ref(true); // Controla la visibilidad del modal
+const isLoading = ref(false)
+const successMessage = ref('')
 
 const regionMap: Record<string, Record<string, string>> = {
   CO: {
@@ -183,9 +193,9 @@ const regionMap: Record<string, Record<string, string>> = {
     TUN: 'Tunja',
     FLO: 'Florencia'
   }
-};
+}
 
-const availableCities = computed(() => regionMap['CO']);
+const availableCities = computed(() => regionMap['CO'])
 
 const form = ref({
   nombresUsuario: '',
@@ -197,47 +207,46 @@ const form = ref({
   contrasenaUsuario: '',
   celularUsuario: '',
   region: '',
-  idRol: ''
-});
+  idRol: '' // 👈 rol dinámico
+})
 
 const formatDate = (dateString: string) => {
-  if (!dateString) return '';
-  return new Date(dateString).toISOString().split('T')[0];
-};
+  if (!dateString) return ''
+  return new Date(dateString).toISOString().split('T')[0]
+}
 
 const soloLetras = (campo: 'nombresUsuario' | 'apellidosUsuario') => {
-  form.value[campo] = form.value[campo].replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
-};
-
+  form.value[campo] = form.value[campo].replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')
+}
 const onlyLetters = (e: KeyboardEvent) => {
-  const char = String.fromCharCode(e.keyCode);
-  const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/; // solo letras y espacios
-  if (!regex.test(char)) e.preventDefault();
-};
+  const char = String.fromCharCode(e.keyCode)
+  const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/ // solo letras y espacios
+  if (!regex.test(char)) e.preventDefault()
+}
 
-const soloNumeros = (texto: string) => /^[0-9]+$/.test(texto);
-const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const validarContrasena = (password: string) => password.length >= 8;
+const soloNumeros = (texto: string) => /^[0-9]+$/.test(texto)
+const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+const validarContrasena = (password: string) => password.length >= 8
 
 const validarFormulario = () => {
   if (!form.value.idRol) {
-    toast.error('Por favor selecciona un rol');
-    return false;
+    toast.error('Por favor selecciona un rol')
+    return false
   }
   if (!validarEmail(form.value.correoUsuario)) {
-    toast.error('Correo inválido');
-    return false;
+    toast.error('Correo inválido')
+    return false
   }
   if (!validarContrasena(form.value.contrasenaUsuario)) {
-    toast.error('La contraseña debe tener al menos 8 caracteres');
-    return false;
+    toast.error('La contraseña debe tener al menos 8 caracteres')
+    return false
   }
   if (!soloNumeros(form.value.celularUsuario) || form.value.celularUsuario.length < 10) {
-    toast.error('El número de teléfono debe tener al menos 10 dígitos');
-    return false;
+    toast.error('El número de teléfono debe tener al menos 10 dígitos')
+    return false
   }
-  return true;
-};
+  return true
+}
 
 const resetForm = () => {
   form.value = {
@@ -251,14 +260,14 @@ const resetForm = () => {
     celularUsuario: '',
     region: '',
     idRol: ''
-  };
-  successMessage.value = '';
-};
+  }
+  successMessage.value = ''
+}
 
 const registrarUsuario = async () => {
-  if (!validarFormulario()) return;
+  if (!validarFormulario()) return
   try {
-    isLoading.value = true;
+    isLoading.value = true
     const usuario = {
       nombresUsuario: startCase(toLower(form.value.nombresUsuario)),
       apellidosUsuario: startCase(toLower(form.value.apellidosUsuario)),
@@ -272,29 +281,25 @@ const registrarUsuario = async () => {
       paisUsuario: 'Colombia',
       idRol: Number(form.value.idRol),
       estado: 'Activo'
-    };
+    }
 
-    await registerStore.registerUser(usuario);
+    await registerStore.registerUser(usuario)
 
     notificaciones.agregar(
       `Nuevo ${usuario.idRol === 2 ? 'Administrador' : 'Doctor'} registrado: ${
         usuario.nombresUsuario
       } ${usuario.apellidosUsuario}`
-    );
+    )
 
     successMessage.value = `¡${
       usuario.idRol === 2 ? 'Administrador' : 'Doctor'
-    } registrado con éxito!`;
-
-    // Cerrar el modal automáticamente
-    isVisible.value = false;
-
-    resetForm();
+    } registrado con éxito!`
+    resetForm()
   } catch (error: any) {
-    console.error('Error completo:', error);
-    toast.error(error.response?.data?.message || 'Error al registrar usuario');
+    console.error('Error completo:', error)
+    toast.error(error.response?.data?.message || 'Error al registrar usuario')
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
-};
+}
 </script>

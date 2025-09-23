@@ -134,8 +134,7 @@ const router = createRouter({
       name: 'recetasSaludables',
       component: () => import('../views/RecetasSaludablesView.vue'),
       meta: {
-        requiresAuth: true,
-        allowedRoles: ['Paciente']
+        requiresAuth: false,
       }
     },
     {

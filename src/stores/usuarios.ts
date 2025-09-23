@@ -77,7 +77,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
 
       // **CAMBIO AQUÍ: de axios.put a axios.patch**
       const response = await axios.patch(
-        `https://glycopulse-back-production.up.railway.app/usuarios/${usuarioEditado.idUsuario}`,
+        `https://glycopulse-back-production.up.railway.app/api/v1/usuarios/${usuarioEditado.idUsuario}`,
         datosActualizados
       )
 
@@ -104,7 +104,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
   const cambiarEstadoUsuario = async (idUsuario: number, nuevoEstado: boolean) => {
     try {
       const response = await axios.patch(
-        `https://glycopulse-back-production.up.railway.app/usuarios/${idUsuario}/estado`,
+        `https://glycopulse-back-production.up.railway.app/api/v1/usuarios/${idUsuario}/estado`,
         { activo: nuevoEstado }
       )
 

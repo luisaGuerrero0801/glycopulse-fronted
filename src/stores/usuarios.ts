@@ -38,6 +38,26 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
       loading.value = false
     }
   }
+   // 👩‍⚕️ Obtener pacientes asignados a un doctor
+  const fetchPacientesByDoctor = async (idDoctor: number) => {
+    loading.value = true
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/v1/usuarios/doctor/${idDoctor}/pacientes`
+      )
+      usuariosFiltrados.value = response.data.map((usuario: any) => ({
+        ...usuario,
+        activo: usuario.estado === 'Activo'
+      }))
+      return usuariosFiltrados.value
+    } catch (err) {
+      error.value = 'Error al cargar pacientes del doctor.'
+      console.error('Error al cargar pacientes del doctor:', err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
 
   // ✏️ Editar usuario
   const editarUsuario = async (usuarioEditado: any) => {
@@ -109,6 +129,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
     error,
     fetchUsuarios,
     editarUsuario,
+    fetchPacientesByDoctor, // ✅ nuevo
     cambiarEstadoUsuario
   }
 })

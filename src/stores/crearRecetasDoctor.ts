@@ -13,13 +13,14 @@ interface Receta {
   idReceta?: number
   nombre: string
   descripcion: string
-  dificultad: string
+  nivel: string
   porciones: number
   calorias: number
   tiempo: string
   imagen?: string
   ingredientes: Ingrediente[]
   pasosPreparacion: string[]
+  idUsuario?: number   // 👈 paciente asignado
 }
 
 export const useRecetasStore = defineStore('recetas', {
@@ -44,16 +45,15 @@ export const useRecetasStore = defineStore('recetas', {
     },
 
     /**
-     * crearReceta: recibe el objeto del front y opcionalmente el File de imagen
-     * Mapea ingredientes y pasos y hace POST al backend en formato JSON.
+     * crearReceta: recibe el objeto del front, paciente asignado y opcionalmente el File de imagen
      */
-    async crearReceta(receta: Omit<Receta, 'idReceta'>, imagen?: File) {
+    async crearReceta(
+      receta: Omit<Receta, 'idReceta'>,
+      imagen?: File
+    ) {
       try {
-        // obtener idUsuario desde sessionStorage si existe (recomendado)
-        const storedId = sessionStorage.getItem('idUsuario')
-        const idUsuario = storedId ? Number(storedId) : 0
-        if (!idUsuario) {
-          console.warn('crearReceta: idUsuario no encontrado en sessionStorage, usando 1 como fallback')
+        if (!receta.idUsuario) {
+          throw new Error('⚠️ No se seleccionó paciente para la receta')
         }
 
         const body = {
@@ -62,15 +62,15 @@ export const useRecetasStore = defineStore('recetas', {
           porcionesReceta: Number(receta.porciones),
           caloriasReceta: Number(receta.calorias),
           tiempoReceta: receta.tiempo,
-          imagenReceta: imagen ? imagen.name : 'no-image', // por ahora mandamos el nombre para pasar la validación
-          nivelReceta: receta.dificultad,
+          imagenReceta: receta.imagen || 'no-image',
+          nivelReceta: receta.nivel,
           categoriaReceta: 'General',
           ingredientes: mapIngredientesFrontToBack(receta.ingredientes),
           pasos: mapPasosFrontToBack(receta.pasosPreparacion),
-          idUsuario: idUsuario || 1
+          idUsuario: receta.idUsuario   // 👈 paciente seleccionado en el form
         }
- // 👇 Aquí mostramos el JSON que realmente viaja al backend
-    console.log("Payload que se envía a backend:", body)
+
+        console.log('Payload que se envía a backend:', body)
 
         const res = await fetch(`${import.meta.env.VITE_API_URL}recetas`, {
           method: 'POST',

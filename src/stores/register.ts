@@ -5,7 +5,8 @@ export const useRegisterStore = defineStore('register', {
   actions: {
     async registerUser(userData: any) {
       try {
-        const response = await axios.post('http://localhost:3000/api/v1/usuarios/', userData, {
+        // const response = await axios.post('http://localhost:3000/api/v1/usuarios/', userData, {
+        const response = await axios.post('https://glycopulse-back-production.up.railway.app/', userData, {
           headers: { 'Content-Type': 'application/json' }
         })
         return response.data

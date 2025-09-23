@@ -37,7 +37,7 @@ const rolesDisponibles = ['Todos', 'Paciente', 'Doctor', 'Admin']
 
 // Paginación
 const currentPage = ref(1)
-const itemsPerPage = 10
+const itemsPerPage = 7
 
 const filteredUsuarios = computed(() =>
   usuariosFiltrados.value

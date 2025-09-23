@@ -17,6 +17,7 @@ export const useGlucometriasStore = defineStore('glucometrias', {
 
       try {
         const response = await GlucometriasProvider.todasGlucometrias()
+        console.log('Respuesta de todasGlucometrias:', response)
         this.glucometrias = response.data
       } catch (err: any) {
         this.error = 'Error al obtener las glucometrias'

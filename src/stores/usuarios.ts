@@ -13,6 +13,7 @@ interface Usuario {
   ciudadUsuario: string
   paisUsuario: string
   activo: boolean // <- Este lo usaremos para traducir desde "estado"
+  idRol: string
 }
 
 export const useUsuariosStore = defineStore('usuariosGestion', () => {
@@ -24,7 +25,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
   const fetchUsuarios = async () => {
     loading.value = true
     try {
-      const response = await axios.get('https://glycopulse-back-production.up.railway.app/usuarios')
+      const response = await axios.get('https://glycopulse-back-production.up.railway.app/api/v1/usuarios')
 
       // Transformamos estado: 'Activo' | 'Inactivo' a activo: boolean
       usuariosFiltrados.value = response.data.map((usuario: any) => ({
@@ -43,7 +44,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
     loading.value = true
     try {
       const response = await axios.get(
-        `https://glycopulse-back-production.up.railway.app/usuarios/doctor/${idDoctor}/pacientes`
+        `https://glycopulse-back-production.up.railway.app/api/v1/usuarios/doctor/${idDoctor}/pacientes`
       )
       usuariosFiltrados.value = response.data.map((usuario: any) => ({
         ...usuario,

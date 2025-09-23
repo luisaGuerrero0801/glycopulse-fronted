@@ -5,6 +5,7 @@ import { useUsuariosStore } from '@/stores/usuarios'
 import EditUsuarioModal from '../molecules/EditUsuarioModal.vue'
 import ConfirmationModal from '../molecules/ConfirmationModal.vue'
 import FormDoctorAdmin from '../molecules/FormDoctorAdmin.vue'
+import Rol from '@/components/molecules/Rol.vue';
 
 interface Usuario {
   idUsuario: number
@@ -13,7 +14,7 @@ interface Usuario {
   correoUsuario: string
   rhUsuario: string
   activo: boolean
-  rol: { nombreRol: string }
+  rolUsuario: { nombreRol: string }
 }
 
 const usuariosStore = useUsuariosStore()
@@ -39,7 +40,7 @@ const usuariosVisibles = computed(() =>
   usuariosFiltrados.value
     .filter(u => u.correoUsuario !== 'glycopulse@gmail.com')
     .filter(u => [u.nombresUsuario, u.apellidosUsuario, u.correoUsuario].some(f => f.toLowerCase().includes(busqueda.value.toLowerCase())))
-    .filter(u => filtroRol.value === 'Todos' || u.rol.nombreRol === filtroRol.value)
+    .filter(u => filtroRol.value === 'Todos' || u.idRol === filtroRol.value)
 )
 
 // 🔹 Funciones

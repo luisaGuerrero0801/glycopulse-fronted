@@ -12,7 +12,7 @@ export function useLogin() {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com)$/
   const login = loginStore()
 
-  const handleClick = () => {
+ const handleClick = async () => {
     if (!formData.correoUser || !emailRegex.test(formData.correoUser)) {
       toast.warning('Ingrese un correo válido')
       return
@@ -23,7 +23,11 @@ export function useLogin() {
       return
     }
 
-    login.validateUser(formData.correoUser, formData.pass)
+    try {
+      await login.validateUser(formData.correoUser, formData.pass)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return {

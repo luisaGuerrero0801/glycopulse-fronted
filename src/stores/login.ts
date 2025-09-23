@@ -3,7 +3,7 @@ import Login from '@/providers/LoginProvider'
 import { toast } from 'vue3-toastify'
 import router from '@/router'
 import jwtDecode from 'jwt-decode'
-import { response } from 'express'
+
 
 interface DecodedToken {
   sub: number
@@ -75,11 +75,7 @@ export const loginStore = defineStore('login', {
             type: toast.TYPE.ERROR
           })
         }
-
-        this.token = ''
-        this.rol = ''
-        this.idUsuario = null
-        sessionStorage.clear()
+        this.logout()
       }
     },
 

@@ -42,7 +42,7 @@
           @blur="validarFormulario"
         />
 
-        <!-- Fecha de Nacimiento y Tipo de Sangre en la misma fila -->
+        <!-- Fecha de Nacimiento y Tipo de Sangre -->
         <div class="grid grid-cols-2 gap-4">
           <div>
             <LabelForm nameForm="Fecha de Nacimiento" />
@@ -73,7 +73,7 @@
           </div>
         </div>
 
-        <!-- Género -->
+        <!-- Género y Rol -->
         <div class="grid grid-cols-2 gap-4">
           <div>
             <LabelForm nameForm="Género" />
@@ -146,8 +146,9 @@
           <button
             type="submit"
             class="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            :disabled="isLoading"
           >
-            Registrar Usuario
+            {{ isLoading ? 'Registrando...' : 'Registrar Usuario' }}
           </button>
         </div>
       </form>
@@ -163,6 +164,9 @@ import { useRegisterStore } from '@/stores/register'
 import LabelForm from '@/components/atoms/LabelForm.vue'
 import InputForm from '@/components/atoms/InputForm.vue'
 import { startCase, toLower } from 'lodash'
+
+// Emitir evento hacia el padre cuando el registro sea exitoso
+const emit = defineEmits(['registro-exitoso'])
 
 const registerStore = useRegisterStore()
 const notificaciones = useNotificacionesStore()
@@ -207,7 +211,7 @@ const form = ref({
   contrasenaUsuario: '',
   celularUsuario: '',
   region: '',
-  idRol: '' // 👈 rol dinámico
+  idRol: '' // rol dinámico
 })
 
 const formatDate = (dateString: string) => {
@@ -286,14 +290,14 @@ const registrarUsuario = async () => {
     await registerStore.registerUser(usuario)
 
     notificaciones.agregar(
-      `Nuevo ${usuario.idRol === 2 ? 'Administrador' : 'Doctor'} registrado: ${
-        usuario.nombresUsuario
-      } ${usuario.apellidosUsuario}`
+      `Nuevo ${usuario.idRol === 2 ? 'Administrador' : 'Doctor'} registrado: ${usuario.nombresUsuario} ${usuario.apellidosUsuario}`
     )
 
-    successMessage.value = `¡${
-      usuario.idRol === 2 ? 'Administrador' : 'Doctor'
-    } registrado con éxito!`
+    successMessage.value = `¡${usuario.idRol === 2 ? 'Administrador' : 'Doctor'} registrado con éxito!`
+
+    // Emitimos evento para avisar al padre que se registró correctamente
+    emit('registro-exitoso')
+
     resetForm()
   } catch (error: any) {
     console.error('Error completo:', error)

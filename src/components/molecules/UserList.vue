@@ -5,7 +5,8 @@ import { useUsuariosStore } from '@/stores/usuarios'
 import EditUsuarioModal from '../molecules/EditUsuarioModal.vue'
 import ConfirmationModal from '../molecules/ConfirmationModal.vue'
 import FormDoctorAdmin from '../molecules/FormDoctorAdmin.vue'
-import Rol from '@/components/molecules/Rol.vue';
+import Rol from '@/components/molecules/Rol.vue'
+import Paginate from 'vuejs-paginate-next'  // <-- Importa el paginate
 
 interface Usuario {
   idUsuario: number
@@ -34,12 +35,27 @@ const busqueda = ref('')
 const filtroRol = ref('Todos')
 const rolesDisponibles = ['Todos', 'Paciente', 'Doctor', 'Admin']
 
-const usuariosVisibles = computed(() =>
+// Paginación
+const currentPage = ref(1)
+const itemsPerPage = 10
+
+const filteredUsuarios = computed(() =>
   usuariosFiltrados.value
     .filter(u => u.correoUsuario !== 'glycopulse@gmail.com')
     .filter(u => [u.nombresUsuario, u.apellidosUsuario, u.correoUsuario].some(f => f.toLowerCase().includes(busqueda.value.toLowerCase())))
     .filter(u => filtroRol.value === 'Todos' || u.rol.nombreRol === filtroRol.value)
 )
+
+const totalPages = computed(() => Math.ceil(filteredUsuarios.value.length / itemsPerPage))
+
+const usuariosVisibles = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return filteredUsuarios.value.slice(start, start + itemsPerPage)
+})
+
+const goToPage = (page: number) => {
+  currentPage.value = page
+}
 
 const getInitial = (name: string) => name?.[0].toUpperCase() || ''
 
@@ -83,7 +99,6 @@ const estadoBotonClass = (activo: boolean) =>
 const toggleDropdown = () => { dropdownVisible.value = !dropdownVisible.value }
 const abrirRegistro = () => { dropdownVisible.value = false; modales.value.registro = true }
 
-// ** NUEVO: Función para cerrar modal y refrescar usuarios **
 const handleRegistroExitoso = async () => {
   modales.value.registro = false
   await usuariosStore.fetchUsuarios()
@@ -181,6 +196,21 @@ const handleRegistroExitoso = async () => {
             </tr>
           </tbody>
         </table>
+
+        <!-- Paginación -->
+        <div class="flex justify-center mt-6">
+          <paginate
+            :page-count="totalPages"
+            :click-handler="goToPage"
+            :prev-text="'Anterior'"
+            :next-text="'Siguiente'"
+            :container-class="'flex flex-wrap justify-center gap-2'"
+            :page-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-[var(--colorSecundarioButton)] transition'"
+            :active-class="'bg-[var(--colorPrimarioButton)] text-white font-semibold'"
+            :prev-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+            :next-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+          />
+        </div>
       </div>
 
       <!-- Modales -->
@@ -190,7 +220,6 @@ const handleRegistroExitoso = async () => {
       <div v-if="modales.registro" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="relative bg-white rounded-xl shadow-lg w-full max-w-3xl p-8">
           <button @click="modales.registro=false" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl">✕</button>
-          <!-- ESCUCHA EL EVENTO 'registro-exitoso' -->
           <FormDoctorAdmin @registro-exitoso="handleRegistroExitoso" />
         </div>
       </div>

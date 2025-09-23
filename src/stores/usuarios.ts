@@ -13,7 +13,6 @@ interface Usuario {
   ciudadUsuario: string
   paisUsuario: string
   activo: boolean // <- Este lo usaremos para traducir desde "estado"
-  idRol: string
 }
 
 export const useUsuariosStore = defineStore('usuariosGestion', () => {

@@ -134,7 +134,8 @@ const router = createRouter({
       name: 'recetasSaludables',
       component: () => import('../views/RecetasSaludablesView.vue'),
       meta: {
-        requiresAuth: true, allowedRoles: ['Paciente']
+        requiresAuth: true,
+        allowedRoles: ['Paciente']
       }
     },
     {
@@ -193,23 +194,21 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const token = sessionStorage.getItem('token')
-  const rol = sessionStorage.getItem('rol') ?? ''
+  const login = loginStore()
+  login.initStore() // mantener sesión
+
+  const token = login.token
+  const rol = login.rol
   const requiresAuth = to.meta.requiresAuth
-  const allowedRoles = (to.meta.allowedRoles || []) as string[]
+
+  // ✅ Forzamos que allowedRoles sea string[]
+  const allowedRoles = (to.meta.allowedRoles as string[]) || []
 
   console.log('Guard: to=', to.path, 'rol=', rol, 'token=', token)
 
   if (!requiresAuth) return next()
-    
-  if (requiresAuth && !token) {
-    return next('/')
-  }
-
-  if (requiresAuth && allowedRoles.length && !allowedRoles.includes(rol)) {
-    return next('/')
-  }
-
+  if (!token) return next('/')
+  if (allowedRoles.length && !allowedRoles.includes(rol)) return next('/')
   next()
 })
 

@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
+import { URL_BASE } from '@/helpers/configUrl'
 
 interface Rol {
   idRol: number
@@ -16,7 +17,7 @@ export const useRolesStore = defineStore('roles', () => {
   const fetchRoles = async () => {
     loading.value = true
     try {
-      const response = await axios.get('https://glycopulse-back-production.up.railway.app/roles')
+      const response = await axios.get(`${URL_BASE}/roles`)
       roles.value = response.data
     } catch (err) {
       error.value = 'Error al cargar los roles.'

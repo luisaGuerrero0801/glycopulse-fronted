@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
+import { URL_BASE } from '@/helpers/configUrl'
 
 interface Usuario {
   idUsuario: number
@@ -24,7 +25,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
   const fetchUsuarios = async () => {
     loading.value = true
     try {
-      const response = await axios.get('https://glycopulse-back-production.up.railway.app/api/v1/usuarios')
+      const response = await axios.get(`${URL_BASE}/api/v1/usuarios`)
 
       // Transformamos estado: 'Activo' | 'Inactivo' a activo: boolean
       usuariosFiltrados.value = response.data.map((usuario: any) => ({
@@ -43,7 +44,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
     loading.value = true
     try {
       const response = await axios.get(
-        `https://glycopulse-back-production.up.railway.app/api/v1/usuarios/doctor/${idDoctor}/pacientes`
+        `${URL_BASE}/api/v1/usuarios/doctor/${idDoctor}/pacientes`
       )
       usuariosFiltrados.value = response.data.map((usuario: any) => ({
         ...usuario,
@@ -77,7 +78,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
 
       // **CAMBIO AQUÍ: de axios.put a axios.patch**
       const response = await axios.patch(
-        `https://glycopulse-back-production.up.railway.app/api/v1/usuarios/${usuarioEditado.idUsuario}`,
+        `${URL_BASE}/api/v1/usuarios/${usuarioEditado.idUsuario}`,
         datosActualizados
       )
 
@@ -104,7 +105,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
   const cambiarEstadoUsuario = async (idUsuario: number, nuevoEstado: boolean) => {
     try {
       const response = await axios.patch(
-        `https://glycopulse-back-production.up.railway.app/api/v1/usuarios/${idUsuario}/estado`,
+        `${URL_BASE}/api/v1/usuarios/${idUsuario}/estado`,
         { activo: nuevoEstado }
       )
 

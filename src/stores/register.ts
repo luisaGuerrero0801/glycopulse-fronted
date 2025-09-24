@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { URL_BASE } from '@/helpers/configUrl'
 
 export const useRegisterStore = defineStore('register', {
   actions: {
     async registerUser(userData: any) {
       try {
         // const response = await axios.post('http://localhost:3000/api/v1/usuarios/', userData, {
-        const response = await axios.post('https://glycopulse-back-production.up.railway.app/api/v1/usuarios/', userData, {
+        const response = await axios.post(`${URL_BASE}/api/v1/usuarios/`, userData, {
           headers: { 'Content-Type': 'application/json' }
         })
         return response.data

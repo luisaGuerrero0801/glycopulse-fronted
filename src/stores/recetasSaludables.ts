@@ -1,5 +1,6 @@
 import router from "@/router";
 import { defineStore } from "pinia";
+import { URL_BASE } from '../helpers/configUrl'
 
 export const useRecetasStore = defineStore('recetas', {
   state: () => ({
@@ -22,7 +23,7 @@ export const useRecetasStore = defineStore('recetas', {
 
         // console.log('Token que se enviará:', token); 
         
-        const response = await fetch('https://glycopulse-back-production.up.railway.app/api/v1/recetas', {
+        const response = await fetch(`${URL_BASE}/api/v1/recetas`, {
           headers: {
             'Authorization': `Bearer ${token}`, 
             'Content-Type': 'application/json'

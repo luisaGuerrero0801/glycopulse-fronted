@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
+import { URL_BASE } from '../helpers/configUrl'
 
 export const useUsuariosStore = defineStore('usuarios', {
   state: () => ({
@@ -40,7 +41,7 @@ export const useUsuariosStore = defineStore('usuarios', {
       this.loading = true
       this.error = null
       try {
-        const resp = await fetch('https://glycopulse-back-production.up.railway.app/api/v1/usuarios')
+        const resp = await fetch(`${URL_BASE}/api/v1/usuarios`)
         if (!resp.ok) {
           throw new Error('Error al obtener usuarios')
         }

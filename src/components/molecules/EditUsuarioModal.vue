@@ -142,6 +142,7 @@ import { watch, reactive } from "vue";
 import axios from "axios";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
+import { URL_BASE } from "@/helpers/configUrl";
 
 const props = defineProps<{
   visible: boolean;
@@ -188,7 +189,7 @@ function cancelar() {
 async function guardar() {
   try {
     const usuarioId = props.usuario.idUsuario;
-    const urlApi = `https://glycopulse-back-production.up.railway.app/api/v1/usuarios/${usuarioId}`;
+    const urlApi = `${URL_BASE}/api/v1/usuarios/${usuarioId}`;
     const token = localStorage.getItem("token");
 
     if (!usuarioId) {

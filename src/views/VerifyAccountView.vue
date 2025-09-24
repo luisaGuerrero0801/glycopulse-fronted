@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import { useRoute, useRouter } from 'vue-router'
-import { URL_BASE } from '@/helpers/configUrl'
+const { VITE_API_URL } = import.meta.env
 
 const route = useRoute()
 const router = useRouter()
@@ -18,7 +18,7 @@ onMounted(async () => {
   }
 
   try {
-    const response = await axios.get(`${URL_BASE}/auth/verify?token=${token}`)
+    const response = await axios.get(`${VITE_API_URL}/auth/verify?token=${token}`)
     mensaje.value = response.data.message || '✅ Cuenta verificada correctamente'
     exito.value = true
   } catch (error) {

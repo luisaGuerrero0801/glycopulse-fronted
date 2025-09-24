@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
-import { URL_BASE } from '@/helpers/configUrl'
+const { VITE_API_URL } = import.meta.env
 
 interface Usuario {
   idUsuario: number
@@ -25,7 +25,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
   const fetchUsuarios = async () => {
     loading.value = true
     try {
-      const response = await axios.get(`${URL_BASE}/api/v1/usuarios`)
+      const response = await axios.get(`${VITE_API_URL}usuarios`)
 
       // Transformamos estado: 'Activo' | 'Inactivo' a activo: boolean
       usuariosFiltrados.value = response.data.map((usuario: any) => ({
@@ -44,7 +44,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
     loading.value = true
     try {
       const response = await axios.get(
-        `${URL_BASE}/api/v1/usuarios/doctor/${idDoctor}/pacientes`
+        `${VITE_API_URL}usuarios/doctor/${idDoctor}/pacientes`
       )
       usuariosFiltrados.value = response.data.map((usuario: any) => ({
         ...usuario,
@@ -78,7 +78,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
 
       // **CAMBIO AQUÍ: de axios.put a axios.patch**
       const response = await axios.patch(
-        `${URL_BASE}/api/v1/usuarios/${usuarioEditado.idUsuario}`,
+        `${VITE_API_URL}usuarios/${usuarioEditado.idUsuario}`,
         datosActualizados
       )
 
@@ -105,7 +105,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
   const cambiarEstadoUsuario = async (idUsuario: number, nuevoEstado: boolean) => {
     try {
       const response = await axios.patch(
-        `${URL_BASE}/api/v1/usuarios/${idUsuario}/estado`,
+        `${VITE_API_URL}usuarios/${idUsuario}/estado`,
         { activo: nuevoEstado }
       )
 

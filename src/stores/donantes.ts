@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
-import { URL_BASE } from '../helpers/configUrl'
-
+const { VITE_API_URL } = import.meta.env
 export const useUsuariosStore = defineStore('usuarios', {
   state: () => ({
     usuarios: [] as any[],
@@ -41,7 +40,7 @@ export const useUsuariosStore = defineStore('usuarios', {
       this.loading = true
       this.error = null
       try {
-        const resp = await fetch(`${URL_BASE}/api/v1/usuarios`)
+        const resp = await fetch(`${VITE_API_URL}usuarios`)
         if (!resp.ok) {
           throw new Error('Error al obtener usuarios')
         }

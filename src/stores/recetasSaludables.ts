@@ -1,6 +1,6 @@
 import router from "@/router";
 import { defineStore } from "pinia";
-import { URL_BASE } from '../helpers/configUrl'
+const { VITE_API_URL } = import.meta.env
 
 export const useRecetasStore = defineStore('recetas', {
   state: () => ({
@@ -23,7 +23,7 @@ export const useRecetasStore = defineStore('recetas', {
 
         // console.log('Token que se enviará:', token); 
         
-        const response = await fetch(`${URL_BASE}/api/v1/recetas`, {
+        const response = await fetch(`${VITE_API_URL}/recetas`, {
           headers: {
             'Authorization': `Bearer ${token}`, 
             'Content-Type': 'application/json'

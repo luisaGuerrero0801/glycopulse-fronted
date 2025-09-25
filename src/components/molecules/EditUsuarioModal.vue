@@ -47,7 +47,6 @@
             </div>
 
             <div>
-              <!-- Celular -->
               <LabelForm nameForm="Celular" />
               <InputForm
                 namePlaceholder="Número de celular"
@@ -79,6 +78,7 @@
               <LabelForm nameForm="Tipo de Sangre (RH)" />
               <select
                 inputType="text"
+                :disabled=true
                 v-model="form.rhUsuario"
                 class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -94,9 +94,10 @@
             </div>
 
             <div>
-              <LabelForm nameForm="Tipo de Sangre (RH)" />
+              <LabelForm nameForm="Genero" />
               <select
                 inputType="text"
+               
                 v-model="form.generoUsuario"
                 class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -115,18 +116,43 @@
               />
             </div>
 
-            <div>
-              <LabelForm nameForm="Rol del Usuario" />
-              <select
-                inputType="text"
-                v-model="form.rolUsuario"
-                class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {{}}
-                <option value="1">Paciente</option>
-                <option value="2">Administrador</option>
-                <option value="3">Doctor</option>
-              </select>
+            <div v-if="form.idRol === 1">
+              <div>
+                <LabelForm nameForm="Rol del Usuario" />
+                <select
+                 :disabled=true
+                  v-model="form.rolUsuario"
+                  class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="1">Paciente</option>
+                </select>
+              </div>
+            </div>
+            <div v-if="form.idRol === 2" >
+              <div>
+                <LabelForm nameForm="Rol del Usuario" />
+                <select
+                  v-model="form.rolUsuario"
+                  class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="1">Paciente</option>
+                  <option value="2">Administrador</option>
+                  <option value="3">Doctor</option>
+                </select>
+              </div>
+            </div>
+
+            <div v-if="form.idRol === 3">
+              <div>
+                <LabelForm nameForm="Rol del Usuario" />
+                <select
+                 :disabled=true
+                  v-model="form.rolUsuario"
+                  class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="3">Doctor</option>
+                </select>
+              </div>
             </div>
 
             <div class="md:col-span-2">
@@ -171,6 +197,7 @@ import InputForm from '@/components/atoms/InputForm.vue'
 
 const { VITE_API_URL } = import.meta.env
 
+
 const props = defineProps<{
   visible: boolean
   usuario: any
@@ -212,28 +239,40 @@ const form = reactive({
   fechaNacimientoUsuario: '',
   generoUsuario: '',
   ciudadUsuario: '',
-  paisUsuario: '', // Asumo que `paisUsuario` también debería estar en el formulario.
+  paisUsuario: '',
   rolUsuario: '',
   region: '',
   celularUsuario: '',
-  idRol: ''
+  idRol: 0
 })
+const correoLogueado = computed(() => sessionStorage.getItem('email'))
 
 watch(
   () => props.usuario,
   (nuevoUsuario) => {
     if (nuevoUsuario) {
       console.log('Datos del usuario a editar recibidos:', nuevoUsuario)
-      form.nombresUsuario = nuevoUsuario.nombresUsuario
-      form.apellidosUsuario = nuevoUsuario.apellidosUsuario
-      form.correoUsuario = nuevoUsuario.correoUsuario
-      form.rhUsuario = nuevoUsuario.rhUsuario
-      form.fechaNacimientoUsuario = nuevoUsuario.fechaNacimientoUsuario
-      form.generoUsuario = nuevoUsuario.generoUsuario
-      form.ciudadUsuario = nuevoUsuario.ciudadUsuario
-      form.paisUsuario = nuevoUsuario.paisUsuario
-      form.celularUsuario = nuevoUsuario.celularUsuario
-      form.rolUsuario = nuevoUsuario.rol.idRol
+
+      form.nombresUsuario = nuevoUsuario.nombresUsuario || ''
+      form.apellidosUsuario = nuevoUsuario.apellidosUsuario || ''
+      form.correoUsuario = nuevoUsuario.correoUsuario || ''
+      form.rhUsuario = nuevoUsuario.rhUsuario || ''
+      form.generoUsuario = nuevoUsuario.generoUsuario || ''
+      form.ciudadUsuario = nuevoUsuario.ciudadUsuario || ''
+      form.paisUsuario = nuevoUsuario.paisUsuario || ''
+      form.celularUsuario = nuevoUsuario.celularUsuario || ''
+
+      form.idRol = Number(nuevoUsuario.rol?.idRol) || 0
+
+      if (nuevoUsuario.rol && typeof nuevoUsuario.rol.idRol === 'number') {
+        form.rolUsuario = String(nuevoUsuario.rol.idRol)
+      } else {
+        form.rolUsuario = ''
+      }
+
+      if (nuevoUsuario.fechaNacimientoUsuario) {
+        form.fechaNacimientoUsuario = nuevoUsuario.fechaNacimientoUsuario.split('T')[0]
+      }
     }
   },
   { immediate: true }
@@ -266,6 +305,7 @@ async function guardar() {
       paisUsuario: form.paisUsuario,
       idRol: Number(form.rolUsuario)
     }
+    console.log(datosActualizados)
 
     const response = await axios.patch(urlApi, datosActualizados, {
       headers: {
@@ -310,10 +350,10 @@ function showToast(message: string, color: string) {
 
 function permitirSoloNumeros(e: KeyboardEvent) {
   const char = String.fromCharCode(e.keyCode)
-  const regex = /[0-9]/ // solo permite dígitos
+  const regex = /[0-9]/
 
   if (!regex.test(char)) {
-    e.preventDefault() // bloquea letras
+    e.preventDefault()
   }
 }
 </script>

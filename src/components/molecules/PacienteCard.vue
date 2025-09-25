@@ -1,3 +1,4 @@
+<!-- PacientesCard.vue -->
 <template>
   <div
     class="bg-white shadow rounded-xl p-4 sm:p-5 md:p-6 flex flex-col sm:flex-row items-center justify-between w-full transition hover:bg-gray-50"
@@ -50,20 +51,32 @@
 
       <!-- Opciones -->
       <div class="flex justify-center sm:justify-end">
-        <select
-          class="border rounded-md px-2 py-1 text-sm text-gray-600"
-        >
-          <option disabled selected>Selecciona</option>
-          <option>Reportes</option>
-          <option>Glucometrias</option>
-          <option>Recetas</option>
-        </select>
+<select
+  class="border rounded-md px-2 py-1 text-sm text-gray-600"
+  @change="irAOpcion($event, paciente.id)"
+>
+  <option disabled selected>Selecciona</option>
+  <option value="reportes">Reportes</option>
+  <option value="glucometrias">Glucometrias</option>
+  <option value="recetas">Recetas</option>
+</select>
+
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const irAOpcion = (event: Event, pacienteId: number) => {
+  const opcion = (event.target as HTMLSelectElement).value
+
+  if (opcion === 'recetas') {
+    router.push({ name: 'DoctorRecetasHome', params: { id: pacienteId } })
+  }
+}
 defineProps<{
   paciente: {
     id: number

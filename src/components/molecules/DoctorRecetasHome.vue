@@ -1,12 +1,17 @@
+<!-- DoctorRecetasHome.vue -->
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router' // 👈 aquí faltaba
 import iconoUsuario from '@/assets/iconoC.png'
 
 const showMenu = ref(false)
 const search = ref('')
 const router = useRouter()
+const route = useRoute() // ahora sí disponible
+const pacienteId = route.params.id // id que viene de la ruta
+
 const emit = defineEmits(['crear-receta'])
+
 const toggleMenu = () => {
   showMenu.value = !showMenu.value
 }

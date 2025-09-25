@@ -13,7 +13,7 @@ interface Receta {
   idReceta?: number
   nombre: string
   descripcion: string
-  dificultad: string
+  nivel: string
   porciones: number
   calorias: number
   tiempo: string
@@ -33,7 +33,12 @@ export const useRecetasStore = defineStore('recetas', {
     async fetchRecetas() {
       this.cargando = true
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}recetas`)
+        const token = sessionStorage.getItem('token')
+        const res = await fetch(`${import.meta.env.VITE_API_URL}recetas`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
         if (!res.ok) throw new Error('Error al cargar recetas')
         this.recetas = await res.json()
       } catch (err: any) {
@@ -42,18 +47,25 @@ export const useRecetasStore = defineStore('recetas', {
         this.cargando = false
       }
     },
-
     /**
      * crearReceta: recibe el objeto del front y opcionalmente el File de imagen
      * Mapea ingredientes y pasos y hace POST al backend en formato JSON.
      */
     async crearReceta(receta: Omit<Receta, 'idReceta'>, imagen?: File) {
       try {
-        // obtener idUsuario desde sessionStorage si existe (recomendado)
+        // obtener idUsuario desde sessionStorage si existe
         const storedId = sessionStorage.getItem('idUsuario')
         const idUsuario = storedId ? Number(storedId) : 0
         if (!idUsuario) {
-          console.warn('crearReceta: idUsuario no encontrado en sessionStorage, usando 1 como fallback')
+          console.warn(
+            'crearReceta: idUsuario no encontrado en sessionStorage, usando 1 como fallback'
+          )
+        }
+
+        // obtener token de sesión
+        const token = sessionStorage.getItem('token')
+        if (!token) {
+          throw new Error('Token no encontrado en sessionStorage')
         }
 
         const body = {
@@ -62,23 +74,24 @@ export const useRecetasStore = defineStore('recetas', {
           porcionesReceta: Number(receta.porciones),
           caloriasReceta: Number(receta.calorias),
           tiempoReceta: receta.tiempo,
-          imagenReceta: imagen ? imagen.name : 'no-image', // por ahora mandamos el nombre para pasar la validación
-          nivelReceta: receta.dificultad,
-          categoriaReceta: 'General',
+          imagenReceta: receta.imagen || 'no-image', // por ahora solo nombre
+          nivelReceta: receta.nivel,
+          categoriaReceta: 'Favoritos',
           ingredientes: mapIngredientesFrontToBack(receta.ingredientes),
           pasos: mapPasosFrontToBack(receta.pasosPreparacion),
           idUsuario: idUsuario || 1
         }
- // 👇 Aquí mostramos el JSON que realmente viaja al backend
-    console.log("Payload que se envía a backend:", body)
 
-        
+        console.log('Payload que se envía a backend:', body)
 
         const res = await fetch(`${import.meta.env.VITE_API_URL}recetas`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(body)
-})
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}` // 👈 token en header
+          },
+          body: JSON.stringify(body)
+        })
 
         if (!res.ok) {
           const text = await res.text().catch(() => null)

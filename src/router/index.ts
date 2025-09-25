@@ -158,7 +158,7 @@ const router = createRouter({
     //   meta: { requiresAuth: true, role: 'doctor' }
     // },
     {
-      path: '/doctor/recetas',
+      path: '/doctor/:id/recetas',
       name: 'DoctorRecetasHome',
       component: () => import('@/views/DoctorRecetasHomeView.vue'),
       meta: { requiresAuth: false, role: 'doctor' }

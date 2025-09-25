@@ -1,3 +1,4 @@
+<!-- DoctorRecetasCard.vue -->
 <template>
   <div class="flex flex-col items-center p-6 bg-gray-50 min-h-screen overflow-y-auto">
     <div class="w-full max-w-4xl bg-white shadow-lg rounded-2xl p-6">
@@ -330,7 +331,8 @@ const guardarReceta = async () => {
       imagenReceta: form.imagenUrl   // 👈 aquí va la URL
 
     }
-console.log(guardarReceta)
+console.log("Payload que se enviará:", recetaPayload)
+
 
     await recetasStore.crearReceta(recetaPayload)
     alert('Receta guardada con éxito 🎉')

@@ -126,6 +126,7 @@
           namePlaceholder="Número de celular"
           inputType="tel"
           v-model="form.celularUsuario"
+          @keypress="permitirSoloNumeros"
           @blur="validarFormulario"
         />
 
@@ -290,10 +291,14 @@ const registrarUsuario = async () => {
     await registerStore.registerUser(usuario)
 
     notificaciones.agregar(
-      `Nuevo ${usuario.idRol === 2 ? 'Administrador' : 'Doctor'} registrado: ${usuario.nombresUsuario} ${usuario.apellidosUsuario}`
+      `Nuevo ${usuario.idRol === 2 ? 'Administrador' : 'Doctor'} registrado: ${
+        usuario.nombresUsuario
+      } ${usuario.apellidosUsuario}`
     )
 
-    successMessage.value = `¡${usuario.idRol === 2 ? 'Administrador' : 'Doctor'} registrado con éxito!`
+    successMessage.value = `¡${
+      usuario.idRol === 2 ? 'Administrador' : 'Doctor'
+    } registrado con éxito!`
 
     // Emitimos evento para avisar al padre que se registró correctamente
     emit('registro-exitoso')
@@ -304,6 +309,15 @@ const registrarUsuario = async () => {
     toast.error(error.response?.data?.message || 'Error al registrar usuario')
   } finally {
     isLoading.value = false
+  }
+}
+
+function permitirSoloNumeros(e: KeyboardEvent) {
+  const char = String.fromCharCode(e.keyCode)
+  const regex = /[0-9]/ // solo permite dígitos
+
+  if (!regex.test(char)) {
+    e.preventDefault() // bloquea letras
   }
 }
 </script>

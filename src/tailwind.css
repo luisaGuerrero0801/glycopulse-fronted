@@ -21,3 +21,15 @@
     --colorNegro: black;
  
 }
+
+/* Elimina los spinners en Chrome, Safari, Edge */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Elimina los spinners en Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}

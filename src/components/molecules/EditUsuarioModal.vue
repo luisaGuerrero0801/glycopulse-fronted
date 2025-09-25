@@ -60,7 +60,6 @@
               <LabelForm nameForm="Ciudad" />
               <select
                 v-model="form.ciudadUsuario"
-                type="text"
                 class="border border-gray-300 rounded-2xl w-full p-2 mt-0.5 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Seleccione ciudad</option>
@@ -77,8 +76,7 @@
             <div>
               <LabelForm nameForm="Tipo de Sangre (RH)" />
               <select
-                inputType="text"
-                :disabled=true
+                :disabled="true"
                 v-model="form.rhUsuario"
                 class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -96,8 +94,6 @@
             <div>
               <LabelForm nameForm="Genero" />
               <select
-                inputType="text"
-               
                 v-model="form.generoUsuario"
                 class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
@@ -120,7 +116,7 @@
               <div>
                 <LabelForm nameForm="Rol del Usuario" />
                 <select
-                 :disabled=true
+                  :disabled="true"
                   v-model="form.rolUsuario"
                   class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -128,7 +124,8 @@
                 </select>
               </div>
             </div>
-            <div v-if="form.idRol === 2" >
+
+            <div v-if="form.idRol === 2">
               <div>
                 <LabelForm nameForm="Rol del Usuario" />
                 <select
@@ -146,7 +143,7 @@
               <div>
                 <LabelForm nameForm="Rol del Usuario" />
                 <select
-                 :disabled=true
+                  :disabled="true"
                   v-model="form.rolUsuario"
                   class="border border-gray-300 rounded-2xl w-full p-2 mt-1 bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -185,6 +182,7 @@
     </div>
   </div>
 </template>
+
 
 <script lang="ts" setup>
 import { watch, reactive, computed } from 'vue'
@@ -341,11 +339,12 @@ function showToast(message: string, color: string) {
     duration: 3000,
     gravity: 'top',
     position: 'right',
-    backgroundColor: color,
+    style: {
+      background: color,  
+    },
     close: true
   }).showToast()
 }
-
 function permitirSoloNumeros(e: KeyboardEvent) {
   const char = String.fromCharCode(e.keyCode)
   const regex = /[0-9]/

@@ -54,7 +54,6 @@ export const usePacientesDoctorStore = defineStore('pacientesDoctor', {
         }
 
         const data = await res.json()
-        console.log('👉 Datos recibidos de la API:', data)
 
         // 🔄 Mapear backend → interfaz Paciente
         this.pacientes = data.map((p: any) => ({

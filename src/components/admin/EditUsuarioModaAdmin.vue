@@ -25,7 +25,9 @@
 
       <form @submit.prevent="guardar" class="p-8 space-y-8 overflow-y-auto max-h-[85vh]">
         <div class="border-b border-gray-300 pb-6">
-          <h3 class="text-2xl font-semibold text-center text-gray-900 mb-6">Información Personal</h3>
+          <h3 class="text-2xl font-semibold text-center text-gray-900 mb-6">
+            Información Personal
+          </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <LabelForm nameForm="Nombre" />
@@ -78,7 +80,7 @@
             <div>
               <LabelForm nameForm="Tipo de Sangre (RH)" />
               <select
-                :disabled="true"
+                
                 v-model="form.rhUsuario"
                 class="border border-gray-300 rounded-3xl w-full p-3 mt-1 bg-gray-100 text-gray-500 cursor-not-allowed"
               >
@@ -115,18 +117,7 @@
               />
             </div>
 
-            <div v-if="form.idRol === 1">
-              <LabelForm nameForm="Rol del Usuario" />
-              <select
-                :disabled="true"
-                v-model="form.rolUsuario"
-                class="border border-gray-300 rounded-3xl w-full p-3 mt-1 bg-gray-100 text-gray-500 cursor-not-allowed"
-              >
-                <option value="1">Paciente</option>
-              </select>
-            </div>
-
-            <div v-if="form.idRol === 2">
+            <div>
               <LabelForm nameForm="Rol del Usuario" />
               <select
                 v-model="form.rolUsuario"
@@ -134,17 +125,6 @@
               >
                 <option value="1">Paciente</option>
                 <option value="2">Administrador</option>
-                <option value="3">Doctor</option>
-              </select>
-            </div>
-
-            <div v-if="form.idRol === 3">
-              <LabelForm nameForm="Rol del Usuario" />
-              <select
-                :disabled="true"
-                v-model="form.rolUsuario"
-                class="border border-gray-300 rounded-3xl w-full p-3 mt-1 bg-gray-100 text-gray-500 cursor-not-allowed"
-              >
                 <option value="3">Doctor</option>
               </select>
             </div>
@@ -294,7 +274,10 @@ async function guardar() {
       return
     }
 
-    if (form.nuevaContrasenaUsuario.trim() !== '' && form.nuevaContrasenaUsuario.trim().length < 8) {
+    if (
+      form.nuevaContrasenaUsuario.trim() !== '' &&
+      form.nuevaContrasenaUsuario.trim().length < 8
+    ) {
       showToast('La contraseña debe tener al menos 8 caracteres.', '#ff9800')
       return
     }

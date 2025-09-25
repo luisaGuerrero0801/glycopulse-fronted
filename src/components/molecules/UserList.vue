@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUsuariosStore } from '@/stores/usuarios'
-import EditUsuarioModal from '../molecules/EditUsuarioModal.vue'
+import EditUsuarioModalAdmin from '../admin/EditUsuarioModaAdmin.vue'
 import ConfirmationModal from '../molecules/ConfirmationModal.vue'
 import FormDoctorAdmin from '../molecules/FormDoctorAdmin.vue'
 import Rol from '@/components/molecules/Rol.vue'
@@ -214,7 +214,7 @@ const handleRegistroExitoso = async () => {
       </div>
 
       <!-- Modales -->
-      <EditUsuarioModal :visible="modales.editar" :usuario="usuarioSeleccionado" @close="modales.editar=false" @save="guardarCambios" />
+      <EditUsuarioModalAdmin :visible="modales.editar" :usuario="usuarioSeleccionado" @close="modales.editar=false" @save="guardarCambios" />
       <ConfirmationModal :visible="modales.confirmar" :message="`¿Estás seguro de que quieres ${usuarioAToggle?.activo ? 'inactivar' : 'reactivar'} a ${usuarioAToggle?.nombresUsuario}?`" @confirm="onConfirm" @cancel="modales.confirmar=false" />
 
       <div v-if="modales.registro" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

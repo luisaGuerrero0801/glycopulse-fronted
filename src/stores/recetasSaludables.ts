@@ -21,7 +21,6 @@ export const useRecetasStore = defineStore('recetas', {
           throw new Error('No hay token de autenticación');
         }
 
-        // console.log('Token que se enviará:', token); 
         
         const response = await fetch(`${VITE_API_URL}/recetas`, {
           headers: {

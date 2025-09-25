@@ -69,8 +69,7 @@ export const useRecetasStore = defineStore('recetas', {
           pasos: mapPasosFrontToBack(receta.pasosPreparacion),
           idUsuario: idUsuario || 1
         }
- // 👇 Aquí mostramos el JSON que realmente viaja al backend
-    console.log("Payload que se envía a backend:", body)
+
 
         
 

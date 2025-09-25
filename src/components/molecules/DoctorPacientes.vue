@@ -28,7 +28,6 @@ const { fetchPacientesDoctor } = pacientesStore
 const selectedOption = ref('')
 
 const consultar = () => {
-  console.log("🔍 Ruta seleccionada:", selectedOption.value)
   if (selectedOption.value) {
     router.push({ path: selectedOption.value }) // ✅ ahora sí redirige
   } else {

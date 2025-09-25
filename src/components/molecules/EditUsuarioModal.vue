@@ -251,7 +251,6 @@ watch(
   () => props.usuario,
   (nuevoUsuario) => {
     if (nuevoUsuario) {
-      console.log('Datos del usuario a editar recibidos:', nuevoUsuario)
 
       form.nombresUsuario = nuevoUsuario.nombresUsuario || ''
       form.apellidosUsuario = nuevoUsuario.apellidosUsuario || ''
@@ -305,7 +304,6 @@ async function guardar() {
       paisUsuario: form.paisUsuario,
       idRol: Number(form.rolUsuario)
     }
-    console.log(datosActualizados)
 
     const response = await axios.patch(urlApi, datosActualizados, {
       headers: {

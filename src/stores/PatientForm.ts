@@ -24,7 +24,6 @@ export const usePatientStore = defineStore('patientStore', {
         ...data
       }
       this.patients.push(newPatient)
-      console.log('Paciente añadido:', newPatient)
       this.saveToLocalStorage()
     },
     saveToLocalStorage() {

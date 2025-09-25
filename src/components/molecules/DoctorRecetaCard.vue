@@ -291,7 +291,6 @@ onMounted(async () => {
     }
 
     pacientes.value = await usuariosStore.fetchPacientesByDoctor(idDoctor)
-    console.log('✅ Pacientes cargados:', pacientes.value)
   } catch (error) {
     console.error('Error cargando pacientes:', error)
   }
@@ -330,7 +329,6 @@ const guardarReceta = async () => {
       imagenReceta: form.imagenUrl   // 👈 aquí va la URL
 
     }
-console.log(guardarReceta)
 
     await recetasStore.crearReceta(recetaPayload)
     alert('Receta guardada con éxito 🎉')

@@ -80,7 +80,7 @@
             <div>
               <LabelForm nameForm="Tipo de Sangre (RH)" />
               <select
-                :disabled="true"
+                
                 v-model="form.rhUsuario"
                 class="border border-gray-300 rounded-3xl w-full p-3 mt-1 bg-gray-100 text-gray-500 cursor-not-allowed"
               >

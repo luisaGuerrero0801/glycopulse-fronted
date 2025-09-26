@@ -1,39 +1,69 @@
-import axios from '@/providers/axiosInstance';
-import type { Glucometria } from '@/types/glucometria';
+import instance from '@/providers/axiosInstance';
+import type { 
+  Glucometria, 
+  CrearGlucometriaDto, 
+  ActualizarGlucometriaDto 
+} from '@/types/glucometria';
 
-const BASE_URL = import.meta.env.VITE_API_URL +"glucometrias";
+const BASE_URL = 'glucometrias';
 
-const todasGlucometrias = (): Promise<{ data: Glucometria[] }> => {
-
-    return axios.get(BASE_URL);
+/**
+ * Crear una nueva glucometría (Paciente autenticado).
+ */
+const crearGlucometria = (data: CrearGlucometriaDto) => {
+  return instance.post<Glucometria>(BASE_URL, data);
 };
 
-const crearGlucometria = (data: {
-    fechaGlucometria: string;
-    horaGlucometria: string;
-    nivelGlucometria: number;
-  }): Promise<{ data: Glucometria }> => {
-    return axios.post(BASE_URL, data);
-  };
+/**
+ * Buscar glucometría por ID.
+ */
+const obtenerGlucometriaPorId = (id: number) => {
+  return instance.get<Glucometria>(`${BASE_URL}/${id}`);
+};
 
-  const obtenerGlucometriaPorId = (id: number): Promise<{ data: Glucometria }> => {
-    return axios.get(`${BASE_URL}/${id}`)
+/**
+ * Obtener la última glucometría registrada de un usuario.
+ * Retorna solo { fecha, hora }.
+ */
+const obtenerUltimaPorUsuario = (userId: number) => {
+  return instance.get<{ fecha: string; hora: string }>(`${BASE_URL}/last/${userId}`);
+};
+
+/**
+ * Listar todas las glucometrías de un usuario, con filtros opcionales.
+ */
+const todasGlucometrias = (
+  userId: number,
+  filters?: {
+    fechaGlucometria?: string;
+    horaGlucometria?: string;
+    rangoGlucometria?: string;
+    orderFecha?: 'ASC' | 'DESC';
+    orderFechaHora?: 'ASC' | 'DESC';
+    orderNivel?: 'ASC' | 'DESC';
   }
-  
-  const actualizarGlucometria = (
-    id: number,
-    data: {
-      fechaGlucometria: string;
-      horaGlucometria: string;
-      nivelGlucometria: number;
-    }
-  ): Promise<{ data: Glucometria }> => {
-    return axios.patch(`${BASE_URL}/${id}`, data)
-  }
+) => {
+  return instance.get<Glucometria[]>(`${BASE_URL}/user/${userId}`, {
+    params: filters,
+  });
+};
+
+/**
+ * Actualizar glucometría (Paciente autenticado).
+ */
+const actualizarGlucometria = (idGlucometria: number, data: ActualizarGlucometriaDto) => {
+  return instance.patch<Glucometria>(`${BASE_URL}/${idGlucometria}`, data);
+};
+
+const obtenerRangos = () => {
+  return instance.get<string[]>(`${BASE_URL}/rangos/nombres`);
+}
 
 export default {
-    todasGlucometrias,
-    crearGlucometria,
-    obtenerGlucometriaPorId,
-    actualizarGlucometria
-}
+  todasGlucometrias, 
+  crearGlucometria, 
+  obtenerGlucometriaPorId, 
+  obtenerUltimaPorUsuario,
+  actualizarGlucometria,
+  obtenerRangos
+};

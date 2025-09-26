@@ -188,7 +188,28 @@ const router = createRouter({
       name: 'Asignar',
       component: () => import('../views/UsuarioDoctorAsignarView.vue'),
       meta: { requiresAuth: true }
-    }
+    },
+
+
+
+    // terminos y condiciones 
+
+    {
+    path: '/condiciones',
+    name: 'Condiciones',
+    component: () => import('../views/policies/CondicionesView.vue'),
+  },
+  {
+    path: '/privacidad',
+    name: 'PoliticaPrivacidad',
+    component: () => import('../views/policies/PoliticaPrivacidadView.vue'),
+  },
+  {
+    path: '/terminos',
+    name: 'TerminosCondiciones',
+    component: () => import('../views/policies/TerminosCondicionesView.vue'),
+  
+  },
   ]
 })
 

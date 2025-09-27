@@ -1,5 +1,9 @@
 <template>
   <div class="min-h-screen bg-gray-100 p-4 overflow-x-hidden" id="capture">
+    <header class="flex flex-col items-center py-10">
+      <h1 class="text-7xl font-bold text-center">Estadísticas Generales</h1>
+      <p class="text-gray-600 mt-3 text-center text-2xl">Visualiza el estado general de la plataforma en tiempo real.</p>
+    </header>
     <div class="fixed top-4 right-4 z-50">
       <button
         @click="captureScreen"
@@ -28,6 +32,10 @@
           <div class="bg-purple-500 text-white rounded-lg p-4">
             <p class="text-sm">Activos</p>
             <p class="text-2xl font-bold">{{ totalActivos }}</p>
+          </div>
+          <div class="bg-blue-500 text-white rounded-lg p-4">
+            <p class="text-sm">Administradores</p>
+            <p class="text-2xl font-bold">{{ totalAdministradores }}</p>
           </div>
         </div>
       </div>
@@ -64,8 +72,7 @@
               <Pie :data="pieChartData" :options="pieChartOptions"/>
             </div>
           </div>
-
-          </div>
+        </div>
 
         <div v-if="isMobile" class="flex items-center justify-center gap-4 mt-4">
           <button @click="prevPage" :disabled="currentPage===1" class="px-3 py-1 rounded border disabled:opacity-50">Anterior</button>
@@ -86,22 +93,7 @@ import { useUsuariosStore } from '@/stores/donantes';
 import { storeToRefs } from 'pinia';
 import { Bar, Pie, Line } from 'vue-chartjs';
 import html2canvas from 'html2canvas';
-
-// Se comentan las importaciones de las librerías del mapa
-// import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
-// import L from 'leaflet';
-// import 'leaflet/dist/leaflet.css';
-// import 'leaflet.heat'; 
-
-// Se comenta la configuración de los íconos de Leaflet
-/*
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-});
-*/
+import { useGraficosAdminStore } from '@/stores/graficosAdmin';
 
 // Chart.js
 import {
@@ -123,52 +115,15 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tool
 const usuariosStore = useUsuariosStore();
 const { usuariosFiltrados } = storeToRefs(usuariosStore);
 
-// Se comentan las variables y referencias del mapa
-/*
-const map = ref(null);
-const heatLayer = ref<L.HeatLayer | null>(null);
-const mapCenter = ref([4.6097, -74.0817]);
-const mapZoom = ref(6);
-*/
-
-// Se comenta la propiedad computada que filtra los pacientes con coordenadas
-/*
-const pacientesConCoordenadas = computed(() =>
-  usuariosFiltrados.value.filter(u => u.rol?.nombreRol === 'Paciente' && u.latitud && u.longitud)
-);
-*/
-
-// Se comenta la función que actualiza el mapa de calor
-/*
-function updateHeatmap() {
-  if (!map.value) return;
-
-  if (heatLayer.value) {
-    (map.value as any).leafletObject.removeLayer(heatLayer.value);
-  }
-
-  const heatData = pacientesConCoordenadas.value.map(p => [p.latitud, p.longitud, 1]);
-
-  console.log('Datos del mapa de calor:', heatData);
-
-  if (heatData.length > 0) {
-    heatLayer.value = (L as any).heatLayer(heatData, {
-      radius: 25,
-      gradient: { '0.4': 'blue', '0.6': 'cyan', '0.7': 'lime', '0.8': 'yellow', '1.0': 'red' }
-    });
-    (map.value as any).leafletObject.addLayer(heatLayer.value);
-  }
-}
-*/
-
-// Se comenta el 'watch' que dependía de las coordenadas para actualizar el mapa
-// watch(pacientesConCoordenadas, updateHeatmap, { deep: true, immediate: true });
 
 // Estadísticas
 const totalUsuarios = computed(() => usuariosFiltrados.value.length);
 const totalPacientes = computed(() => usuariosFiltrados.value.filter(u=>u.rol?.nombreRol === 'Paciente').length);
 const totalDoctores = computed(() => usuariosFiltrados.value.filter(u=>u.rol?.nombreRol === 'Doctor').length);
 const totalActivos = computed(() => usuariosFiltrados.value.filter(u=>u.estado === 'Activo').length);
+const totalAdministradores = computed(() => 
+  usuariosFiltrados.value.filter(u => ['Admin', 'Administrador'].includes(u.rol?.nombreRol)).length
+);
 
 // Gráfico de barras
 const barChartData = computed(() => {
@@ -274,22 +229,6 @@ function prevPage(){ if(currentPage.value>1) currentPage.value--; }
 function setPage(n:number){ if(n>=1 && n<=totalPages) currentPage.value=n; }
 watch(isMobile, mobile => { if(!mobile) currentPage.value=1; });
 window.addEventListener('resize', ()=>windowWidth.value=window.innerWidth);
-
-// Se comenta la función que hace zoom en el mapa al hacer clic en la gráfica de barras
-/*
-function handleBarClick(evt:any){
-  if(!evt[0]) return;
-  const doctorIndex = evt[0].index;
-  const doctores = usuariosFiltrados.value.filter(u=>u.rol?.nombreRol === 'Doctor');
-  const doctorId = doctores[doctorIndex]?.idUsuario;
-  if(!doctorId) return;
-  const pacientesDoctor = pacientesConCoordenadas.value.filter(p=>p.idUsuarioResponsable === doctorId);
-  if(pacientesDoctor.length){
-    const bounds = L.latLngBounds(pacientesDoctor.map(p=>[p.latitud,p.longitud] as any));
-    (map.value as any).leafletObject.fitBounds(bounds);
-  }
-}
-*/
 
 // Fetch usuarios al montar
 onMounted(() => { usuariosStore.fetchUsuarios(); });

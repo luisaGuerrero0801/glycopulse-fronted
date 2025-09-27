@@ -1,12 +1,14 @@
-import axios from '@/providers/axiosInstance'
-import type { ConteoRolRh } from '@/types/usuarios'
+import axios from "@/providers/axiosInstance";
 
-const BASE_URL = import.meta.env.VITE_API_URL + 'usuarios'
-
-const ConteoPorRol = (): Promise<{ data: ConteoRolRh[] }> => {
-  return axios.get(`${BASE_URL}/conteo-rol-rh`)
+export interface ConteoRolRh {
+  rol: string;
+  rh: string;
+  cantidad: number;
 }
 
-export default {
-  ConteoPorRol
-}
+const BASE_URL = import.meta.env.VITE_API_URL + "usuarios";
+
+export const getConteoPorRolRh = async (): Promise<ConteoRolRh[]> => {
+  const res = await axios.get(`${BASE_URL}/conteo-rol-rh`);
+  return res.data;
+};

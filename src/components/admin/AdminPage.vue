@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import LogoApp from '../atoms/LogoApp.vue';
 import { RouterLink } from 'vue-router';
+import DropdownMenu from '../atoms/DropdownMenu.vue';
 import {
   ref,
   onMounted,
@@ -86,6 +87,8 @@ const filteredLinks = computed(() => {
       ☰
     </button>
 
+    
+
     <!-- Sidebar -->
     <section
       role="navigation"
@@ -140,6 +143,10 @@ const filteredLinks = computed(() => {
         </ul>
       </div>
     </section>
+
+    <div class="w-16 h-10 justify-center">
+          <DropdownMenu/>
+        </div>
 
     <!-- Fondo oscuro para cerrar en móvil -->
     <div

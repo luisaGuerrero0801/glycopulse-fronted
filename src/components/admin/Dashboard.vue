@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen bg-gray-100 p-4 overflow-x-hidden" id="capture">
-    <!-- Botón descargar -->
     <div class="fixed top-4 right-4 z-50">
       <button
         @click="captureScreen"
@@ -10,9 +9,7 @@
       </button>
     </div>
 
-    <!-- Contenedor grid principal -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-w-full mx-auto">
-      <!-- Tarjetas estadísticas -->
       <div class="bg-white shadow-md rounded-xl p-4 w-full">
         <h2 class="text-lg font-bold mb-2">Estadísticas</h2>
         <div class="grid grid-cols-2 gap-4">
@@ -35,7 +32,6 @@
         </div>
       </div>
 
-      <!-- Gráfico de barras: Pacientes por Doctor -->
       <div class="bg-white shadow-md rounded-xl p-4 w-full overflow-hidden">
         <h2 class="text-lg font-bold mb-2">Pacientes por Doctor</h2>
         <div class="w-full h-[250px] md:h-[300px] max-w-full">
@@ -43,10 +39,25 @@
         </div>
       </div>
 
-      <!-- Contenedor combinado: Pacientes por género + Mapa -->
+      <div class="bg-white shadow-md rounded-xl p-4 w-full overflow-hidden">
+        <h2 class="text-lg font-bold mb-2">Pacientes sin Doctor</h2>
+        <div class="relative w-full h-[250px] md:h-[300px] flex items-center justify-center">
+          <Pie :data="sinDoctorChartData" :options="sinDoctorChartOptions" />
+          <div class="absolute text-3xl font-bold text-gray-700">
+            {{ totalSinDoctor }}
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white shadow-md rounded-xl p-4 w-full overflow-hidden">
+        <h2 class="text-lg font-bold mb-2">Evolución de Usuarios</h2>
+        <div class="w-full h-[250px] md:h-[300px] max-w-full">
+          <Line :data="lineChartData" :options="lineChartOptions" />
+        </div>
+      </div>
+
       <div class="col-span-1 md:col-span-2 xl:col-span-2">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Pie: Pacientes por género -->
           <div v-if="!isMobile || currentPage === 1" class="bg-white shadow-md rounded-xl p-4 w-full overflow-hidden">
             <h2 class="text-lg font-bold mb-2">Pacientes por Género</h2>
             <div class="w-full h-[250px] md:h-[300px] max-w-full">
@@ -54,21 +65,8 @@
             </div>
           </div>
 
-          <!-- Mapa -->
-          <div v-if="!isMobile || currentPage === 2" class="bg-white shadow-md rounded-xl p-4 w-full overflow-hidden">
-            <h2 class="text-lg font-bold mb-2">Mapa de Pacientes</h2>
-            <div class="w-full h-[250px] md:h-[300px] rounded-lg overflow-hidden">
-              <LMap ref="map" :zoom="mapZoom" :center="mapCenter" style="height: 100%">
-                <LTileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution="&copy; OpenStreetMap contributors"
-                />
-              </LMap>
-            </div>
           </div>
-        </div>
 
-        <!-- Paginación móvil -->
         <div v-if="isMobile" class="flex items-center justify-center gap-4 mt-4">
           <button @click="prevPage" :disabled="currentPage===1" class="px-3 py-1 rounded border disabled:opacity-50">Anterior</button>
           <div class="flex items-center gap-2">
@@ -83,92 +81,103 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useUsuariosStore } from '@/stores/donantes';
 import { storeToRefs } from 'pinia';
-import { Bar, Pie } from 'vue-chartjs';
+import { Bar, Pie, Line } from 'vue-chartjs';
 import html2canvas from 'html2canvas';
-import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import 'leaflet.markercluster';
-import 'leaflet.markercluster/dist/MarkerCluster.css';
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
-// Configurar Leaflet iconos
+// Se comentan las importaciones de las librerías del mapa
+// import { LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
+// import L from 'leaflet';
+// import 'leaflet/dist/leaflet.css';
+// import 'leaflet.heat'; 
+
+// Se comenta la configuración de los íconos de Leaflet
+/*
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
   iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
+*/
 
 // Chart.js
 import {
   Chart as ChartJS,
   Title,
   Tooltip,
-  Legend,
   ArcElement,
   BarElement,
   CategoryScale,
-  LinearScale
+  LinearScale,
+  PointElement,
+  LineElement,
+  Legend
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend, ChartDataLabels);
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend, ChartDataLabels, PointElement, LineElement);
 
 // Store de usuarios
 const usuariosStore = useUsuariosStore();
 const { usuariosFiltrados } = storeToRefs(usuariosStore);
 
-// Map
+// Se comentan las variables y referencias del mapa
+/*
 const map = ref(null);
-const markerClusterLayer: any = ref(null);
+const heatLayer = ref<L.HeatLayer | null>(null);
 const mapCenter = ref([4.6097, -74.0817]);
 const mapZoom = ref(6);
+*/
 
-// Pacientes con coordenadas
+// Se comenta la propiedad computada que filtra los pacientes con coordenadas
+/*
 const pacientesConCoordenadas = computed(() =>
-  usuariosFiltrados.value.filter(u => u.rol.nombreRol==='Paciente' && u.latitud && u.longitud)
+  usuariosFiltrados.value.filter(u => u.rol?.nombreRol === 'Paciente' && u.latitud && u.longitud)
 );
+*/
 
-// Función para actualizar marcadores
-function updateMarkers() {
-  if (!map.value || !pacientesConCoordenadas.value) return;
-  if (!markerClusterLayer.value) markerClusterLayer.value = (L as any).markerClusterGroup();
-  markerClusterLayer.value.clearLayers();
-  pacientesConCoordenadas.value.forEach(p => {
-    const marker = L.marker([p.latitud, p.longitud]);
-    marker.bindPopup(`
-      <div>
-        <h3>${p.nombre}</h3>
-        <p>ID: ${p.id}</p>
-        <p>Edad: ${p.edad || 'N/A'}</p>
-        <p>Doctor: ${p.usuarioResponsable || 'Sin asignar'}</p>
-        <p>Estado: ${p.estado || 'N/A'}</p>
-      </div>
-    `);
-    markerClusterLayer.value.addLayer(marker);
-  });
-  (map.value as any).leafletObject.addLayer(markerClusterLayer.value);
+// Se comenta la función que actualiza el mapa de calor
+/*
+function updateHeatmap() {
+  if (!map.value) return;
+
+  if (heatLayer.value) {
+    (map.value as any).leafletObject.removeLayer(heatLayer.value);
+  }
+
+  const heatData = pacientesConCoordenadas.value.map(p => [p.latitud, p.longitud, 1]);
+
+  console.log('Datos del mapa de calor:', heatData);
+
+  if (heatData.length > 0) {
+    heatLayer.value = (L as any).heatLayer(heatData, {
+      radius: 25,
+      gradient: { '0.4': 'blue', '0.6': 'cyan', '0.7': 'lime', '0.8': 'yellow', '1.0': 'red' }
+    });
+    (map.value as any).leafletObject.addLayer(heatLayer.value);
+  }
 }
+*/
 
-watch(pacientesConCoordenadas, () => updateMarkers());
+// Se comenta el 'watch' que dependía de las coordenadas para actualizar el mapa
+// watch(pacientesConCoordenadas, updateHeatmap, { deep: true, immediate: true });
 
 // Estadísticas
 const totalUsuarios = computed(() => usuariosFiltrados.value.length);
-const totalPacientes = computed(() => usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Paciente').length);
-const totalDoctores = computed(() => usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Doctor').length);
-const totalActivos = computed(() => usuariosFiltrados.value.filter(u=>u.estado==='Activo').length);
+const totalPacientes = computed(() => usuariosFiltrados.value.filter(u=>u.rol?.nombreRol === 'Paciente').length);
+const totalDoctores = computed(() => usuariosFiltrados.value.filter(u=>u.rol?.nombreRol === 'Doctor').length);
+const totalActivos = computed(() => usuariosFiltrados.value.filter(u=>u.estado === 'Activo').length);
 
-// Gráficos
+// Gráfico de barras
 const barChartData = computed(() => {
-  const doctores = usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Doctor');
+  const doctores = usuariosFiltrados.value.filter(u=>u.rol?.nombreRol === 'Doctor');
   return {
-    labels: doctores.map(d=>d.nombre),
+    labels: doctores.map(d=>`${d.nombresUsuario} ${d.apellidosUsuario}`),
     datasets:[{
       label:'Pacientes',
-      data: doctores.map(d => usuariosFiltrados.value.filter(p => p.usuarioResponsable===d.id).length),
+      data: doctores.map(d => usuariosFiltrados.value.filter(p => p.idUsuarioResponsable === d.idUsuario).length),
       backgroundColor: 'rgba(54,162,235,0.7)'
     }]
   };
@@ -176,19 +185,70 @@ const barChartData = computed(() => {
 const barChartOptions = {
   responsive:true,
   maintainAspectRatio:false,
-  plugins:{ legend:{display:false}, datalabels:{anchor:'end', align:'top'}}
+  plugins:{ legend:{display:false}, datalabels:{anchor:'end', align:'top'} }
 };
 
+// Gráfico de pacientes por género
 const pieChartData = computed(() => {
-  const hombres = usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Paciente' && u.generoUsuario==='Hombre').length;
-  const mujeres = usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Paciente' && u.generoUsuario==='Femenino').length;
-  const otros = usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Paciente' && !['Hombre','Mujer'].includes(u.genero)).length;
+  const pacientes = usuariosFiltrados.value.filter(u => u.rol?.nombreRol === 'Paciente');
+  const hombres = pacientes.filter(u => u.generoUsuario === 'Hombre').length;
+  const mujeres = pacientes.filter(u => u.generoUsuario === 'Mujer').length;
+  const otros = pacientes.filter(u => !['Hombre', 'Mujer'].includes(u.generoUsuario)).length;
   return {
     labels:['Hombres','Mujeres','Otros'],
     datasets:[{data:[hombres,mujeres,otros], backgroundColor:['#36A2EB','#FF6384','#FFCE56']}]
   };
 });
-const pieChartOptions = { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}}};
+const pieChartOptions = { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}} };
+
+// Pacientes sin doctor
+const totalSinDoctor = computed(() =>
+  usuariosFiltrados.value.filter(u => u.rol?.nombreRol === 'Paciente' && !u.idUsuarioResponsable).length
+);
+const totalConDoctor = computed(() =>
+  usuariosFiltrados.value.filter(u => u.rol?.nombreRol === 'Paciente' && u.idUsuarioResponsable).length
+);
+const sinDoctorChartData = computed(() => ({
+  labels: ['Sin Doctor', 'Con Doctor'],
+  datasets: [{
+    data: [totalSinDoctor.value, totalConDoctor.value],
+    backgroundColor: ['#FF6384', '#36A2EB']
+  }]
+}));
+const sinDoctorChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { position: 'bottom' } }
+};
+
+// Evolución de usuarios (por mes)
+const lineChartData = computed(() => {
+  const counts: Record<string, number> = {};
+  usuariosFiltrados.value.forEach(u => {
+    // Usar una propiedad que exista en tus datos para la fecha de registro.
+    const fecha = new Date(u.fechaNacimientoUsuario);
+    const mes = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+    counts[mes] = (counts[mes] || 0) + 1;
+  });
+  const labels = Object.keys(counts).sort();
+  return {
+    labels,
+    datasets: [{
+      label: 'Usuarios registrados',
+      data: labels.map(l => counts[l]),
+      borderColor: 'rgba(75,192,192,1)',
+      backgroundColor: 'rgba(75,192,192,0.2)',
+      fill: true,
+      tension: 0.3
+    }]
+  };
+});
+const lineChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { position: 'bottom' } },
+  scales: { y: { beginAtZero: true } }
+};
 
 // Captura de pantalla
 function captureScreen(){
@@ -215,19 +275,21 @@ function setPage(n:number){ if(n>=1 && n<=totalPages) currentPage.value=n; }
 watch(isMobile, mobile => { if(!mobile) currentPage.value=1; });
 window.addEventListener('resize', ()=>windowWidth.value=window.innerWidth);
 
-// Zoom al doctor desde gráfica
+// Se comenta la función que hace zoom en el mapa al hacer clic en la gráfica de barras
+/*
 function handleBarClick(evt:any){
   if(!evt[0]) return;
   const doctorIndex = evt[0].index;
-  const doctores = usuariosFiltrados.value.filter(u=>u.rol.nombreRol==='Doctor');
-  const doctorId = doctores[doctorIndex]?.id;
+  const doctores = usuariosFiltrados.value.filter(u=>u.rol?.nombreRol === 'Doctor');
+  const doctorId = doctores[doctorIndex]?.idUsuario;
   if(!doctorId) return;
-  const pacientesDoctor = pacientesConCoordenadas.value.filter(p=>p.usuarioResponsable===doctorId);
+  const pacientesDoctor = pacientesConCoordenadas.value.filter(p=>p.idUsuarioResponsable === doctorId);
   if(pacientesDoctor.length){
     const bounds = L.latLngBounds(pacientesDoctor.map(p=>[p.latitud,p.longitud] as any));
     (map.value as any).leafletObject.fitBounds(bounds);
   }
 }
+*/
 
 // Fetch usuarios al montar
 onMounted(() => { usuariosStore.fetchUsuarios(); });

@@ -172,6 +172,26 @@ const {
             </select>
           </div>
 
+          <div class="mt-5">
+            <p class="text-sm text-gray-700">
+              Es posible que las personas que usan GlycoPulse hayan subido tu información de
+              contacto a nuestra plataforma.
+              <a href="#" class="text-blue-500 hover:underline">Más información</a>.
+              <br />
+              <span class="text-gray-700">
+                Al hacer clic en "Registrarte", aceptas nuestras
+                <a href="/condiciones" class="text-blue-500 hover:underline">Condiciones</a>,
+                <a href="/privacidad" class="text-blue-500 hover:underline"
+                  >Política de privacidad</a
+                >
+                y
+                <a href="/terminos" class="text-blue-500 hover:underline">Términos y Condiciones</a
+                >. Es posible que te enviemos notificaciones por E-MAIL, que podrás desactivar en
+                cualquier momento.
+              </span>
+            </p>
+          </div>
+
           <!-- Botón de registro -->
           <div class="pt-4">
             <ButtonLogin

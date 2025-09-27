@@ -158,7 +158,7 @@ const router = createRouter({
     //   meta: { requiresAuth: true, role: 'doctor' }
     // },
     {
-      path: '/doctor/recetas',
+      path: '/doctor/:id/recetas',
       name: 'DoctorRecetasHome',
       component: () => import('@/views/DoctorRecetasHomeView.vue'),
       meta: { requiresAuth: false, role: 'doctor' }
@@ -166,7 +166,7 @@ const router = createRouter({
 
     // 🔹 Vista de creación de receta (Card)
     {
-      path: '/doctor/recetas/crear',
+      path: '/doctor/recetas/:id/crear',
       name: 'DoctorRecetaCard',
       component: () => import('@/views/DoctorRecetaCardView.vue'),
       meta: { requiresAuth: false, role: 'doctor' }
@@ -188,7 +188,28 @@ const router = createRouter({
       name: 'Asignar',
       component: () => import('../views/UsuarioDoctorAsignarView.vue'),
       meta: { requiresAuth: true }
-    }
+    },
+
+
+
+    // terminos y condiciones 
+
+    {
+    path: '/condiciones',
+    name: 'Condiciones',
+    component: () => import('../views/policies/CondicionesView.vue'),
+  },
+  {
+    path: '/privacidad',
+    name: 'PoliticaPrivacidad',
+    component: () => import('../views/policies/PoliticaPrivacidadView.vue'),
+  },
+  {
+    path: '/terminos',
+    name: 'TerminosCondiciones',
+    component: () => import('../views/policies/TerminosCondicionesView.vue'),
+  
+  },
   ]
 })
 

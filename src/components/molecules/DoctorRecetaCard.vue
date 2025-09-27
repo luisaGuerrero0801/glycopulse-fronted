@@ -1,3 +1,4 @@
+<!-- DoctorRecetasCard.vue -->
 <template>
   <div class="flex flex-col items-center p-6 bg-gray-50 min-h-screen overflow-y-auto">
     <div class="w-full max-w-4xl bg-white shadow-lg rounded-2xl p-6">
@@ -64,20 +65,6 @@
                 ></textarea>
               </div>
             </div>
-          </div>
-          <div>
-            <label for="paciente" class="block text-sm font-medium text-gray-700">Paciente *</label>
-            <select
-              v-model="form.idUsuario"
-              id="paciente"
-              required
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            >
-              <option value="" disabled>Seleccionar paciente...</option>
-              <option v-for="p in pacientes" :key="p.idUsuario" :value="p.idUsuario">
-                {{ p.nombresUsuario }} {{ p.apellidosUsuario }}
-              </option>
-            </select>
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
@@ -262,15 +249,18 @@ import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRecetasStore } from '@/stores/crearRecetasDoctor'
 import { useUsuariosStore } from '@/stores/usuarios'
+import { useRoute } from 'vue-router'
 
 const router = useRouter()
 const recetasStore = useRecetasStore()
 const usuariosStore = useUsuariosStore()
 const currentStep = ref(1)
+const route = useRoute()
 
 const pacientes = ref<any[]>([]) // 👈 lista de pacientes cargados
 
 const form = reactive({
+  idUsuario: Number(route.params.id), // ✅ id del paciente ya cargado
   nombre: '',
   descripcion: '',
   nivel: '',
@@ -278,7 +268,11 @@ const form = reactive({
   calorias: 1,
   tiempo: '',
   imagenUrl: '',   // 👈 ahora usamos URL en vez de archivo
-  idUsuario: 0
+})
+
+onMounted(() => {
+  // pacienteId viene desde la URL
+  form.idUsuario = Number(route.params.id)
 })
 
 
@@ -329,10 +323,9 @@ const guardarReceta = async () => {
       imagenReceta: form.imagenUrl   // 👈 aquí va la URL
 
     }
-
     await recetasStore.crearReceta(recetaPayload)
     alert('Receta guardada con éxito 🎉')
-    router.push({ name: 'DoctorRecetasHome' })
+   router.push({ name: 'DoctorRecetasHome', params: { id: form.idUsuario } })
     resetForm()
   } catch (err) {
     console.error('guardarReceta error:', err)
@@ -348,13 +341,12 @@ const resetForm = () => {
   form.calorias = 1
   form.tiempo = ''
   form.imagenUrl = ''   // 👈 limpia la URL
-  form.idUsuario = 0
   ingredientes.splice(0, ingredientes.length, { nombre: '', cantidad: null, unidad: '' })
   pasosPreparacion.splice(0, pasosPreparacion.length, '')
 }
 
 const irARecetas = () => {
-  router.push({ name: 'DoctorRecetasHome' })
+  router.push({ name: 'DoctorRecetasHome', params: { id: form.idUsuario } })
 }
 </script>
 

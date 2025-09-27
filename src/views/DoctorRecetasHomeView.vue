@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import DoctorLayout from '@/components/molecules/DoctorLayout.vue'
 import DoctorRecetasHome from '@/components/molecules/DoctorRecetasHome.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 
-const irACrearReceta = () => {
-  router.push({ name: 'DoctorRecetaCard' })
+// 👇 aquí obtenemos el id del paciente desde la URL
+const pacienteId = Number(route.params.id)
+
+const crearReceta = () => {
+  router.push({ name: 'DoctorRecetaCard', params: { id: pacienteId } })
 }
 </script>
 
@@ -14,7 +18,7 @@ const irACrearReceta = () => {
   <div class="w-full flex">
     <DoctorLayout />
     <div class="w-full flex flex-col relative bg-gray-50 p-6">
-      <DoctorRecetasHome @crear-receta="irACrearReceta" />
+      <DoctorRecetasHome @crear-receta="crearReceta" />
     </div>
   </div>
 </template>

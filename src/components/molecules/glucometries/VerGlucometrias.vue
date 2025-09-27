@@ -44,7 +44,7 @@ const sortedGlucometrias = computed(() => {
 // Usa el composable pasándole la lista de glucometrías   esto es para paginado tambien
 const { currentPage, itemsPerPage, paginatedItems, totalPages, goToPage } = usePagination(
   computed(() => sortedGlucometrias.value),
-  5
+  4
 )
 
 const isModalVisible = ref(false)
@@ -233,7 +233,7 @@ const handleSubmit = async () => {
               class="text-left px-4 py-0 hover:bg-gray-200 transition-colors duration-150 rounded flex items-center gap-1 min-w-0"
               @click="sortBy('fechaGlucometria')"
             >
-              <span class="truncate text-indigo-950">FECHA</span>
+              <span class="truncate text-indigo-950 text-lg">FECHA</span>
               <span
                 v-if="sortKey === 'fechaGlucometria'"
                 class="text-indigo-950 flex-shrink-0 text-xl font-semibold"
@@ -247,7 +247,7 @@ const handleSubmit = async () => {
               class="text-left px-4 py-0 hover:bg-gray-200 transition-colors duration-150 rounded flex items-center gap-1 min-w-0"
               @click="sortBy('hora')"
             >
-              <span class="truncate text-indigo-950">HORA</span>
+              <span class="truncate text-indigo-950 text-lg">HORA</span>
               <span
                 v-if="sortKey === 'hora'"
                 class="text-indigo-950 flex-shrink-0 text-xl font-semibold"
@@ -261,7 +261,7 @@ const handleSubmit = async () => {
               class="text-left px1 py-0 hover:bg-gray-200 transition-colors duration-150 rounded flex items-center gap-1 min-w-0"
               @click="sortBy('nivelGlucometria')"
             >
-              <span class="truncate text-indigo-950">GLUCOMETRÍA</span>
+              <span class="truncate text-indigo-950 text-lg">GLUCOMETRÍA</span>
               <span
                 v-if="sortKey === 'nivelGlucometria'"
                 class="text-indigo-950 flex-shrink-0 text-xl font-semibold"
@@ -272,12 +272,12 @@ const handleSubmit = async () => {
 
             <!-- RECOMENDACIÓN - mismo ancho que w-1/3 en la tabla -->
             <div class="text-left px-1 py-0">
-              <span class="truncate text-indigo-950">RECOMENDACIÓN</span>
+              <span class="truncate text-lg text-indigo-950">RECOMENDACIÓN</span>
             </div>
 
             <!-- ACCIONES - mismo ancho que la columna de botones (px-16) -->
             <div class="text-center px-16 py-0">
-              <span class="truncate text-indigo-950">ACCIONES</span>
+              <span class="truncate text-lg text-indigo-950">ACCIONES</span>
             </div>
           </div>
         </div>
@@ -310,10 +310,10 @@ const handleSubmit = async () => {
         :prev-text="'Anterior'"
         :next-text="'Siguiente'"
         :container-class="'flex space-x-2'"
-        :page-class="'px-4 py-2 border rounded cursor-pointer text-sm text-[var(--colorBlanco)] font-bold hover:bg-[var(--colorSecundarioButton)] transition'"
+        :page-class="'px-4 py-2 border rounded cursor-pointer text-lg  text-gray-300 font-bold hover:bg-[var(--colorSecundarioButton)] transition'"
         :active-class="'bg-[var(--colorPrimarioButton)] text-[var(--colorBlanco)] font-semibold'"
-        :prev-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
-        :next-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+        :prev-class="'px-4 py-2 border rounded cursor-pointer text-lg text-gray-700 hover:bg-gray-200 transition'"
+        :next-class="'px-4 py-2 border rounded cursor-pointer text-lg text-gray-700 hover:bg-gray-200 transition'"
       />
     </div>
 

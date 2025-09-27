@@ -18,7 +18,7 @@ const activeTab = ref<TabType>('Recomendaciones')
 <template>
   <div class="w-full px-2">
     <!-- Tabs -->
-    <div class="border-b mb-4">
+    <div class="border-b mb-4 ml-2 mr-2">
       <nav class="flex gap-6">
         <button
           v-for="tab in tabs"
@@ -37,88 +37,187 @@ const activeTab = ref<TabType>('Recomendaciones')
     </div>
 
     <!-- Contenido -->
-    <div v-if="glucometria">
+<div v-if="glucometria">
       <!-- Tab 1 -->
       <div v-if="activeTab === 'Recomendaciones'" class="space-y-3">
-        <div v-if="activeTab === 'Recomendaciones'" class="space-y-4">
+        <div class="space-y-4">
           <!-- Card con información resumida -->
-          <div class="flex justify-between mx-6 px-8 py-6 bg-white rounded-lg shadow">
+          <div
+            class="flex flex-col md:flex-row bg-white border border-gray-200 rounded-2xl shadow mx-4 md:mx-6 py-6"
+          >
             <!-- Glucometría -->
-            <div class="flex flex-col items-center">
+            <div class="flex flex-col items-center w-full md:w-1/4 md:border-r md:border-gray-300 px-4 py-4 md:py-0">
               <span class="text-indigo-950 text-xl font-semibold">Glucometría</span>
-              <span class="text-gray-500 text-2xl font-medium">{{ glucometria.nivelGlucometria }} mg/dL</span>
-            </div>
-
-            <!-- Estado -->
-            <div class="flex flex-col items-center border-l border-gray-300 pl-8">
-              <span class="text-indigo-950 text-xl font-semibold">Estado</span>
-              <span class="text-gray-500 text-xl font-medium" >
-                {{ glucometria.estado?.nombreEstado }}
-              </span>
+              <span class="text-gray-500 text-2xl font-medium"
+                >{{ glucometria.nivelGlucometria }} mg/dL</span
+              >
             </div>
 
             <!-- Rango -->
-            <div class="flex flex-col items-center border-l border-gray-300 pl-6">
+            <div class="flex flex-col items-center w-full md:w-1/2 md:border-r md:border-gray-300 px-4 py-4 md:py-0">
               <span class="text-indigo-950 text-xl font-semibold">Rango</span>
-              <span class="flex items-center  gap-2 text-gray-500 text-xl font-medium">
+              <span class="flex items-center gap-2 text-gray-600 text-xl font-medium">
                 {{ glucometria.rango?.nombreRango }}
                 <span
-                  class="w-7 h-7 rounded-full"
+                  class="w-20 h-7 rounded-full"
                   :style="{ backgroundColor: glucometria.rango?.color || '#ccc' }"
                 ></span>
               </span>
             </div>
+
+            <!-- Estado -->
+            <div class="flex flex-col items-center w-full md:w-1/3 px-4 py-4 md:py-0">
+              <span class="text-indigo-950 text-xl font-semibold">Estado</span>
+              <span class="text-gray-600 text-xl font-medium text-center">
+                {{ glucometria.estado?.nombreEstado }}
+              </span>
+            </div>
           </div>
-          <p><strong>ID:</strong> {{ glucometria.idGlucometria }}</p>
-          <p><strong>Fecha:</strong> {{ glucometria.fechaGlucometria }}</p>
-          <p><strong>Hora:</strong> {{ glucometria.horaGlucometria }}</p>
-          <p><strong>Nivel:</strong> {{ glucometria.nivelGlucometria }} mg/dL</p>
-          <p><strong>Momento:</strong> {{ glucometria.momento }}</p>
-          <p>
-            <strong>Estado:</strong>
-            <span
-              :class="[
-                glucometria.estado?.nombreEstado === 'Normal'
-                  ? 'text-green-600 font-semibold'
-                  : glucometria.estado?.nombreEstado === 'Alto'
-                  ? 'text-red-600 font-semibold'
-                  : 'text-yellow-600 font-semibold'
-              ]"
+
+          <div class="bg-white mx-2 px-4 pb-0 pt-0 w-full max-w-4xl">
+            <!-- Título -->
+            <div class="flex items-center mb-0">
+              <h2 class="text-2xl font-bold text-gray-800 mr-4 mb-4">Recomendaciones</h2>
+              <div class="flex-1 border-t border-gray-300"></div>
+            </div>
+
+            <!-- Intro -->
+            <div
+              v-if="
+                glucometria.recomendaciones?.find(
+                  (r) => r.tipoRecomendacion.toLowerCase() === 'general'
+                )
+              "
             >
-              {{ glucometria.estado?.nombreEstado }}
-            </span>
-          </p>
-          <p><strong>Rango:</strong> {{ glucometria.rango?.nombreRango }}</p>
-        </div>
+              <p class="text-gray-600 text-xl font-normal px-0 py-0">
+                {{
+                  glucometria.recomendaciones.find(
+                    (r) => r.tipoRecomendacion.toLowerCase() === 'general'
+                  )?.descripcionRecomendacion
+                }}
+              </p>
+            </div>
 
-        <!-- Tab 2 -->
-        <div v-else-if="activeTab === 'Usuario'" class="space-y-3">
-          <p>
-            <strong>Nombre:</strong> {{ glucometria.usuario?.nombres }}
-            {{ glucometria.usuario?.apellidos }}
-          </p>
-          <p><strong>Correo:</strong> {{ glucometria.usuario?.correo }}</p>
-          <p><strong>Rol:</strong> {{ glucometria.usuario?.rol?.nombreRol }}</p>
-        </div>
+            <!-- Bloques de recomendaciones -->
+            <div class="space-y-4 mb-8">
+              <!-- Alimentación -->
+              <div
+                v-if="
+                  glucometria.recomendaciones?.find(
+                    (r) => r.tipoRecomendacion.toLowerCase() === 'alimentaria'
+                  )
+                "
+              >
+                <p class="text-xl font-semibold text-gray-800 mt-4">Alimentación:</p>
+                <ul class="list-disc pl-6 mt-2 text-gray-600 text-xl font-normal marker:text-base">
+                  <li>
+                    {{
+                      glucometria.recomendaciones.find(
+                        (r) => r.tipoRecomendacion.toLowerCase() === 'alimentaria'
+                      )?.descripcionRecomendacion
+                    }}
+                  </li>
+                </ul>
+              </div>
 
-        <!-- Tab 3 -->
-        <div v-else-if="activeTab === 'Acudir al Médico'" class="space-y-2">
-          <ul v-if="glucometria.recomendaciones?.length" class="list-disc list-inside">
-            <li v-for="rec in glucometria.recomendaciones" :key="rec.idRecomendacion">
-              {{ rec.descripcionRecomendacion }}
-            </li>
-          </ul>
-          <p v-else class="text-gray-500">No hay recomendaciones disponibles.</p>
+              <!-- Actividad Física -->
+              <div
+                v-if="
+                  glucometria.recomendaciones?.find(
+                    (r) => r.tipoRecomendacion.toLowerCase() === 'actividad física'
+                  )
+                "
+              >
+                <p class="text-xl font-semibold text-gray-800 mt-4">Actividad Física:</p>
+                <ul class="list-disc pl-6 mt-2 text-gray-600 text-xl font-normal marker:text-base">
+                  <li>
+                    {{
+                      glucometria.recomendaciones.find(
+                        (r) => r.tipoRecomendacion.toLowerCase() === 'actividad física'
+                      )?.descripcionRecomendacion
+                    }}
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Hidratación -->
+              <div
+                v-if="
+                  glucometria.recomendaciones?.find(
+                    (r) => r.tipoRecomendacion.toLowerCase() === 'hidratación'
+                  )
+                "
+              >
+                <p class="text-xl font-bold text-gray-800 mt-4">Hidratación:</p>
+                <ul class="list-disc pl-6 mt-2 text-gray-600 text-xl font-normal marker:text-base">
+                  <li>
+                    {{
+                      glucometria.recomendaciones.find(
+                        (r) => r.tipoRecomendacion.toLowerCase() === 'hidratación'
+                      )?.descripcionRecomendacion
+                    }}
+                  </li>
+                </ul>
+              </div>
+              <!-- Control Continuo -->
+              <div
+                v-if="
+                  glucometria.recomendaciones?.find(
+                    (r) => r.tipoRecomendacion.toLowerCase() === 'control continuo'
+                  )
+                "
+              >
+                <p class="text-xl font-bold text-gray-800 mt-4">Control Continuo:</p>
+                <ul class="list-disc pl-6 mt-2 text-gray-600 text-xl font-normal marker:text-base">
+                  <li>
+                    {{
+                      glucometria.recomendaciones.find(
+                        (r) => r.tipoRecomendacion.toLowerCase() === 'control continuo'
+                      )?.descripcionRecomendacion
+                    }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div v-else class="text-center text-gray-600">Cargando detalles...</div>
+      <!-- Tab 2 -->
+      <div v-else-if="activeTab === 'Acudir al Médico'" class="space-y-2 ml-5">
+        <div class="flex items-center mb-0 ">
+          <h2 class="text-2xl font-semibold text-gray-800 mr-4 mb-4">Cuándo Acudir al Médico</h2>
+          <div class="flex-1 border-t border-gray-300"></div>
+        </div>
+        <div>
+          <p class="text-xl font-bold text-gray-800 mt-2">Síntomas de descontrol de glucosa alta (hiperglucemia):</p>
+          <ul class="list-disc pl-6 mt-0 text-gray-600 text-xl font-normal marker:text-base">
+            <li>Sed excesiva (polidipsia), visión borrosa y/o mareo.</li>
+            <li>Aumento en la frecuencia de orina (poliuria).</li>
+            <li>Cansancio extremo, debilidad y/o dolor de cabeza persistente.</li>
+            <li>Heridas que tardan mucho en sanar.</li>
+            <li>Pérdida de peso inesperada.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="text-xl font-bold text-gray-800 mt-6">Señales de alerta que requieren atención inmediata:</p>
+          <ul class="list-disc pl-6 mt-0 text-gray-600 text-xl font-normal marker:text-base">
+            <li>Dolor en el pecho o dificultad para respirar: Puede indicar problemas cardiovasculares.</li>
+            <li>Náuseas, vómitos o dolor abdominal severo: Posible cetoacidosis diabética (más común en diabetes tipo 1).</li>
+            <li>Infecciones frecuentes o graves: Como infecciones en los pies, piel, tracto urinario o encías</li>
+            <li>Hinchazón en piernas o pies: Puede ser señal de problemas renales.</li>
+            <li>Entumecimiento o sensación de hormigueo en manos o pies: Indica posible neuropatía diabética.</li>
+            <li>Somnolencia extrema o confusión: Podría ser una hiperglucemia grave o hipoglucemia severa.</li>
+          </ul>
+        </div>
+      </div>
 
-      <!-- Footer -->
-      <div class="mt-6 flex justify-end">
+      <div v-else class="text-center text-2xl text-gray-800 font-light">Cargando detalles...</div>
+      <!-- Botón Cerrar -->
+      <div class="flex justify-end mt-6 mb-4 mr-2">
         <button
-          @click="handleClose"
-          class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          @click="emit('close')"
+          class="px-6 py-2 bg-indigo-900 text-white text-2xl font-medium rounded-lg shadow hover:bg-indigo-700 transition"
         >
           Cerrar
         </button>

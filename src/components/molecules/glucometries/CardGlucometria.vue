@@ -28,22 +28,22 @@ const editarRegistro = () => {
       <div class="w-full text-left text-base">
         <div class="grid items-center" style="grid-template-columns: 0.9fr 0.8fr 0.8fr 2fr 1fr;">
           <!-- FECHA - mismo ancho que el header -->
-          <div class="px-4 py-3 text-gray-800">
+          <div class="px-4 py-3 text-gray-800 text-lg">
             {{ fecha }}
           </div>
           
           <!-- HORA - mismo ancho que el header -->
-          <div class="px-4 py-3 text-gray-800">
+          <div class="px-4 py-3 text-gray-800 text-lg">
             {{ hora }}
           </div>
           
           <!-- GLUCOMETRÍA - mismo ancho que el header -->
-          <div class="px-4 py-3 font-semibold text-gray-700">
+          <div class="px-4 py-3 font-semibold text-gray-700 text-lg">
             {{ glucosa }}
           </div>
           
           <!-- RECOMENDACIÓN - mismo ancho que el header -->
-          <div class="pl-0 py-3 text-gray-600 break-words" :title="comentario">
+          <div class="pl-0 py-3 text-gray-600 break-words text-lg" :title="comentario">
             {{ comentario }}
           </div>
           
@@ -51,13 +51,13 @@ const editarRegistro = () => {
           <div class="px-16 py-3">
             <div class="flex justify-end gap-3 flex-wrap">
               <button
-                class="flex-shrink-0 bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition"
+                class="flex-shrink-0 bg-gray-300 text-lg text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition"
                 @click="verDetalle"
               >
                 Ver
               </button>
               <button
-                class="flex-shrink-0 bg-blue-900 text-stone-50 px-4 py-2 rounded-md hover:bg-gray-500 transition"
+                class="flex-shrink-0 bg-blue-900 text-lg text-stone-50 px-4 py-2 rounded-md hover:bg-gray-500 transition"
                 @click="editarRegistro"
               >
                 Editar

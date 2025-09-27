@@ -22,7 +22,7 @@ const cargarRangos = async () => {
     value: r,
     label: r.charAt(0).toUpperCase() + r.slice(1) // capitaliza la primera letra
   }))
-  rangos.value.unshift({ value: 'no', label: 'Normal' }) // opción por defecto
+  rangos.value.unshift({ value: 'no', label: 'Todas' }) // opción por defecto
 }
 
 // Función para aplicar filtros

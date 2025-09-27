@@ -4,8 +4,8 @@ import FiltroRh from '@/components/molecules/FiltroRh.vue'
 
 <template>
   <section class="px-12 py-4">
-    <div class="flex justify-between items-center mb-4">
-      <h1 class="text-3xl font-semibold">Donantes</h1>
+    <div class="flex justify-between items-center w-full px-4">
+      <h1 class="text-4xl font-semibold text-indigo-950 truncate">Donantes</h1>
     </div>
 
     <div class="flex justify-center mb-6">

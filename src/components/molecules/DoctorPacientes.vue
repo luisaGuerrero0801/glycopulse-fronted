@@ -6,6 +6,8 @@ import PacientesLista from '@/components/molecules/PacientesLista.vue'
 import DoctorLayout from '@/components/molecules/DoctorLayout.vue'
 import { useRouter } from 'vue-router'
 import iconoUsuario from '@/assets/iconoC.png'
+import UserHeader from './UserHeader.vue'
+import HeaderApp from './HeaderApp.vue'
 
 const showMenu = ref(false)
 const router = useRouter()
@@ -42,40 +44,7 @@ onMounted(() => {
 
 <template>
   <DoctorLayout>
-    <!-- Barra superior derecha -->
-    <div class="flex justify-between items-center mb-2">
-      <div></div>
-      <div class="flex items-center gap-4">
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Buscar paciente..."
-          class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 "
-        />
-        <div class="relative" @click="toggleMenu">
-          <img
-            :src="iconoUsuario"
-            alt="Usuario"
-            class="w-10 h-10 rounded-lg object-cover cursor-pointer border border-gray-300"
-          />
-          <div
-            v-if="showMenu"
-            class="absolute right-0 mt-2 w-40 bg-white border rounded shadow z-50"
-          >
-            <button
-              @click="cerrarSesion"
-              class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-            >
-              Cerrar sesión
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mb-6">
-      <h1 class="text-4xl font-bold text-[#374473] mb-2">Pacientes</h1>
-    </div>
+    <HeaderApp pagename="doctor/pacientes" />
 
     <!-- Filtros -->
     <div class="bg-white p-4 rounded shadow mb-6">

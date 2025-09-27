@@ -7,6 +7,7 @@ import ConfirmationModal from '../molecules/ConfirmationModal.vue'
 import FormDoctorAdmin from '../molecules/FormDoctorAdmin.vue'
 import Rol from '@/components/molecules/Rol.vue'
 import Paginate from 'vuejs-paginate-next'  // <-- Importa el paginate
+import { LockClosedIcon, LockOpenIcon } from '@heroicons/vue/24/solid'
 
 interface Usuario {
   idUsuario: number
@@ -179,11 +180,13 @@ const handleRegistroExitoso = async () => {
               <td class="px-6 py-4 text-gray-700">{{ usuario.correoUsuario }}</td>
               <td class="px-6 py-4"><span class="px-3 py-1 inline-flex text-sm font-bold rounded-full bg-red-100 text-red-800">{{ usuario.rhUsuario }}</span></td>
               <td class="px-6 py-4"><span class="px-3 py-1 inline-flex text-sm font-bold rounded-full bg-blue-100 text-blue-800">{{ usuario.rol.nombreRol }}</span></td>
-              <td class="px-6 py-4">
-                <span :class="usuario.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="px-3 py-1 inline-flex text-sm font-bold rounded-full">
-                  {{ usuario.activo ? 'Activo' : 'Inhabilitado' }}
-                </span>
-              </td>
+                 <td class="px-6 py-4">
+               <span :class="usuario.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="px-3 py-1 inline-flex text-sm font-bold rounded-full flex items-center gap-2">
+                 <LockOpenIcon v-if="usuario.activo" class="h-4 w-4" />
+                 <LockClosedIcon v-else class="h-4 w-4" />
+                 {{ usuario.activo ? '' : '' }}
+               </span>
+             </td>
               <td class="px-6 py-4 text-right flex gap-3 justify-end">
                 <button @click="editarUsuario(usuario)" class="text-blue-600 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 px-4 py-2 rounded-md font-medium transition-colors">Editar</button>
                 <button 

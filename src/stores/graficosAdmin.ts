@@ -1,124 +1,117 @@
 // src/stores/graficosAdmin.ts
-import { defineStore } from 'pinia'
-import graficosAdmin from '@/providers/graficosProvider'
-import { toast } from 'vue3-toastify'
-import type { ConteoRolRh } from '@/types/usuarios'
+import { defineStore } from 'pinia';
+import { useUsuariosStore } from './usuarios';
+import { computed, ref } from 'vue';
 
-export const useGraficosAdminStore = defineStore('graficosAdmin', {
-  state: () => ({
-    conteoRolRh: [] as ConteoRolRh[],
+export const useGraficosAdminStore = defineStore('graficosAdmin', () => {
+  const usuariosStore = useUsuariosStore();
+  const loading = ref(false);
 
-    // KPIs
-    totalUsuarios: 0 as number,
-    totalAdmins: 0 as number,
-    totalDoctores: 0 as number,
-    totalPacientes: 0 as number,
-    promedioPacientesPorDoctor: 0 as number,      // numérico
-    porcentajeConDoctor: 0 as string | number,    // string por toFixed()
-    pacientesSinDoctor: 0 as number,
+  // Usa la propiedad 'usuarios' directamente del store de usuarios
+  const usuarios = computed(() => usuariosStore.usuarios);
 
-    // Charts (lo más simple: any)
-    chartUsuariosPorRol: null as any,
-    chartDoctoresVsPacientes: null as any,
-    chartPacientesPorDoctor: null as any,
-    chartTopDoctores: null as any,
-    chartEvolucionRegistros: null as any,
-    chartActividadUsuarios: null as any,
-    chartPacientesPorUbicacion: null as any,
+  // 1. Lógica para los KPIs (Estadísticas)
+  const totalUsuarios = computed(() => usuarios.value.length);
+  const totalPacientes = computed(() => usuarios.value.filter(u => u.rol?.nombreRol === 'Paciente').length);
+  const totalDoctores = computed(() => usuarios.value.filter(u => u.rol?.nombreRol === 'Doctor').length);
+  const totalActivos = computed(() => usuarios.value.filter(u => u.estado === 'Activo').length);
 
-    // control
-    loading: false,
-    error: ''
-  }),
+  // 2. Gráfico de Pacientes por Doctor
+  const chartPacientesPorDoctor = computed(() => {
+    const doctores = usuarios.value.filter(u => u.rol?.nombreRol === 'Doctor');
+    const labels = doctores.map(d => `${d.nombresUsuario} ${d.apellidosUsuario}`);
+    const data = doctores.map(d => {
+      return usuarios.value.filter(p => p.rol?.nombreRol === 'Paciente' && p.idUsuarioResponsable === d.idUsuario).length;
+    });
+    return {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: ['#3b82f6', '#22c55e', '#ef4444'],
+      }]
+    };
+  });
 
-  actions: {
-    async cargarDatos() {
-      this.loading = true
-      this.error = ''
+  // 3. Gráfico de Pacientes sin Doctor
+  const totalSinDoctor = computed(() => usuarios.value.filter(u => u.rol?.nombreRol === 'Paciente' && !u.idUsuarioResponsable).length);
+  const totalConDoctor = computed(() => totalPacientes.value - totalSinDoctor.value);
+  const sinDoctorChartData = computed(() => ({
+    labels: ['Sin Doctor', 'Con Doctor'],
+    datasets: [{
+      data: [totalSinDoctor.value, totalConDoctor.value],
+      backgroundColor: ['#FF6384', '#36A2EB'],
+    }]
+  }));
 
-      try {
-        const response = await graficosAdmin.ConteoPorRol()
-        this.conteoRolRh = response.data
+  // 4. Gráfico de Evolución de Usuarios
+  const lineChartData = computed(() => {
+    const counts: Record<string, number> = {};
+    usuarios.value.forEach(u => {
+      // ✅ CORRECCIÓN: Usar 'fechaRegistroUsuario'
+      if (u.fechaRegistroUsuario) {
+        const fecha = new Date(u.fechaRegistroUsuario);
+        const mes = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+        counts[mes] = (counts[mes] || 0) + 1;
+      }
+    });
+    const labels = Object.keys(counts).sort();
+    return {
+      labels,
+      datasets: [{
+        label: 'Usuarios registrados',
+        data: labels.map(l => counts[l]),
+        borderColor: 'rgba(75,192,192,1)',
+        backgroundColor: 'rgba(75,192,192,0.2)',
+        fill: true,
+        tension: 0.3,
+      }]
+    };
+  });
 
-        // === KPIs básicos ===
-        this.totalUsuarios = this.conteoRolRh.reduce((acc, item) => acc + Number(item.cantidad), 0)
-        this.totalAdmins = Number(this.conteoRolRh.find(r => r.rol === 'Admin')?.cantidad || 0)
-        this.totalDoctores = Number(this.conteoRolRh.find(r => r.rol === 'Doctor')?.cantidad || 0)
-        this.totalPacientes = Number(this.conteoRolRh.find(r => r.rol === 'Paciente')?.cantidad || 0)
+  // 5. Gráfico de Pacientes por Género - CORREGIDO
+  const pieChartData = computed(() => {
+    const hombres = usuarios.value.filter(u => u.rol?.nombreRol === 'Paciente' && u.generoUsuario === 'Hombre').length;
+    // ✅ CAMBIO: Ahora usa 'Mujer' para coincidir con el JSON de la API
+    const mujeres = usuarios.value.filter(u => u.rol?.nombreRol === 'Paciente' && u.generoUsuario === 'Mujer').length;
+    const otros = usuarios.value.filter(u => u.rol?.nombreRol === 'Paciente' && !['Hombre', 'Mujer'].includes(u.generoUsuario)).length;
+    return {
+      labels: ['Hombres', 'Mujeres', 'Otros'],
+      datasets: [{
+        data: [hombres, mujeres, otros],
+        backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'],
+      }]
+    };
+  });
 
-        this.promedioPacientesPorDoctor = this.totalDoctores > 0
-          ? parseFloat((this.totalPacientes / this.totalDoctores).toFixed(1))
-          : 0
+  // 6. Mapa de Pacientes
+  // const pacientesConCoordenadas = computed(() => {
+    // return usuarios.value.filter(u => u.rol?.nombreRol === 'Paciente' && u.latitud && u.longitud);
+  // });
 
-        this.pacientesSinDoctor = 10 // 👈 cambiar si tu API lo devuelve
-        this.porcentajeConDoctor = this.totalPacientes > 0
-          ? ((this.totalPacientes - this.pacientesSinDoctor) / this.totalPacientes * 100).toFixed(1)
-          : 0
-
-        // === Charts ===
-        this.chartUsuariosPorRol = {
-          labels: this.conteoRolRh.map(r => r.rol),
-          datasets: [{
-            data: this.conteoRolRh.map(r => Number(r.cantidad)),
-            backgroundColor: ['#22c55e','#6366f1','#f97316','#3b82f6']
-          }]
-        }
-
-        this.chartDoctoresVsPacientes = {
-          labels: ['Doctores', 'Pacientes'],
-          datasets: [{
-            data: [this.totalDoctores, this.totalPacientes],
-            backgroundColor: ['#8b5cf6','#f59e0b']
-          }]
-        }
-
-        this.chartPacientesPorDoctor = {
-          labels: ['Dr. A','Dr. B','Dr. C'],
-          datasets: [{
-            data: [10,20,15],
-            backgroundColor: ['#3b82f6','#22c55e','#ef4444']
-          }]
-        }
-
-        this.chartTopDoctores = {
-          labels: ['Dr. X','Dr. Y','Dr. Z','Dr. M','Dr. N'],
-          datasets: [{
-            data: [30,25,20,15,10],
-            backgroundColor: '#14b8a6'
-          }]
-        }
-
-        this.chartEvolucionRegistros = {
-          labels: ['Ene','Feb','Mar','Abr','May'],
-          datasets: [{
-            label: 'Usuarios',
-            data: [5,10,20,40,60],
-            borderColor: '#2563eb'
-          }]
-        }
-
-        this.chartActividadUsuarios = {
-          labels: ['Login','Consultas','Registros'],
-          datasets: [{
-            data: [50,80,30],
-            backgroundColor: ['#f43f5e','#3b82f6','#22c55e']
-          }]
-        }
-
-        this.chartPacientesPorUbicacion = {
-          Bogotá: 40,
-          Medellín: 25,
-          Cali: 15,
-          Barranquilla: 10,
-          Otros: 5
-        }
-
-      } catch (err) {
-        this.error = 'Error al obtener datos de gráficos'
-        toast.error(this.error)
-      } finally {
-        this.loading = false
-      }
+  // Acción para cargar los datos
+  const cargarDatos = async () => {
+    loading.value = true;
+    try {
+      await usuariosStore.fetchUsuarios();
+    } catch (error) {
+      console.error('Error al cargar datos para los gráficos:', error);
+    } finally {
+      loading.value = false;
     }
-  }
-})
+  };
+
+  return {
+    loading,
+    totalUsuarios,
+    totalPacientes,
+    totalDoctores,
+    totalActivos,
+    chartPacientesPorDoctor,
+    sinDoctorChartData,
+    totalSinDoctor,
+    lineChartData,
+    pieChartData,
+    pacientesConCoordenadas,
+    cargarDatos
+  };
+});

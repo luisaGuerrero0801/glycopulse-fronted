@@ -166,7 +166,7 @@ const router = createRouter({
 
     // 🔹 Vista de creación de receta (Card)
     {
-      path: '/doctor/recetas/crear',
+      path: '/doctor/recetas/:id/crear',
       name: 'DoctorRecetaCard',
       component: () => import('@/views/DoctorRecetaCardView.vue'),
       meta: { requiresAuth: false, role: 'doctor' }

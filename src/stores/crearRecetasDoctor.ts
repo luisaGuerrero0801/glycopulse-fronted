@@ -17,7 +17,7 @@ interface Receta {
   porciones: number
   calorias: number
   tiempo: string
-  imagen?: string
+  imagenReceta?: string   // 👈 cambiado para que coincida con el form
   ingredientes: Ingrediente[]
   pasosPreparacion: string[]
 }
@@ -47,64 +47,59 @@ export const useRecetasStore = defineStore('recetas', {
         this.cargando = false
       }
     },
+
     /**
      * crearReceta: recibe el objeto del front y opcionalmente el File de imagen
      * Mapea ingredientes y pasos y hace POST al backend en formato JSON.
      */
-    async crearReceta(receta: Omit<Receta, 'idReceta'>, imagen?: File) {
-      try {
-        // obtener idUsuario desde sessionStorage si existe
-        const storedId = sessionStorage.getItem('idUsuario')
-        const idUsuario = storedId ? Number(storedId) : 0
-        if (!idUsuario) {
-          console.warn(
-            'crearReceta: idUsuario no encontrado en sessionStorage, usando 1 como fallback'
-          )
-        }
+    async crearReceta(receta: Omit<Receta, 'idReceta'>, imagenReceta?: File) {
+  try {
+    const token = sessionStorage.getItem('token')
+    if (!token) throw new Error('Token no encontrado en sessionStorage')
 
-        // obtener token de sesión
-        const token = sessionStorage.getItem('token')
-        if (!token) {
-          throw new Error('Token no encontrado en sessionStorage')
-        }
-
-        const body = {
-          nombreReceta: receta.nombre,
-          descripcionReceta: receta.descripcion,
-          porcionesReceta: Number(receta.porciones),
-          caloriasReceta: Number(receta.calorias),
-          tiempoReceta: receta.tiempo,
-          imagenReceta: receta.imagen || 'no-image', // por ahora solo nombre
-          nivelReceta: receta.nivel,
-          categoriaReceta: 'Favoritos',
-          ingredientes: mapIngredientesFrontToBack(receta.ingredientes),
-          pasos: mapPasosFrontToBack(receta.pasosPreparacion),
-          idUsuario: idUsuario || 1
-        }
-
-        console.log('Payload que se envía a backend:', body)
-
-        const res = await fetch(`${import.meta.env.VITE_API_URL}recetas`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}` // 👈 token en header
-          },
-          body: JSON.stringify(body)
-        })
-
-        if (!res.ok) {
-          const text = await res.text().catch(() => null)
-          throw new Error(text || 'Error al crear receta')
-        }
-
-        const nueva = await res.json()
-        this.recetas.push(nueva)
-        return nueva
-      } catch (err: any) {
-        this.error = err.message
-        throw err
-      }
+    // Asegurarse que venga idUsuario en el objeto receta
+    if (!('idUsuario' in receta) || !receta.idUsuario) {
+      throw new Error('idUsuario (paciente) no proporcionado en la receta')
     }
+
+    const body = {
+      nombreReceta: receta.nombre,
+      descripcionReceta: receta.descripcion,
+      porcionesReceta: Number(receta.porciones),
+      caloriasReceta: Number(receta.calorias),
+      tiempoReceta: receta.tiempo,
+      imagenReceta: (receta as any).imagenReceta || 'no-image',
+      nivelReceta: receta.nivel,
+      categoriaReceta: 'Favoritos',
+      ingredientes: mapIngredientesFrontToBack(receta.ingredientes || []),
+      pasos: mapPasosFrontToBack(receta.pasosPreparacion || []),
+      idUsuario: (receta as any).idUsuario
+    }
+
+    console.log('Payload que se envía a backend:', body)
+
+    const res = await fetch(`${import.meta.env.VITE_API_URL}recetas`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    })
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => null)
+      throw new Error(text || 'Error al crear receta')
+    }
+
+    const nueva = await res.json()
+    this.recetas.push(nueva)
+    return nueva
+  } catch (err: any) {
+    this.error = err.message
+    throw err
+  }
+}
+
   }
 })

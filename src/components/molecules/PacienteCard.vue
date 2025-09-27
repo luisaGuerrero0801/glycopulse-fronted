@@ -51,16 +51,15 @@
 
       <!-- Opciones -->
       <div class="flex justify-center sm:justify-end">
-<select
-  class="border rounded-md px-2 py-1 text-sm text-gray-600"
-  @change="irAOpcion($event, paciente.id)"
->
-  <option disabled selected>Selecciona</option>
-  <option value="reportes">Reportes</option>
-  <option value="glucometrias">Glucometrias</option>
-  <option value="recetas">Recetas</option>
-</select>
-
+        <select
+          class="border rounded-md px-2 py-1 text-sm text-gray-600"
+          @change="irAOpcion($event, paciente.id)"
+        >
+          <option disabled selected>Selecciona</option>
+          <option value="reportes">Reportes</option>
+          <option value="glucometrias">Glucometrias</option>
+          <option value="recetas">Recetas</option>
+        </select>
       </div>
     </div>
   </div>
@@ -71,12 +70,17 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const irAOpcion = (event: Event, pacienteId: number) => {
-  const opcion = (event.target as HTMLSelectElement).value
+  const select = event.target as HTMLSelectElement
+  const opcion = select.value
 
   if (opcion === 'recetas') {
     router.push({ name: 'DoctorRecetasHome', params: { id: pacienteId } })
   }
+
+  // Resetear select
+  select.value = ''
 }
+
 defineProps<{
   paciente: {
     id: number

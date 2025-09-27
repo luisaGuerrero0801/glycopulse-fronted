@@ -1,3 +1,4 @@
+<!-- DoctorRecetaCardView.vue -->
 <script setup lang="ts">
 import DoctorLayout from '@/components/molecules/DoctorLayout.vue'
 import DoctorRecetaCard from '@/components/molecules/DoctorRecetaCard.vue'

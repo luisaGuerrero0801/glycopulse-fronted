@@ -15,11 +15,14 @@
     </div>
 
     <!-- Contenido: listado de recetas -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+    <div class=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
       <div
         v-for="receta in paginatedItems"
         :key="receta.idReceta"
+
         class="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition min-h-[150px]"
+
+
       >
         <img
           :src="receta.imagenReceta || 'https://via.placeholder.com/250'"

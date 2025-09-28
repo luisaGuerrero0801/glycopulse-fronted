@@ -1,7 +1,7 @@
 <!-- PacientesCard.vue -->
 <template>
   <div
-    class="bg-white shadow rounded-xl p-4 sm:p-5 md:p-6 flex flex-col sm:flex-row items-center justify-between w-full transition hover:bg-gray-50"
+    class="bg-white shadow rounded-xl p-4 sm:p-5 mt-4 md:p-6 flex flex-col sm:flex-row items-center justify-between w-full transition hover:bg-gray-50"
   >
     <div
       class="grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-4 items-center w-full text-center sm:text-left"
@@ -75,6 +75,9 @@ const irAOpcion = (event: Event, pacienteId: number) => {
 
   if (opcion === 'recetas') {
     router.push({ name: 'DoctorRecetasHome', params: { id: pacienteId } })
+  }
+  if (opcion === 'glucometrias') {
+    router.push({ name: 'VerGlucometrias', query: { pacienteId: pacienteId } })
   }
 
   // Resetear select

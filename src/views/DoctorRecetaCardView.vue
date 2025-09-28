@@ -2,8 +2,7 @@
 <script setup lang="ts">
 import DoctorLayout from '@/components/molecules/DoctorLayout.vue'
 import DoctorRecetaCard from '@/components/molecules/DoctorRecetaCard.vue'
-import HeaderApp from '@/components/molecules/HeaderApp.vue';
-
+import { TableCellsIcon, UserIcon, FolderIcon } from '@heroicons/vue/20/solid';
 import NavbarApp from '@/components/molecules/NavbarApp.vue'  // Importamos NavbarApp
 
 </script>
@@ -15,9 +14,9 @@ import NavbarApp from '@/components/molecules/NavbarApp.vue'  // Importamos Navb
   <div class="grid grid-cols-6 gap-4">
     <div class="col-span-1">
        <NavbarApp :links="[
-        { name: 'Pacientes', to: '/doctor/pacientes', icon: 'FolderPlusIcon' },
-        { name: 'Glucometrias', to: '/doctor/pacientes', icon: 'UserIcon' },
-        { name: 'Recetas', to: '/doctor/recetas/5/crear', icon: 'BeakerIcon' },
+     { name: 'Pacientes', to: '/doctor/pacientes', icon: UserIcon},
+        { name: 'Glucometrias', to: '/doctor/pacientes', icon:  FolderIcon },
+        { name: 'Recetas', to: '/doctor/recetas/5/crear', icon: TableCellsIcon },
         // { name: 'Recetas Saludables', to: '/recetas-saludables', icon: 'BookOpenIcon' },
         // { name: 'Reportes', to: '#', icon: 'ChartBarIcon' }
       ]" />

@@ -1,6 +1,6 @@
 <!-- DoctorRecetasHomeView.vue -->
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
+  <div class="min-w-screen bg-gray-50 flex flex-col">
     <!-- Barra superior -->
     <div class="flex items-center justify-between gap-4 px-6 py-4 bg-white shadow-sm">
       <h1 class="text-2xl font-bold text-[#374473]">Recetas</h1>
@@ -61,24 +61,36 @@
       <span class="text-gray-500">Cargando recetas...</span>
     </div>
 
-    <!-- Contenido: listado de recetas -->
-    <div class="flex flex-wrap justify-center gap-6 p-6">
-      <div
-        v-for="receta in recetasFiltradas"
-        :key="receta.idReceta"
-        class="w-64 bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition"
-        @click="abrirDetalle(receta)"
+<!-- Contenido: listado de recetas -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+  <div
+    v-for="receta in recetasFiltradas"
+    :key="receta.idReceta"
+    class="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition"
+    @click="abrirDetalle(receta)"
+  >
+    <img
+      :src="receta.imagenReceta || 'https://via.placeholder.com/250'"
+      alt="Imagen receta"
+      class="w-full h-40 object-cover"
+    />
+    <div class="p-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold">{{ receta.nombre }}</h2>
+      <!-- Botón corazón -->
+      <button
+        class="text-red-500 hover:scale-110 transition"
+        @click.stop="toggleFavorito(receta)"
       >
-        <img
-          :src="receta.imagenReceta || 'https://via.placeholder.com/250'"
-          alt="Imagen receta"
-          class="w-full h-40 object-cover"
-        />
-        <div class="p-4">
-          <h2 class="text-lg font-semibold mb-2">{{ receta.nombre }}</h2>
-        </div>
-      </div>
+        <span class="material-icons">
+          {{ receta.esFavorito ? 'favorite' : 'favorite_border' }}
+        </span>
+      </button>
     </div>
+  </div>
+</div>
+
+
+
 
 <!-- Modal detalle -->
 <div v-if="recetaSeleccionada" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -162,13 +174,31 @@
 
       <!-- Lista de ingredientes -->
       <div v-if="recetaSeleccionada.ingredientes?.length">
-        <h3 class="text-lg font-bold mb-2">Ingredientes:</h3>
-        <ul class="list-disc pl-5 space-y-1 text-lg text-gray-700">
-          <li v-for="(i, idx) in recetaSeleccionada.ingredientes" :key="idx">
-            {{ i.nombre }} - {{ i.cantidad || '-' }} {{ i.unidad || '' }}
-          </li>
-        </ul>
-      </div>
+  <h3 class="text-lg font-bold mb-2">Ingredientes:</h3>
+  <ul class="list-disc pl-5 space-y-1 text-lg text-gray-700">
+    <li v-for="(i, idx) in ingredientesVisibles" :key="idx">
+      {{ i.nombre }} - {{ i.cantidad || '-' }} {{ i.unidad || '' }}
+    </li>
+  </ul>
+
+  <!-- Controles de paginación -->
+  <div class="flex justify-center items-center mt-4 gap-6" v-if="totalPaginasIngredientes > 1">
+    <button
+      @click="ingPagina--"
+      :disabled="ingPagina === 0"
+      class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+    >
+      ←
+    </button>
+    <button
+      @click="ingPagina++"
+      :disabled="ingPagina === totalPaginasIngredientes - 1"
+      class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+    >
+      →
+    </button>
+  </div>
+</div>
     </div>
 <!-- PREPARACIÓN -->
 <div v-if="tab === 'preparacion'">
@@ -221,8 +251,24 @@ const router = useRouter()
 const route = useRoute()
 const pacienteId = Number(route.params.id) || 0
 const tab = ref<'ingredientes' | 'preparacion'>('ingredientes')
+
+const ingPagina = ref(0) // página actual en ingredientes
+const ingredientesPorPagina = 9
+
+const ingredientesVisibles = computed(() => {
+  if (!recetaSeleccionada.value?.ingredientes) return []
+  const start = ingPagina.value * ingredientesPorPagina
+  return recetaSeleccionada.value.ingredientes.slice(start, start + ingredientesPorPagina)
+})
+
+const totalPaginasIngredientes = computed(() => {
+  if (!recetaSeleccionada.value?.ingredientes) return 0
+  return Math.ceil(recetaSeleccionada.value.ingredientes.length / ingredientesPorPagina)
+})
+
+
 const pasoPagina = ref(0) // página actual de pasos
-const pasosPorPagina = 7
+const pasosPorPagina = 8
 
 const pasosVisibles = computed(() => {
   if (!recetaSeleccionada.value?.pasosPreparacion) return []
@@ -262,4 +308,8 @@ const recetasFiltradas = computed(() =>
 const abrirDetalle = (receta: any) => {
   recetaSeleccionada.value = receta
 }
+const toggleFavorito = (receta: any) => {
+  receta.esFavorito = !receta.esFavorito
+}
+
 </script>

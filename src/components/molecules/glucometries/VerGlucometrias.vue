@@ -11,11 +11,16 @@ import { toast } from 'vue3-toastify'
 import Paginate from 'vuejs-paginate-next' /** esto se importa para paginado */
 import { usePagination } from '@/composables/pagination/usePagination'
 import type { Glucometria } from '@/types/glucometria'
+import { useRoute } from 'vue-router'
 
 const storeGluco = useGlucometriasStore()
 const auth = loginStore()
-const userId = auth.getUserId()
+const route = useRoute()
 
+const userId = auth.getUserId()
+const rol = auth.rol
+
+const pacienteId = route.query.pacienteId as string | undefined
 /** ---------- ORDEN Y PAGINACIÓN ---------- */
 const sortConfig = ref({
   fecha: null as 'ASC' | 'DESC' | null,
@@ -134,9 +139,7 @@ const resetForm = () => {
 }
 
 onMounted(() => {
-  if (userId) {
-    storeGluco.verGlucos(userId, { orderFecha: 'DESC' })
-  }
+    if (userId) storeGluco.verGlucos(userId, { orderFecha: 'DESC' })
 })
 
 const openModal = () => {
@@ -166,6 +169,7 @@ const verDetalleGlucometria = async (idGlucometria: number) => {
 
 /** Carga la glucometría para editar en modal formulario */
 const editarGlucometria = async (id: number) => {
+  if (rol === 'doctor') return
   try {
     const detalle = await storeGluco.verDetalleGlucometria(id)
     if (detalle) {
@@ -242,7 +246,7 @@ const handleSubmit = async () => {
     <!-- Título y botón de nueva glucometría -->
     <div class="flex justify-between items-center w-full px-4">
       <span class="text-4xl font-semibold text-indigo-950 truncate">Glucometrías</span>
-      <ButtomNew nameButton="Nuevo" iconButton="add_circle" @click="openModal" />
+      <ButtomNew v-if="rol !== 'doctor'" nameButton="Nuevo" iconButton="add_circle" @click="openModal" />
     </div>
 
     <!-- Próxima glucosa y filtros -->
@@ -331,7 +335,7 @@ const handleSubmit = async () => {
               ?.descripcionRecomendacion || ''
           "
           @verGluco="verDetalleGlucometria(g.idGlucometria)"
-          @editarGluco="editarGlucometria(g.idGlucometria)"
+          @editarGluco="rol !== 'doctor' ? editarGlucometria(g.idGlucometria) : null"
         />
       </div>
     </div>

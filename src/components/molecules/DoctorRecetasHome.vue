@@ -15,11 +15,11 @@
     </div>
 
     <!-- Contenido: listado de recetas -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+    <div class=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
       <div
         v-for="receta in recetasFiltradas"
         :key="receta.idReceta"
-        class="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition"
+        class="bg-white h-[90%] bg rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition"
         @click="abrirDetalle(receta)"
       >
         <img

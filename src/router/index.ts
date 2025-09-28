@@ -130,7 +130,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/recetas-saludables',
+      path: '/recetas-saludables/recetas/:id/crear',
       name: 'recetasSaludables',
       component: () => import('../views/RecetasSaludablesView.vue'),
       meta: {

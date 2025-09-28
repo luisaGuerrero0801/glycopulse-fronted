@@ -258,6 +258,7 @@ const route = useRoute()
 
 const pacientes = ref<any[]>([]) 
 
+
 const ingredientes = reactive<Ingrediente[]>([{ nombre: '', cantidad: null, unidad: '' }])
 const pasosPreparacion = reactive<string[]>([''])
 

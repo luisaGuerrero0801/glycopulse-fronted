@@ -8,18 +8,20 @@
     </p>
 
     <form
+      v-if="donanteActual"
       @submit.prevent="handleSubmit"
       class="bg-white shadow-md rounded-lg py-10 px-6 sm:px-8 mb-10"
       novalidate
     >
       <div class="mb-5">
-        <label for="name" class="text-sm uppercase font-bold">Paciente</label>
+        <label for="estado" class="text-sm uppercase font-bold">Usuario</label>
         <input
-          id="name"
-          v-model="patientData.name"
+          id="estado"
+          v-model="donanteActual.nombresUsuario"
           class="w-full p-3 border border-gray-200 rounded-md mt-2"
           type="text"
-          placeholder="Nombre del Paciente"
+          disabled
+          placeholder="Estado del Donante"
           required
         />
       </div>
@@ -28,21 +30,23 @@
         <label for="email" class="text-sm uppercase font-bold">Email</label>
         <input
           id="email"
-          v-model="patientData.email"
+          v-model="donanteActual.correoUsuario"
           class="w-full p-3 border border-gray-200 rounded-md mt-2"
           type="email"
+          disabled
           placeholder="Email de Registro"
           required
         />
       </div>
 
       <div class="mb-5">
-        <label for="status" class="text-sm uppercase font-bold">Estado</label>
+        <label for="status" class="text-sm uppercase font-bold">Estado Paciente</label>
         <input
           id="status"
-          v-model="patientData.status"
+          v-model="donanteActual.estado"
           class="w-full p-3 border border-gray-200 rounded-md mt-2"
           type="text"
+          disabled
           placeholder="Estado"
           required
         />
@@ -81,34 +85,55 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import { usePatientStore } from '../../stores/PatientForm'
+import { useUsuariosPagination } from '@/composables/utils/usePagination'
 
 const patientStore = usePatientStore()
 
 const patientData = ref({
-  name: '',
-  email: '',
-  status: '',
   specialist: '',
   date: ''
 })
 
+const idUsuarioActual = ref<number | null>(null)
+
+const {
+  paginatedUsuarios: todosLosUsuarios,
+  fetchUsuarios
+} = useUsuariosPagination()
+
+onMounted(() => {
+  try {
+    const storedId = sessionStorage.getItem('idUsuario')
+    if (storedId) {
+      idUsuarioActual.value = Number(storedId)
+      console.log('ID del usuario actual obtenido de sessionStorage:', idUsuarioActual.value)
+    } else {
+      console.log('No se encontró el ID del usuario en sessionStorage.')
+    }
+  } catch (e) {
+    console.error('Error al obtener el ID del usuario de sessionStorage:', e)
+  }
+  fetchUsuarios()
+})
+
 const handleSubmit = () => {
+ 
   if (
-    !patientData.value.name ||
-    !patientData.value.email ||
-    !patientData.value.status ||
-    !patientData.value.specialist ||
-    !patientData.value.date
+    !patientData.value.specialist || 
+    !patientData.value.date 
   ) {
-    toast.error('Por favor, completa todos los campos')
+    toast.error('Por favor, completa todos los campos requeridos')
     return
   }
 
   const newPatient = {
     ...patientData.value,
+    estado: donanteActual.value.estado, 
+    nombresUsuario: donanteActual.value.nombresUsuario, 
+    correoUsuario: donanteActual.value.correoUsuario, 
     date: new Date(patientData.value.date)
   }
 
@@ -116,11 +141,17 @@ const handleSubmit = () => {
   toast.success('Paciente registrado correctamente')
 
   patientData.value = {
-    name: '',
-    email: '',
-    status: '',
     specialist: '',
     date: ''
   }
 }
+
+const donanteActual = computed(() => {
+  if (idUsuarioActual.value !== null) {
+    return todosLosUsuarios.value.find(
+      (d: any) => d.idUsuario === idUsuarioActual.value
+    )
+  }
+  return null
+})
 </script>

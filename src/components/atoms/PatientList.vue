@@ -7,15 +7,13 @@
       <span class="text-[var(--colorPrimarioTexto)] font-bold"> haz seguimiento</span>
     </p>
 
-    <!-- Mensaje cuando no hay citas -->
     <div
-      v-if="patients.length === 0"
+      v-if="donanteActual === null"
       class="text-lg mt-5 text-center mb-10 bg-white shadow-md rounded-lg py-10 px-5"
     >
       No hay citas registradas
     </div>
 
-    <!-- Tabla de citas -->
     <div
       v-else
       class="bg-white shadow-md rounded-lg py-6 px-4 sm:px-6 mb-10 overflow-x-auto"
@@ -32,19 +30,18 @@
         </thead>
         <tbody>
           <tr
-            v-for="donante in donantesFiltrados"
-            :key="donante.idUsuario"
-            @click="seleccionarDonante(donante)"
+            v-if="donanteActual"
+            :key="donanteActual.idUsuario"
             class="hover:bg-gray-50 cursor-pointer transition-colors"
           >
             <td class="px-4 py-2 whitespace-nowrap border-b">
-              {{ donante.nombresUsuario }} {{ donante.apellidosUsuario }}
+              {{ donanteActual.nombresUsuario }} {{ donanteActual.apellidosUsuario }}
             </td>
-            <td class="px-4 py-2 whitespace-nowrap border-b">{{ donante.correoUsuario }}</td>
-            <td class="px-4 py-2 whitespace-nowrap border-b">{{ donante.estado }}</td>
-            <td class="px-4 py-2 whitespace-nowrap border-b">{{ donante.estado }}</td>
+            <td class="px-4 py-2 whitespace-nowrap border-b">{{ donanteActual.correoUsuario }}</td>
+            <td class="px-4 py-2 whitespace-nowrap border-b">{{ donanteActual.estado }}</td>
+            <td class="px-4 py-2 whitespace-nowrap border-b">{{ donanteActual.estado }}</td>
             <td class="px-4 py-2 whitespace-nowrap border-b">
-              {{ donante.fechaAsignacion ? new Date(donante.fechaAsignacion).toLocaleDateString() : 'No disponible' }}
+              {{ donanteActual.fechaAsignacion ? new Date(donanteActual.fechaAsignacion).toLocaleDateString() : 'No disponible' }}
             </td>
           </tr>
         </tbody>
@@ -82,14 +79,29 @@ const seleccionarDonante = (donante: any) => {
   emits('donante-seleccionado', donante)
 }
 
-const idRolDeseado = 1
 const idUsuarioActual = ref<number | null>(null)
-const donantesFiltrados = computed(() => {
+
+onMounted(() => {
+  try {
+    const storedId = sessionStorage.getItem('idUsuario') 
+    if (storedId) {
+      idUsuarioActual.value = Number(storedId)
+      console.log('ID del usuario actual obtenido de sessionStorage:', idUsuarioActual.value)
+    } else {
+      console.log('No se encontró el ID del usuario en sessionStorage.')
+    }
+  } catch (e) {
+    console.error('Error al obtener el ID del usuario de sessionStorage:', e)
+  }
+  fetchUsuarios()
+})
+
+const donanteActual = computed(() => {
   if (idUsuarioActual.value !== null) {
-    return todosLosUsuarios.value.filter(
-      (d: any) => d.rol?.idRol === idRolDeseado && d.idUsuario !== idUsuarioActual.value
+    return todosLosUsuarios.value.find(
+      (d: any) => d.idUsuario === idUsuarioActual.value
     )
   }
-  return todosLosUsuarios.value.filter((d: any) => d.rol?.idRol === idRolDeseado)
+  return null
 })
 </script>

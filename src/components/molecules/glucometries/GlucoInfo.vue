@@ -37,7 +37,7 @@ const activeTab = ref<TabType>('Recomendaciones')
     </div>
 
     <!-- Contenido -->
-<div v-if="glucometria">
+    <div v-if="glucometria">
       <!-- Tab 1 -->
       <div v-if="activeTab === 'Recomendaciones'" class="space-y-3">
         <div class="space-y-4">
@@ -46,7 +46,9 @@ const activeTab = ref<TabType>('Recomendaciones')
             class="flex flex-col md:flex-row bg-white border border-gray-200 rounded-2xl shadow mx-4 md:mx-6 py-6"
           >
             <!-- Glucometría -->
-            <div class="flex flex-col items-center w-full md:w-1/4 md:border-r md:border-gray-300 px-4 py-4 md:py-0">
+            <div
+              class="flex flex-col items-center w-full md:w-1/4 md:border-r md:border-gray-300 px-4 py-4 md:py-0"
+            >
               <span class="text-indigo-950 text-xl font-semibold">Glucometría</span>
               <span class="text-gray-500 text-2xl font-medium"
                 >{{ glucometria.nivelGlucometria }} mg/dL</span
@@ -54,22 +56,24 @@ const activeTab = ref<TabType>('Recomendaciones')
             </div>
 
             <!-- Rango -->
-            <div class="flex flex-col items-center w-full md:w-1/2 md:border-r md:border-gray-300 px-4 py-4 md:py-0">
-              <span class="text-indigo-950 text-xl font-semibold">Rango</span>
-              <span class="flex items-center gap-2 text-gray-600 text-xl font-medium">
-                {{ glucometria.rango?.nombreRango }}
-                <span
-                  class="w-20 h-7 rounded-full"
-                  :style="{ backgroundColor: glucometria.rango?.color || '#ccc' }"
-                ></span>
+            <div
+              class="flex flex-col items-center w-full md:w-1/2 md:border-r md:border-gray-300 px-4 py-4 md:py-0"
+            >
+              <span class="text-indigo-950 text-xl font-semibold">Estado</span>
+              <span class="text-gray-600 text-xl font-medium text-center">
+                {{ glucometria.estado?.nombreEstado }}
               </span>
             </div>
 
             <!-- Estado -->
-            <div class="flex flex-col items-center w-full md:w-1/3 px-4 py-4 md:py-0">
-              <span class="text-indigo-950 text-xl font-semibold">Estado</span>
-              <span class="text-gray-600 text-xl font-medium text-center">
-                {{ glucometria.estado?.nombreEstado }}
+            <div class="flex flex-col items-center w-full md:w-1/4 px-4 py-4 md:py-0">
+              <span class="text-indigo-950 text-xl font-semibold">Rango</span>
+              <span class="flex items-center gap-2 text-gray-600 text-xl font-medium">
+                {{ glucometria.rango?.nombreRango }}
+                <span
+                  class="w-6 h-6 rounded-full"
+                  :style="{ backgroundColor: glucometria.rango?.color || '#ccc' }"
+                ></span>
               </span>
             </div>
           </div>
@@ -185,12 +189,14 @@ const activeTab = ref<TabType>('Recomendaciones')
 
       <!-- Tab 2 -->
       <div v-else-if="activeTab === 'Acudir al Médico'" class="space-y-2 ml-5">
-        <div class="flex items-center mb-0 ">
+        <div class="flex items-center mb-0">
           <h2 class="text-2xl font-semibold text-gray-800 mr-4 mb-4">Cuándo Acudir al Médico</h2>
           <div class="flex-1 border-t border-gray-300"></div>
         </div>
         <div>
-          <p class="text-xl font-bold text-gray-800 mt-2">Síntomas de descontrol de glucosa alta (hiperglucemia):</p>
+          <p class="text-xl font-bold text-gray-800 mt-2">
+            Síntomas de descontrol de glucosa alta (hiperglucemia):
+          </p>
           <ul class="list-disc pl-6 mt-0 text-gray-600 text-xl font-normal marker:text-base">
             <li>Sed excesiva (polidipsia), visión borrosa y/o mareo.</li>
             <li>Aumento en la frecuencia de orina (poliuria).</li>
@@ -200,14 +206,31 @@ const activeTab = ref<TabType>('Recomendaciones')
           </ul>
         </div>
         <div>
-          <p class="text-xl font-bold text-gray-800 mt-6">Señales de alerta que requieren atención inmediata:</p>
+          <p class="text-xl font-bold text-gray-800 mt-6">
+            Señales de alerta que requieren atención inmediata:
+          </p>
           <ul class="list-disc pl-6 mt-0 text-gray-600 text-xl font-normal marker:text-base">
-            <li>Dolor en el pecho o dificultad para respirar: Puede indicar problemas cardiovasculares.</li>
-            <li>Náuseas, vómitos o dolor abdominal severo: Posible cetoacidosis diabética (más común en diabetes tipo 1).</li>
-            <li>Infecciones frecuentes o graves: Como infecciones en los pies, piel, tracto urinario o encías</li>
+            <li>
+              Dolor en el pecho o dificultad para respirar: Puede indicar problemas
+              cardiovasculares.
+            </li>
+            <li>
+              Náuseas, vómitos o dolor abdominal severo: Posible cetoacidosis diabética (más común
+              en diabetes tipo 1).
+            </li>
+            <li>
+              Infecciones frecuentes o graves: Como infecciones en los pies, piel, tracto urinario o
+              encías
+            </li>
             <li>Hinchazón en piernas o pies: Puede ser señal de problemas renales.</li>
-            <li>Entumecimiento o sensación de hormigueo en manos o pies: Indica posible neuropatía diabética.</li>
-            <li>Somnolencia extrema o confusión: Podría ser una hiperglucemia grave o hipoglucemia severa.</li>
+            <li>
+              Entumecimiento o sensación de hormigueo en manos o pies: Indica posible neuropatía
+              diabética.
+            </li>
+            <li>
+              Somnolencia extrema o confusión: Podría ser una hiperglucemia grave o hipoglucemia
+              severa.
+            </li>
           </ul>
         </div>
       </div>

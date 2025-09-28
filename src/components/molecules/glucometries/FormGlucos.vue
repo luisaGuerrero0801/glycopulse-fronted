@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, watch } from 'vue'
+import { MomentoGlucometria } from '@/enums/momento-glucometria.enum'
 
 const props = defineProps({
   form: {
@@ -9,27 +10,27 @@ const props = defineProps({
       fecha: '',
       hora: '',
       glucosa: 0,
-      comentario: ''
+      momento: '',
     })
   },
   submitForm: Function,
   submitEdit: Function
-});
+})
 
-const emit = defineEmits(['update:form']);
+const emit = defineEmits(['update:form'])
 
 // Función para convertir de formato 12h a 24h
 function convertTo24Hour(time12h: string): string {
-  if (!time12h || !time12h.includes(' ')) return time12h;
-  const [time, modifier] = time12h.split(' ');
-  let [hours, minutes] = time.split(':');
-  let h = parseInt(hours, 10);
-  if (modifier === 'PM' && h !== 12) h += 12;
-  if (modifier === 'AM' && h === 12) h = 0;
-  return `${String(h).padStart(2, '0')}:${minutes}`;
+  if (!time12h || !time12h.includes(' ')) return time12h
+  const [time, modifier] = time12h.split(' ')
+  let [hours, minutes] = time.split(':')
+  let h = parseInt(hours, 10)
+  if (modifier === 'PM' && h !== 12) h += 12
+  if (modifier === 'AM' && h === 12) h = 0
+  return `${String(h).padStart(2, '0')}:${minutes}`
 }
 
-const hora24 = computed(() => convertTo24Hour(props.form.hora));
+const hora24 = computed(() => convertTo24Hour(props.form.hora))
 
 watch(
   () => props.form.hora,
@@ -38,67 +39,109 @@ watch(
       emit('update:form', {
         ...props.form,
         hora: convertTo24Hour(newHora)
-      });
+      })
     }
   },
   { immediate: true }
-);
+)
 
 const fechaISO = computed(() => {
-  const f = props.form.fecha;
-  if (!f) return '';
-  if (/^\d{4}-\d{2}-\d{2}$/.test(f)) return f;
+  const f = props.form.fecha
+  if (!f) return ''
+  if (/^\d{4}-\d{2}-\d{2}$/.test(f)) return f
 
-  const parts = f.split(/[-/]/);
-  if (parts.length !== 3) return '';
-  let day = '', month = '', year = '';
-  if (parseInt(parts[2]) > 31) [day, month, year] = parts;
-  else [month, day, year] = parts;
+  const parts = f.split(/[-/]/)
+  if (parts.length !== 3) return ''
+  let day = '',
+    month = '',
+    year = ''
+  if (parseInt(parts[2]) > 31) [day, month, year] = parts
+  else [month, day, year] = parts
 
-  return `${year.padStart(4,'0')}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
-});
+  return `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+})
 
 const updateField = (field: string, event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (!target) return;
-  let value: string | number = target.value;
-  if (field === 'glucosa') value = parseInt(target.value);
-  else if (field === 'fecha') value = String(target.value);
-  emit('update:form', { ...props.form, [field]: value });
-};
+  const target = event.target as HTMLInputElement
+  if (!target) return
+  let value: string | number | null = target.value
+
+  if (field === 'glucosa') {
+    value = target.value ? parseInt(target.value) : null
+  } else if (field === 'fecha') {
+    value = target.value ? String(target.value) : null
+  } else if (field === 'momento') {
+    value = target.value === '' ? null : target.value
+  }
+  emit('update:form', { ...props.form, [field]: value })
+}
 
 const handleSubmit = (event: MouseEvent) => {
-  event.preventDefault();
-  if (props.submitEdit) props.submitEdit();
-  else if (props.submitForm) props.submitForm();
-};
+  console.log("Payload glucometria FORMULARIO -------:", props.form)
+  event.preventDefault()
+  if (props.submitEdit) props.submitEdit()
+  else if (props.submitForm) props.submitForm()
+}
+
+const momentos = Object.values(MomentoGlucometria)
 </script>
 
 <template>
-  <div class="bg-white p-6 sm:p-7 md:p-8 lg:p-10 rounded-2xl shadow-lg space-y-6 sm:space-y-7 md:space-y-8 w-full max-w-[750px] mx-auto">
-
+  <div>
+    <!-- Header -->
     <div>
-      <label class="block text-base sm:text-lg font-medium mb-1">Fecha</label>
-      <input type="date" :value="fechaISO" @input="updateField('fecha', $event)" class="w-full border px-4 py-3 rounded-md text-base sm:text-lg" />
+      <h2 class="text-3xl font-semibold mb-3 mt-8">Glucometría</h2>
+      <p class="border-b mb-6"></p>
     </div>
 
-    <div>
-      <label class="block text-base sm:text-lg font-medium mb-1">Hora</label>
-      <input type="time" :value="hora24" @input="updateField('hora', $event)" class="w-full border px-4 py-3 rounded-md text-base sm:text-lg" />
+    <div class="mx-3 my-4">
+      <!-- Fecha -->
+      <div>
+        <label class="block text-2xl font-medium mb-3 text-slate-950">Fecha Glucometria</label>
+        <input
+          type="date"
+          :value="fechaISO"
+          @input="updateField('fecha', $event)"
+          class="w-full border text-xl border-gray-300 rounded-lg mb-6 px-3 py-4 bg-gray-100 text-gray-600"
+        />
+      </div>
+
+      <div>
+        <label class="block text-2xl font-medium mb-3 text-slate-950">Hora Glucometria</label>
+        <input
+          type="time"
+          :value="hora24"
+          @input="updateField('hora', $event)"
+          class="w-full border text-xl border-gray-300 rounded-lg mb-6 px-3 py-4 bg-gray-100 text-gray-600"
+        />
+      </div>
+
+      <div>
+        <label class="block text-2xl font-medium mb-3 text-slate-950">Nivel de Glucometria</label>
+        <input
+          type="number"
+          :value="form.glucosa"
+          @input="updateField('glucosa', $event)"
+          class="w-full border text-xl border-gray-300 rounded-lg mb-6 px-3 py-4 bg-gray-100 text-gray-600"
+        />
+      </div>
+
+      <div>
+      <label class="block text-2xl font-medium mb-3 text-slate-950">Momento del día de la toma</label>
+      <select :value="form.momento ?? ''" @change="updateField('momento', $event)" class="w-full border text-xl border-gray-300 rounded-lg mb-2 px-3 py-4 bg-gray-100 text-gray-600">
+        <option value="" disabled>Seleccione un momento</option>
+        <option v-for="m in momentos" :key="m" :value="m">{{ m }}</option>
+      </select>
     </div>
 
-    <div>
-      <label class="block text-base sm:text-lg font-medium mb-1">Nivel de Glucosa</label>
-      <input type="number" :value="form.glucosa" @input="updateField('glucosa',$event)" class="w-full border px-4 py-3 rounded-md text-base sm:text-lg" />
+      <div class="text-right mt-6 flex justify-center">
+        <button
+          @click="handleSubmit"
+          class="bg-blue-900 text-white px-14 pt-3 pb-4 rounded-lg text-2xl hover:bg-blue-800 transition"
+        >
+          {{ submitEdit ? 'Actualizar' : 'Agregar' }}
+        </button>
+      </div>
     </div>
-
-    <div class="text-right">
-      <button 
-        @click="handleSubmit" 
-        class="bg-blue-600 text-white px-6 py-3 rounded-lg text-base sm:text-lg hover:bg-blue-700 transition">
-        {{ submitEdit ? 'Actualizar' : 'Guardar' }}
-      </button>
-    </div>
-
   </div>
 </template>

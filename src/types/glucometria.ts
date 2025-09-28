@@ -54,7 +54,7 @@ export interface CrearGlucometriaDto {
   fechaGlucometria: string; // formato YYYY-MM-DD
   horaGlucometria: string;  // formato HH:mm:ss
   nivelGlucometria: number;
-  momento: string;          // Enum: AYUNO, POSTPRANDIAL, etc.
+  momento: string;          //
 }
 
 // Para actualizar una glucometría (UpdateGlucometriaDto)

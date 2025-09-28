@@ -20,10 +20,8 @@ export const useGlucometriasStore = defineStore('glucometrias', {
       userId: number,
       filters?: {
         fechaGlucometria?: string
-        horaGlucometria?: string
         rangoGlucometria?: string
         orderFecha?: 'ASC' | 'DESC'
-        orderFechaHora?: 'ASC' | 'DESC'
         orderNivel?: 'ASC' | 'DESC'
       }
     ) {
@@ -46,7 +44,12 @@ export const useGlucometriasStore = defineStore('glucometrias', {
       this.loading = true
       this.error = null
       try {
-        const { data } = await GlucometriasProvider.crearGlucometria(payload)
+        const payloadConUsuario = {
+          ...payload,
+          idUsuario: userId
+        }
+        const { data } = await GlucometriasProvider.crearGlucometria(payloadConUsuario)
+        console.log("Payload glucometria STORE ******", data)
         toast.success('Glucometría creada correctamente')
         // Refrescar lista
         await this.verGlucos(userId)

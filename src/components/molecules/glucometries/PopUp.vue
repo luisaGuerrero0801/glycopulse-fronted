@@ -14,7 +14,7 @@ const props = defineProps({
   glucometria: { type: Object as PropType<Glucometria | null>, default: null },
   isEdit: { type: Boolean, default: false },
   closeModal: Function,
-  submitForm: Function,
+  submitForm: Function
 })
 
 const emit = defineEmits(['closeModal', 'update:form'])
@@ -29,8 +29,28 @@ const handleSubmit = () => {
     return
   }
 
-  const selectedDateTime = new Date(`${props.form.fecha}T${props.form.hora}`)
+  const fechaParts = props.form.fecha.split('-').map(Number)
+  const horaParts = props.form.hora.split(':').map(Number)
+
+  if (fechaParts.length !== 3 || horaParts.length !== 2) {
+    toast.error('Formato de fecha u hora inválido.')
+    return
+  }
+
+  const selectedDateTime = new Date(
+    fechaParts[0],       // year
+    fechaParts[1] - 1,   // month (0-based)
+    fechaParts[2],       // day
+    horaParts[0],        // hour
+    horaParts[1]         // minute
+  )
+
   const now = new Date()
+
+  if (selectedDateTime > now) {
+    toast.error('La fecha y hora no pueden ser mayores a la actual.')
+    return
+  }
 
   if (selectedDateTime > now) {
     toast.error('La fecha y hora no pueden ser mayores a la actual.')
@@ -52,12 +72,15 @@ const handleSubmit = () => {
     v-if="isVisible"
     class="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center"
   >
-    <div class="bg-white rounded-lg px-6 py-4 w-full max-w-4xl">
-      <div class="flex justify-end items-center">
-        <button @click="handleCloseModal" class="text-gray-500 hover:text-gray-700 ">
-          <span class="material-icons ">close</span>
-        </button>
-      </div>
+    <div
+      :class="['bg-white rounded-lg px-6 py-4 w-full relative', modalType === 'form' ? 'max-w-md' : 'max-w-4xl']"
+    >
+     <button
+        @click="handleCloseModal"
+        class="absolute top-2 right-3 text-gray-500 hover:text-gray-700 p-1"
+      >
+        <span class="material-icons text-4xl">close</span>
+      </button>
 
       <!-- Vista FORMULARIO -->
       <GlucoseForm
@@ -74,8 +97,6 @@ const handleSubmit = () => {
         :glucometria="glucometria"
         @close="handleCloseModal"
       />
-
-  </div>
+    </div>
   </div>
 </template>
-

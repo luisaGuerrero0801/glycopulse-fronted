@@ -10,7 +10,6 @@ const userId = auth.getUserId()
 
 // Valores de filtro
 const fecha = ref<string>('')
-const hora = ref<string>('')
 const rango = ref<string>('')
 
 // Cargar rangos dinámicos desde el store
@@ -30,13 +29,12 @@ const aplicarFiltros = () => {
   if (!userId) return
   const filters: Record<string, string> = {}
   if (fecha.value) filters.fechaGlucometria = fecha.value
-  if (hora.value) filters.horaGlucometria = hora.value
   if (rango.value && rango.value !== 'no') filters.rangoGlucometria = rango.value
   storeGluco.verGlucos(userId, filters)
 }
 
 // Observadores para que cada cambio en los inputs aplique el filtro automáticamente
-watch([fecha, hora, rango], () => {
+watch([fecha, rango], () => {
   aplicarFiltros()
 })
 
@@ -62,12 +60,6 @@ onMounted(() => {
       :options="rangos"
       class="text-lg flex-1"
       v-model="rango"
-    />
-
-    <InputAtom 
-      label="Hora" 
-      type="time" 
-      class="text-lg flex-1" 
     />
   </div>
 </template>

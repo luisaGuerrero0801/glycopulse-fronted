@@ -57,10 +57,9 @@
       </div>
     </div>
     <!-- Mostrar loading mientras se cargan las recetas -->
-<div v-if="recetasStore.cargando" class="flex justify-center items-center mt-8">
-  <span class="text-gray-500">Cargando recetas...</span>
-</div>
-
+    <div v-if="recetasStore.cargando" class="flex justify-center items-center mt-8">
+      <span class="text-gray-500">Cargando recetas...</span>
+    </div>
 
     <!-- Contenido: listado de recetas -->
     <div class="flex flex-wrap justify-center gap-6 p-6">
@@ -77,57 +76,137 @@
         />
         <div class="p-4">
           <h2 class="text-lg font-semibold mb-2">{{ receta.nombre }}</h2>
-          <p class="text-gray-600 truncate">{{ receta.descripcion }}</p>
         </div>
       </div>
     </div>
 
-    <!-- Modal detalle -->
-    <div
-      v-if="recetaSeleccionada"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+<!-- Modal detalle -->
+<div v-if="recetaSeleccionada" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl w-11/12 max-w-3xl p-8 relative overflow-y-auto max-h-[90vh]">
+    <button
+      @click="recetaSeleccionada = null"
+      class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-bold"
     >
-      <div class="bg-white rounded-xl w-11/12 max-w-xl p-6 relative overflow-y-auto max-h-[90vh]">
-        <button
-          @click="recetaSeleccionada = null"
-          class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-bold"
-        >
-          ×
-        </button>
+      ×
+    </button>
+
+    <!-- Tabs -->
+    <div class="flex border-b mb-4">
+      <button
+        :class="[
+          'px-4 py-2 text-sm font-medium',
+          tab === 'ingredientes'
+            ? 'text-blue-600 border-b-2 border-blue-600'
+            : 'text-gray-500 hover:text-gray-700'
+        ]"
+        @click="tab = 'ingredientes'"
+      >
+        Ingredientes
+      </button>
+      <button
+        :class="[
+          'px-4 py-2 text-sm font-medium',
+          tab === 'preparacion'
+            ? 'text-blue-600 border-b-2 border-blue-600'
+            : 'text-gray-500 hover:text-gray-700'
+        ]"
+        @click="tab = 'preparacion'"
+      >
+        Preparación
+      </button>
+    </div>
+
+    <!-- INGREDIENTES -->
+    <div v-if="tab === 'ingredientes'">
+      <!-- Imagen + info -->
+      <div class="flex flex-col md:flex-row gap-4 mb-4">
         <img
           :src="recetaSeleccionada.imagenReceta || 'https://via.placeholder.com/250'"
-          class="w-full h-48 object-cover rounded mb-4"
+          class="w-full md:w-1/2 h-42 object-cover rounded"
         />
-        <h2 class="text-2xl font-bold mb-2">{{ recetaSeleccionada.nombre }}</h2>
-        <p class="mb-2">{{ recetaSeleccionada.descripcion }}</p>
-        <p class="mb-1"><strong>Nivel:</strong> {{ recetaSeleccionada.nivel }}</p>
-        <p class="mb-1"><strong>Porciones:</strong> {{ recetaSeleccionada.porciones }}</p>
-        <p class="mb-1"><strong>Calorías:</strong> {{ recetaSeleccionada.calorias }}</p>
-        <p class="mb-1"><strong>Tiempo:</strong> {{ recetaSeleccionada.tiempo }}</p>
-
-        <div v-if="recetaSeleccionada.ingredientes?.length" class="mt-4">
-          <h3 class="font-semibold mb-1">Ingredientes:</h3>
-          <ul class="list-disc pl-5">
-            <li v-for="(i, idx) in recetaSeleccionada.ingredientes" :key="idx">
-              {{ i.nombre }} - {{ i.cantidad || '-' }} {{ i.unidad || '' }}
-            </li>
-          </ul>
-        </div>
-<div v-if="recetasStore.error" class="text-red-500 text-center mt-4">
-  {{ recetasStore.error }}
-</div>
-
-        <div v-if="recetaSeleccionada.pasosPreparacion?.length" class="mt-4">
-          <h3 class="font-semibold mb-1">Pasos:</h3>
-          <ol class="list-decimal pl-5">
-            <li v-for="(p, idx) in recetaSeleccionada.pasosPreparacion" :key="idx">
-              {{ p.descripcion }}
-            </li>
-          </ol>
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold mb-2">{{ recetaSeleccionada.nombre }}</h2>
+          <p class="text-lg text-gray-700">{{ recetaSeleccionada.descripcion }}</p>
         </div>
       </div>
+
+      <!-- Barra con nivel, porciones, calorías, tiempo -->
+      <div
+        class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-100 rounded-xl p-4 text-center mb-4"
+      >
+        <div>
+          <p class="text-sm font-medium text-gray-500">Nivel</p>
+          <p class="text-lg font-semibold text-indigo-700">
+            {{ recetaSeleccionada.nivel }}
+          </p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">Porciones</p>
+          <p class="text-lg font-semibold text-indigo-700">
+            {{ recetaSeleccionada.porciones }}
+          </p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">Calorías</p>
+          <p class="text-lg font-semibold text-indigo-700">
+            {{ recetaSeleccionada.calorias }}
+          </p>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-500">Tiempo</p>
+          <p class="text-lg font-semibold text-indigo-700">
+            {{ recetaSeleccionada.tiempo }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Lista de ingredientes -->
+      <div v-if="recetaSeleccionada.ingredientes?.length">
+        <h3 class="text-lg font-bold mb-2">Ingredientes:</h3>
+        <ul class="list-disc pl-5 space-y-1 text-lg text-gray-700">
+          <li v-for="(i, idx) in recetaSeleccionada.ingredientes" :key="idx">
+            {{ i.nombre }} - {{ i.cantidad || '-' }} {{ i.unidad || '' }}
+          </li>
+        </ul>
+      </div>
+    </div>
+<!-- PREPARACIÓN -->
+<div v-if="tab === 'preparacion'">
+  <h3 class="text-lg text-gray-700 font-bold mb-2">Preparación:</h3>
+
+  <div v-if="recetaSeleccionada.pasosPreparacion?.length">
+    <ol class="list-decimal pl-5 space-y-2 text-lg text-gray-700">
+      <li v-for="(paso, idx) in pasosVisibles" :key="idx">
+        {{ paso.descripcion }}
+      </li>
+    </ol>
+
+    <!-- Controles de paginación -->
+    <div class="flex justify-between items-center mt-4">
+      <button
+        @click="pasoPagina--"
+        :disabled="pasoPagina === 0"
+        class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+      >
+        ←
+      </button>
+      <button
+        @click="pasoPagina++"
+        :disabled="pasoPagina === totalPaginas - 1"
+        class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+      >
+       →
+      </button>
     </div>
   </div>
+</div>
+
+  </div>
+</div>
+
+</div>
+
+  
 </template>
 
 <script setup lang="ts">
@@ -141,6 +220,20 @@ const search = ref('')
 const router = useRouter()
 const route = useRoute()
 const pacienteId = Number(route.params.id) || 0
+const tab = ref<'ingredientes' | 'preparacion'>('ingredientes')
+const pasoPagina = ref(0) // página actual de pasos
+const pasosPorPagina = 7
+
+const pasosVisibles = computed(() => {
+  if (!recetaSeleccionada.value?.pasosPreparacion) return []
+  const start = pasoPagina.value * pasosPorPagina
+  return recetaSeleccionada.value.pasosPreparacion.slice(start, start + pasosPorPagina)
+})
+
+const totalPaginas = computed(() => {
+  if (!recetaSeleccionada.value?.pasosPreparacion) return 0
+  return Math.ceil(recetaSeleccionada.value.pasosPreparacion.length / pasosPorPagina)
+})
 
 
 const toggleMenu = () => {

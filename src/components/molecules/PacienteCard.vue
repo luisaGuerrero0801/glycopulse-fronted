@@ -76,6 +76,9 @@ const irAOpcion = (event: Event, pacienteId: number) => {
   if (opcion === 'recetas') {
     router.push({ name: 'DoctorRecetasHome', params: { id: pacienteId } })
   }
+  if (opcion === 'glucometrias') {
+    router.push({ name: 'glucometrias', query: { pacienteId: pacienteId } })
+  }
 
   // Resetear select
   select.value = ''

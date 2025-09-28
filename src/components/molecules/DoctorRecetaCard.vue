@@ -1,9 +1,9 @@
-<!-- DoctorRecetasCard.vue -->
 <template>
-  <div class="flex flex-col items-center p-6 bg-gray-50 min-h-screen overflow-y-auto">
+   <HeaderApp pagename="doctor/crear" />
+  <div class="flex flex-col items-center p-6  min-w-screen overflow-y-auto">
     <div class="w-full max-w-4xl bg-white shadow-lg rounded-2xl p-6">
       <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-indigo-700">Crear Receta</h1>
+        <h1 class="text-2xl font-bold text-blue-700">Crear Receta</h1>
         <button
           @click="irARecetas"
           class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition"
@@ -13,7 +13,6 @@
       </div>
 
       <form @submit.prevent="currentStep === 1 ? siguientePaso() : guardarReceta" class="space-y-6">
-        <!-- PASO 1 -->
         <div v-if="currentStep === 1">
           <div class="flex flex-col md:flex-row gap-6">
             <div class="flex flex-col">
@@ -25,7 +24,7 @@
                 id="imagenReceta"
                 type="text"
                 placeholder="https://misrecetas.com/ensalada.png"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
 
               <div v-if="form.imagenUrl" class="mt-2">
@@ -48,7 +47,7 @@
                   type="text"
                   placeholder="Ej: Ensalada de frutas"
                   required
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 />
               </div>
               <div>
@@ -61,7 +60,7 @@
                   rows="3"
                   placeholder="Describe tu receta..."
                   required
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                 ></textarea>
               </div>
             </div>
@@ -72,7 +71,7 @@
               <select
                 v-model="form.nivel"
                 required
-                class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500"
+                class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
               >
                 <option value="" disabled>Seleccionar...</option>
                 <option value="Fácil">Fácil</option>
@@ -88,7 +87,7 @@
                 min="1"
                 required
                 placeholder="4"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
             <div>
@@ -99,7 +98,7 @@
                 min="1"
                 required
                 placeholder="200"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
             <div>
@@ -109,7 +108,7 @@
                 type="text"
                 required
                 placeholder="30 min"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
           </div>
@@ -172,13 +171,13 @@
               <button
                 @click="agregarIngrediente"
                 type="button"
-                class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
+                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
                 Agregar ingrediente
               </button>
               <button
                 type="submit"
-                class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition"
+                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
               >
                 Siguiente
               </button>
@@ -186,7 +185,6 @@
           </div>
         </div>
 
-        <!-- PASO 2 -->
         <div v-if="currentStep === 2">
           <label class="block mb-2 font-semibold">Pasos de preparación *</label>
 
@@ -216,7 +214,7 @@
             <button
               @click="agregarPaso"
               type="button"
-              class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+              class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
             >
               + Agregar paso
             </button>
@@ -250,6 +248,7 @@ import { useRouter } from 'vue-router'
 import { useRecetasStore } from '@/stores/crearRecetasDoctor'
 import { useUsuariosStore } from '@/stores/usuarios'
 import { useRoute } from 'vue-router'
+import HeaderApp from './HeaderApp.vue'
 
 const router = useRouter()
 const recetasStore = useRecetasStore()
@@ -257,28 +256,26 @@ const usuariosStore = useUsuariosStore()
 const currentStep = ref(1)
 const route = useRoute()
 
-const pacientes = ref<any[]>([]) // 👈 lista de pacientes cargados
+const pacientes = ref<any[]>([]) 
 
 const form = reactive({
-  idUsuario: Number(route.params.id), // ✅ id del paciente ya cargado
+  idUsuario: Number(route.params.id), 
   nombre: '',
   descripcion: '',
   nivel: '',
   porciones: 1,
   calorias: 1,
   tiempo: '',
-  imagenUrl: '',   // 👈 ahora usamos URL en vez de archivo
+  imagenUrl: '',   
 })
 
 onMounted(() => {
-  // pacienteId viene desde la URL
   form.idUsuario = Number(route.params.id)
 })
 
-
 onMounted(async () => {
   try {
-    const idDoctor = Number(sessionStorage.getItem('idUsuario')) // el doctor logueado
+    const idDoctor = Number(sessionStorage.getItem('idUsuario')) 
     if (!idDoctor) {
       console.warn('⚠️ No se encontró idDoctor en sessionStorage')
       return
@@ -307,7 +304,6 @@ const eliminarPaso = (index: number) => pasosPreparacion.splice(index, 1)
 const siguientePaso = () => (currentStep.value = 2)
 const pasoAnterior = () => (currentStep.value = 1)
 
-
 const guardarReceta = async () => {
   try {
     const recetaPayload = {
@@ -320,8 +316,7 @@ const guardarReceta = async () => {
       ingredientes,
       pasosPreparacion,
       idUsuario: form.idUsuario,
-      imagenReceta: form.imagenUrl   // 👈 aquí va la URL
-
+      imagenReceta: form.imagenUrl   
     }
     await recetasStore.crearReceta(recetaPayload)
     alert('Receta guardada con éxito 🎉')
@@ -340,7 +335,7 @@ const resetForm = () => {
   form.porciones = 1
   form.calorias = 1
   form.tiempo = ''
-  form.imagenUrl = ''   // 👈 limpia la URL
+  form.imagenUrl = ''   
   ingredientes.splice(0, ingredientes.length, { nombre: '', cantidad: null, unidad: '' })
   pasosPreparacion.splice(0, pasosPreparacion.length, '')
 }
@@ -349,4 +344,3 @@ const irARecetas = () => {
   router.push({ name: 'DoctorRecetasHome', params: { id: form.idUsuario } })
 }
 </script>
-

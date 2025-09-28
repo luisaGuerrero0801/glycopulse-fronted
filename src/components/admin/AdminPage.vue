@@ -53,20 +53,19 @@ onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown);
 });
 
-// Bloqueo de scroll del body cuando sidebar está abierto
+
 watch(sidebarOpen, (isOpen) => {
   document.body.style.overflow = isOpen ? 'hidden' : '';
 });
 
-// Lista con íconos
 const links = [
   { name: 'Inicio', to: '/admin/panel', icon:  HomeIcon },
   { name: 'Dashboard', to: '/admin/dashboard', icon: ChartBarIcon },
   { name: 'Usuarios', to: '/admin/users', icon: UsersIcon },
-  // { name: 'Recetas', to: '/admin/favoritos', icon: BookOpenIcon },
+
   { name: 'Salir', to: '/', icon:  ArrowRightOnRectangleIcon  },
 ];
-// Filtro para la búsqueda
+
 const filteredLinks = computed(() => {
   if (!searchQuery.value) return links;
   return links.filter(link =>
@@ -77,7 +76,7 @@ const filteredLinks = computed(() => {
 
 <template>
   <div>
-    <!-- Botón hamburguesa (móvil) -->
+
     <button
       @click="toggleSidebar"
       class="md:hidden p-4 text-white bg-blue-950"
@@ -87,7 +86,7 @@ const filteredLinks = computed(() => {
       ☰
     </button>
 
-    <!-- Sidebar -->
+
     <section
       role="navigation"
       aria-label="Sidebar navigation"
@@ -97,7 +96,7 @@ const filteredLinks = computed(() => {
     >
       <LogoApp text="Glycopulse" />
 
-      <!-- Input de búsqueda -->
+  
       <div class="pb-8 pt-8 pr-10 pl-10">
         <input
           type="text"
@@ -108,7 +107,6 @@ const filteredLinks = computed(() => {
         />
       </div>
 
-      <!-- Enlaces -->
       <div class="pb-8 pt-4 pr-10 pl-8">
         <ul>
           <li
@@ -146,7 +144,7 @@ const filteredLinks = computed(() => {
           <DropdownMenu/>
         </div>
 
-    <!-- Fondo oscuro para cerrar en móvil -->
+
     <div
       v-if="sidebarOpen"
       @click="sidebarOpen = false"

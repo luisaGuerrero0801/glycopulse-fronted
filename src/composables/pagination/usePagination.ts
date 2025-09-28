@@ -5,7 +5,7 @@ import type { Ref } from 'vue'
 export function usePagination<T>(items: Ref<T[]> | T[], itemsPerPageInit = 5) {
   const currentPage = ref(1)
   const itemsPerPage = ref(itemsPerPageInit)
-
+ 
   const paginatedItems = computed(() => {
     const itemsArray = Array.isArray(items) ? items : items.value
     const start = (currentPage.value - 1) * itemsPerPage.value
@@ -22,6 +22,7 @@ export function usePagination<T>(items: Ref<T[]> | T[], itemsPerPageInit = 5) {
     if (page < 1 || page > totalPages.value) return
     currentPage.value = page
   }
+  
 
   return {
     currentPage,

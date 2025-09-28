@@ -17,17 +17,16 @@
     <!-- Contenido: listado de recetas -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
       <div
-        v-for="receta in recetasFiltradas"
+        v-for="receta in paginatedItems"
         :key="receta.idReceta"
-        class="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition"
-        @click="abrirDetalle(receta)"
+        class="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition min-h-[150px]"
       >
         <img
           :src="receta.imagenReceta || 'https://via.placeholder.com/250'"
           alt="Imagen receta"
           class="w-full h-40 object-cover"
         />
-        <div class="p-4 flex items-center justify-between">
+        <div class="p-2 flex items-center justify-between">
           <h2 class="text-lg font-semibold">{{ receta.nombre }}</h2>
           <!-- Botón corazón -->
           <button
@@ -40,6 +39,20 @@
           </button>
         </div>
       </div>
+    </div>
+    <!-- Paginación abajo -->        
+    <div class="flex justify-center mt-6" v-if="totalPages > 1">
+      <paginate
+        :page-count="totalPages"
+        :click-handler="goToPage"
+        :prev-text="'Anterior'"
+        :next-text="'Siguiente'"
+        :container-class="'flex space-x-2'"
+        :page-class="'px-4 py-2 border rounded cursor-pointer text-gray-700 hover:bg-gray-200'"
+        :active-class="'bg-blue-600 text-white font-semibold'"
+        :prev-class="'px-4 py-2 border rounded cursor-pointer text-gray-700 hover:bg-gray-200'"
+        :next-class="'px-4 py-2 border rounded cursor-pointer text-gray-700 hover:bg-gray-200'"
+      />
     </div>
 
     <!-- Modal detalle -->
@@ -186,10 +199,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-
+import Paginate from 'vuejs-paginate-next' 
 import { useRecetasPacienteStore } from '@/stores/VistaHomeRecetas'
 import HeaderApp from './HeaderApp.vue'
-
+import { usePagination } from '@/composables/pagination/usePagination'
 
 const search = ref('')
 const router = useRouter()
@@ -247,5 +260,12 @@ const abrirDetalle = (receta: any) => {
 const toggleFavorito = (receta: any) => {
   receta.esFavorito = !receta.esFavorito
 }
+// Número máximo de recetas por página
+const recetasPorPagina = 12
 
+// Integrar paginación
+const { currentPage, paginatedItems, totalPages, goToPage } = usePagination(
+  computed(() => recetasFiltradas.value),
+  recetasPorPagina
+)
 </script>

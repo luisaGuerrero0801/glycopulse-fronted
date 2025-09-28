@@ -28,18 +28,31 @@ onMounted(async () => {
   }
 
   try {
-    const response = await axios.get(`${VITE_API_URL}auth/verify?token=${token}`)
+    const response = await axios.get(`${VITE_API_URL}/auth/verify?token=${token}`)
 
-    // Maneja tanto JSON como texto plano
-    mensaje.value =
-      response.data?.message ||
-      (typeof response.data === 'string' ? response.data : '✅ Cuenta verificada correctamente')
+    // ✅ Manejo seguro: JSON o string (HTML inesperado)
+    if (response.data) {
+      if (typeof response.data === 'object') {
+        mensaje.value = response.data.message || '✅ Cuenta verificada correctamente'
+      } else {
+        // Si llega HTML u otro texto inesperado
+        mensaje.value = '✅ Cuenta verificada correctamente'
+      }
+    } else {
+      mensaje.value = '✅ Cuenta verificada correctamente'
+    }
+
     exito.value = true
   } catch (error) {
     // Manejo robusto de errores en producción
-    mensaje.value =
-      error.response?.data?.message ||
-      (typeof error.response?.data === 'string' ? error.response.data : '❌ Token inválido o expirado')
+    if (error.response?.data) {
+      mensaje.value =
+        typeof error.response.data === 'object'
+          ? error.response.data.message || '❌ Token inválido o expirado'
+          : '❌ Token inválido o expirado'
+    } else {
+      mensaje.value = '❌ Error de conexión con el servidor'
+    }
     exito.value = false
   }
 

@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import { mapPasosFrontToBack } from '@/helpers/mapPasos'
 import { mapIngredientesFrontToBack } from '@/helpers/mapIngredientes'
+import { loginStore } from './login'
 
 interface Ingrediente {
   nombre: string
@@ -17,9 +18,10 @@ interface Receta {
   porciones: number
   calorias: number
   tiempo: string
-  imagenReceta?: string   // 👈 cambiado para que coincida con el form
+  imagenReceta?: string // 👈 cambiado para que coincida con el form
   ingredientes: Ingrediente[]
   pasosPreparacion: string[]
+  idUsuario?: number
 }
 
 export const useRecetasStore = defineStore('recetas', {
@@ -53,53 +55,55 @@ export const useRecetasStore = defineStore('recetas', {
      * Mapea ingredientes y pasos y hace POST al backend en formato JSON.
      */
     async crearReceta(receta: Omit<Receta, 'idReceta'>, imagenReceta?: File) {
-  try {
-    const token = sessionStorage.getItem('token')
-    if (!token) throw new Error('Token no encontrado en sessionStorage')
+      try {
+        const token = sessionStorage.getItem('token')
+        if (!token) throw new Error('Token no encontrado en sessionStorage')
 
-    // Asegurarse que venga idUsuario en el objeto receta
-    if (!('idUsuario' in receta) || !receta.idUsuario) {
-      throw new Error('idUsuario (paciente) no proporcionado en la receta')
+        const login: ReturnType<typeof loginStore> = useLoginStore()
+
+        if (!receta.idUsuario) {
+          const idUsuarioLogin = login.getUserId()
+          if (!idUsuarioLogin) throw new Error('No se pudo obtener idUsuario del loginStore')
+          receta.idUsuario = idUsuarioLogin
+        }
+
+        const body = {
+          nombreReceta: receta.nombre,
+          descripcionReceta: receta.descripcion,
+          porcionesReceta: Number(receta.porciones),
+          caloriasReceta: Number(receta.calorias),
+          tiempoReceta: receta.tiempo,
+          imagenReceta: (receta as any).imagenReceta || 'no-image',
+          nivelReceta: receta.nivel,
+          categoriaReceta: 'Favoritos',
+          ingredientes: mapIngredientesFrontToBack(receta.ingredientes || []),
+          pasos: mapPasosFrontToBack(receta.pasosPreparacion || []),
+          idUsuario: receta.idUsuario
+        }
+
+        console.log('Payload que se envía a backend:', body)
+
+        const res = await fetch(`${import.meta.env.VITE_API_URL}recetas`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(body)
+        })
+
+        if (!res.ok) {
+          const text = await res.text().catch(() => null)
+          throw new Error(text || 'Error al crear receta')
+        }
+
+        const nueva = await res.json()
+        this.recetas.push(nueva)
+        return nueva
+      } catch (err: any) {
+        this.error = err.message
+        throw err
+      }
     }
-
-    const body = {
-      nombreReceta: receta.nombre,
-      descripcionReceta: receta.descripcion,
-      porcionesReceta: Number(receta.porciones),
-      caloriasReceta: Number(receta.calorias),
-      tiempoReceta: receta.tiempo,
-      imagenReceta: (receta as any).imagenReceta || 'no-image',
-      nivelReceta: receta.nivel,
-      categoriaReceta: 'Favoritos',
-      ingredientes: mapIngredientesFrontToBack(receta.ingredientes || []),
-      pasos: mapPasosFrontToBack(receta.pasosPreparacion || []),
-      idUsuario: (receta as any).idUsuario
-    }
-
-    console.log('Payload que se envía a backend:', body)
-
-    const res = await fetch(`${import.meta.env.VITE_API_URL}recetas`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(body)
-    })
-
-    if (!res.ok) {
-      const text = await res.text().catch(() => null)
-      throw new Error(text || 'Error al crear receta')
-    }
-
-    const nueva = await res.json()
-    this.recetas.push(nueva)
-    return nueva
-  } catch (err: any) {
-    this.error = err.message
-    throw err
-  }
-}
-
   }
 })

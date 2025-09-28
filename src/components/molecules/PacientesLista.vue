@@ -10,17 +10,31 @@
         v-for="paciente in pacientes"
         :key="paciente.id"
         :paciente="paciente"
+        @mostrarGlucometrias="mostrarGlucometrias"
       />
     </div>
+    <GlucometryView
+      v-if="pacienteSeleccionadoId"
+      :pacienteId="pacienteSeleccionadoId"
+    />
+
   </div>
 </template>
 
 
 <script setup lang="ts">
 import PacienteCard from '@/components/molecules/PacienteCard.vue'
+import GlucometryView from '@/views/glucometries/GlucometryView.vue';
+import { ref } from 'vue'
 
 defineProps<{
   pacientes: any[]
   loading: boolean
 }>()
+
+const pacienteSeleccionadoId = ref<number|null>(null)
+
+const mostrarGlucometrias = (pacienteId: number) => {
+  pacienteSeleccionadoId.value = pacienteId
+}
 </script>

@@ -138,6 +138,14 @@ const router = createRouter({
       }
     },
     {
+      path: '/reportes',
+      name: 'reportes',
+      component: () => import('../views/Reportes/ReportesView.vue'),
+      meta: {
+        requiresAuth: true /**cambiar a true */
+      }
+    },
+    {
       path: '/glucometrias',
       name: 'glucometrias',
       component: () => import('../views/glucometries/GlucometriasPaciente.vue'),

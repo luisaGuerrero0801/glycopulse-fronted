@@ -13,18 +13,17 @@
         @mostrarGlucometrias="mostrarGlucometrias"
       />
     </div>
-    <GlucometryView
-      v-if="pacienteSeleccionadoId"
+    <DoctorGlucometry
+      v-if="pacienteSeleccionadoId !== null"
       :pacienteId="pacienteSeleccionadoId"
     />
-
   </div>
 </template>
 
 
 <script setup lang="ts">
-import PacienteCard from '@/components/molecules/PacienteCard.vue'
-import GlucometryView from '@/views/glucometries/GlucometryView.vue';
+import DoctorGlucometry from '@/views/DoctorGlucometry.vue'
+import PacienteCard from './PacienteCard.vue'
 import { ref } from 'vue'
 
 defineProps<{

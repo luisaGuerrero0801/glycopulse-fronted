@@ -12,16 +12,9 @@ import Paginate from 'vuejs-paginate-next' /** esto se importa para paginado */
 import { usePagination } from '@/composables/pagination/usePagination'
 import type { Glucometria } from '@/types/glucometria'
 
-const props = defineProps<{
-  pacienteId?: number
-}>()
-
 const storeGluco = useGlucometriasStore()
 const auth = loginStore()
 const userId = auth.getUserId()
-const userRol = auth.getRol()
-
-const idParaCargar = computed(() => props.pacienteId || userId)
 
 /** ---------- ORDEN Y PAGINACIÓN ---------- */
 const sortConfig = ref({
@@ -141,11 +134,12 @@ const resetForm = () => {
 }
 
 onMounted(() => {
-  if (idParaCargar.value) storeGluco.verGlucos(idParaCargar.value, { orderFecha: 'DESC' })
+  if (userId) {
+    storeGluco.verGlucos(userId, { orderFecha: 'DESC' })
+  }
 })
 
 const openModal = () => {
-  if (userRol === 'doctor') return
   isModalVisible.value = true
   modalType.value = 'form'
   glucometriaSeleccionada.value = null
@@ -172,7 +166,6 @@ const verDetalleGlucometria = async (idGlucometria: number) => {
 
 /** Carga la glucometría para editar en modal formulario */
 const editarGlucometria = async (id: number) => {
-  if (userRol === 'doctor') return
   try {
     const detalle = await storeGluco.verDetalleGlucometria(id)
     if (detalle) {
@@ -212,7 +205,8 @@ const validateForm = (): boolean => {
 const handleSubmit = async () => {
   if (!validateForm()) return
   if (!userId) {
-    return toast.error('Usuario no autenticado.')
+    toast.error('Usuario no autenticado.')
+    return
   }
 
   try {
@@ -228,11 +222,11 @@ const handleSubmit = async () => {
         fechaGlucometria: form.value.fecha,
         horaGlucometria: form.value.hora,
         nivelGlucometria: form.value.glucosa,
-        momento: String(form.value.momento)
+        momento: String(form.value.momento),
       })
     }
-    if (idParaCargar.value) {
-      await storeGluco.verGlucos(idParaCargar.value, { orderFecha: 'DESC' })
+    if (userId) {
+      await storeGluco.verGlucos(userId, { orderFecha: 'DESC' })
     }
     resetForm()
     closeModal()
@@ -248,12 +242,7 @@ const handleSubmit = async () => {
     <!-- Título y botón de nueva glucometría -->
     <div class="flex justify-between items-center w-full px-4">
       <span class="text-4xl font-semibold text-indigo-950 truncate">Glucometrías</span>
-      <ButtomNew
-        v-if="userRol !== 'doctor'"
-        nameButton="Nuevo"
-        iconButton="add_circle"
-        @click="openModal"
-      />
+      <ButtomNew nameButton="Nuevo" iconButton="add_circle" @click="openModal" />
     </div>
 
     <!-- Próxima glucosa y filtros -->
@@ -282,10 +271,8 @@ const handleSubmit = async () => {
               @click="toggleSort('fecha')"
             >
               <span class="truncate text-indigo-950 text-lg">FECHA</span>
-              <span
-                v-if="sortConfig.fecha"
-                class="text-indigo-950 flex-shrink-0 text-xl font-semibold"
-              >
+              <span v-if="sortConfig.fecha" 
+              class="text-indigo-950 flex-shrink-0 text-xl font-semibold">
                 {{ sortConfig.fecha === 'ASC' ? '↑' : '↓' }}
               </span>
             </button>
@@ -344,8 +331,7 @@ const handleSubmit = async () => {
               ?.descripcionRecomendacion || ''
           "
           @verGluco="verDetalleGlucometria(g.idGlucometria)"
-          @editarGluco="userRol !== 'doctor' ? editarGlucometria(g.idGlucometria) : null"
-          :disableEdit="userRol === 'doctor'"
+          @editarGluco="editarGlucometria(g.idGlucometria)"
         />
       </div>
     </div>

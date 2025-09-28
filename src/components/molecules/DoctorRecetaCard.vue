@@ -258,40 +258,6 @@ const route = useRoute()
 
 const pacientes = ref<any[]>([]) 
 
-const form = reactive({
-  idUsuario: Number(route.params.id), 
-  nombre: '',
-  descripcion: '',
-  nivel: '',
-  porciones: 1,
-  calorias: 1,
-  tiempo: '',
-  imagenUrl: '',   
-})
-
-onMounted(() => {
-  form.idUsuario = Number(route.params.id)
-})
-
-onMounted(async () => {
-  try {
-    const idDoctor = Number(sessionStorage.getItem('idUsuario')) 
-    if (!idDoctor) {
-      console.warn('⚠️ No se encontró idDoctor en sessionStorage')
-      return
-    }
-
-    pacientes.value = await usuariosStore.fetchPacientesByDoctor(idDoctor)
-  } catch (error) {
-    console.error('Error cargando pacientes:', error)
-  }
-})
-
-interface Ingrediente {
-  nombre: string
-  cantidad: number | null
-  unidad: string
-}
 const ingredientes = reactive<Ingrediente[]>([{ nombre: '', cantidad: null, unidad: '' }])
 const pasosPreparacion = reactive<string[]>([''])
 
@@ -342,5 +308,42 @@ const resetForm = () => {
 
 const irARecetas = () => {
   router.push({ name: 'DoctorRecetasHome', params: { id: form.idUsuario } })
+}
+const form = reactive({
+  idUsuario: Number(route.params.id), 
+  nombre: '',
+  descripcion: '',
+  nivel: '',
+  porciones: 1,
+  calorias: 1,
+  tiempo: '',
+  imagenUrl: '',   
+})
+
+onMounted(() => {
+  form.idUsuario = Number(route.params.id)
+})
+
+const idUsuarioActual = ref<number | null>(null)
+
+
+onMounted(() => {
+  try {
+    const storedId = sessionStorage.getItem('idUsuario') 
+    if (storedId) {
+      idUsuarioActual.value = Number(storedId)
+      console.log('ID del usuario actual obtenido de sessionStorage:', idUsuarioActual.value)
+    } else {
+      console.log('No se encontró el ID del usuario en sessionStorage.')
+    }
+  } catch (e) {
+    console.error('Error al obtener el ID del usuario de sessionStorage:', e)
+  }
+})
+
+interface Ingrediente {
+  nombre: string
+  cantidad: number | null
+  unidad: string
 }
 </script>

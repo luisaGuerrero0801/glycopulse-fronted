@@ -23,7 +23,7 @@ const props = defineProps({
       { name: 'Donantes', to: '/Donantes', icon: UserIcon },
       { name: 'Glucometría', to: '/glucometrias', icon: BeakerIcon },
       { name: 'Recetas Saludables', to: '/recetas-saludables/recetas/3/crear', icon: BookOpenIcon },
-      { name: 'Reportes', to: 'reportes', icon: ChartBarIcon },
+      { name: 'Reportes', to: '/reportes', icon: ChartBarIcon },
     ]
   },
 });

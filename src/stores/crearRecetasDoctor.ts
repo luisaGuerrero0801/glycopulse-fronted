@@ -59,7 +59,7 @@ export const useRecetasStore = defineStore('recetas', {
         const token = sessionStorage.getItem('token')
         if (!token) throw new Error('Token no encontrado en sessionStorage')
 
-        const login: ReturnType<typeof loginStore> = useLoginStore()
+        const login: ReturnType<typeof loginStore> = loginStore()
 
         if (!receta.idUsuario) {
           const idUsuarioLogin = login.getUserId()

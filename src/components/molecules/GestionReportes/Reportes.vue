@@ -1,115 +1,175 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-8">
-    <!-- Header & Filters -->
-    <header class="mb-8">
-      <h1 class="text-4xl font-extrabold text-indigo-700 mb-4 text-center">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6 sm:p-8" id="capture">
+    <header class="mb-6 sm:mb-8">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-black mb-4 text-center">
         Informe de Glucosa
       </h1>
-      <div
-        class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-lg flex flex-wrap items-end gap-4"
-      >
-        <div class="flex-1 min-w-[160px]">
-          <label for="from" class="block text-gray-600 mb-1">Desde</label>
-          <input
-            id="from"
-            type="date"
-            v-model="filters.startDate"
-            class="w-full border border-indigo-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-          />
+      <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg space-y-4">
+        <div class="flex flex-wrap gap-4 items-end">
+          <div class="flex-1">
+            <p class="text-gray-600">
+              Usuario:
+              <strong>{{ currentUser?.nombres }} {{ currentUser?.apellidos }}</strong>
+            </p>
+            <p class="text-sm text-gray-500">ID: {{ currentUserId }}</p>
+          </div>
+
+          <button
+            @click="loadUserData"
+            class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+            :disabled="loading"
+          >
+            {{ loading ? 'Cargando...' : 'Actualizar Datos' }}
+          </button>
+
+          <button
+            @click="downloadReport"
+            class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition"
+          >
+            Descargar Informe
+          </button>
         </div>
-        <div class="flex-1 min-w-[160px]">
-          <label for="to" class="block text-gray-600 mb-1">Hasta</label>
-          <input
-            id="to"
-            type="date"
-            v-model="filters.endDate"
-            class="w-full border border-indigo-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-          />
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div class="bg-blue-50 p-3 rounded">
+            <div class="font-semibold">Registros</div>
+            <div>{{ userRecords.length }}</div>
+          </div>
+          <div class="bg-blue-50 p-3 rounded">
+            <div class="font-semibold">Cargando</div>
+            <div>{{ loading ? 'Sí' : 'No' }}</div>
+          </div>
+          <div class="bg-blue-50 p-3 rounded">
+            <div class="font-semibold">Error</div>
+            <div>{{ error || 'No' }}</div>
+          </div>
+          <div class="bg-blue-50 p-3 rounded">
+            <div class="font-semibold">Filtrados</div>
+            <div>{{ filteredRecords.length }}</div>
+          </div>
         </div>
-        <button
-          @click="filterRecords"
-          class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition"
-        >
-          Aplicar filtros
-        </button>
       </div>
     </header>
 
-    <!-- Gráficos y tabla -->
-    <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-      <!-- Mensaje si no hay datos disponibles -->
-      <div v-if="!filteredRecords.length" class="lg:col-span-3 text-center py-10 text-gray-500 bg-white rounded-xl shadow-lg">
-          <p class="mt-2 font-semibold">No hay datos de glucosa disponibles para mostrar.</p>
-          <p class="text-sm italic">Intente cambiar los filtros o revise si se cargaron los datos de prueba.</p>
+    <div v-if="loading" class="text-center py-8">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <p class="text-gray-600 mt-2">Cargando datos de glucosa...</p>
+    </div>
+
+    <div v-else-if="error" class="text-center py-8 text-red-600 bg-red-50 rounded-lg mx-4">
+      <p>Error: {{ error }}</p>
+      <button @click="loadUserData" class="mt-2 bg-red-600 text-white px-4 py-2 rounded-lg">
+        Reintentar
+      </button>
+    </div>
+
+    <main v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div
+        v-if="!filteredRecords.length"
+        class="lg:col-span-3 text-center py-8 text-gray-500 bg-white rounded-xl shadow-lg"
+      >
+        <p class="mt-2 font-semibold">No hay registros de glucosa disponibles.</p>
+        <p class="text-sm">Cuando agregues registros de glucosa, aparecerán aquí.</p>
       </div>
 
       <template v-else>
-        <!-- Charts -->
         <div
-          v-for="(chart, idx) in chartConfigs"
+          v-for="(chart, idx) in chartConfigs.filter(c => c.title !== 'Lecturas por Hora')"
           :key="idx"
-          :class="[ 'bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition',
-            chart.title === 'Lecturas por Hora' ? 'lg:col-start-3 lg:row-start-1' : '' ]"
+          class="bg-white p-4 sm:p-6 rounded-2xl shadow-md hover:shadow-xl transition"
         >
           <div class="flex items-center mb-3">
-            <span class="text-2xl mr-2">{{ chart.icon }}</span>
-            <h2 class="text-xl font-semibold text-gray-700">{{ chart.title }}</h2>
+            <h2 class="text-lg sm:text-xl font-semibold text-gray-700">{{ chart.title }}</h2>
           </div>
-          <div class="h-56">
-            <component
-              :is="chart.component"
-              :data="chart.data"
-              :options="chart.options"
-            />
+          <div class="h-48 sm:h-56">
+            <component :is="chart.component" :data="chart.data" :options="chart.options" />
           </div>
         </div>
 
-        <!-- Tabla -->
-        <section
-          class="bg-white rounded-2xl shadow-lg overflow-auto col-span-1 md:col-span-2 lg:col-start-1 lg:col-span-2 lg:row-start-2 p-6"
-        >
-          <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-gray-700">Registros</h3>
-            <span class="text-sm text-gray-500">Mostrando {{ filteredRecords.length }} registros</span>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 col-span-1 sm:col-span-2 lg:col-span-3">
+          <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-md hover:shadow-xl transition">
+            <div class="flex items-center mb-3">
+              <h2 class="text-lg sm:text-xl font-semibold text-gray-700">Lecturas por Hora</h2>
+            </div>
+            <div class="h-48 sm:h-56">
+              <ScatterChart :data="scatterData" :options="scatterOptions" />
+            </div>
           </div>
 
-          <div class="w-full">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-indigo-100">
-                <tr>
-                  <th class="px-6 py-3 text-left text-sm font-medium text-indigo-700">Fecha</th>
-                  <th class="px-6 py-3 text-left text-sm font-medium text-indigo-700">Hora</th>
-                  <th class="px-6 py-3 text-left text-sm font-medium text-indigo-700">Glucosa (mg/dL)</th>
-                  <th class="px-6 py-3 text-left text-sm font-medium text-indigo-700">Estado</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-100">
-                <tr
-                  v-for="rec in filteredRecords"
-                  :key="rec.id"
-                  class="hover:bg-indigo-50 transition"
-                >
-                  <td class="px-6 py-4">{{ formatDate(rec.datetime) }}</td>
-                  <td class="px-6 py-4">{{ formatTime(rec.datetime) }}</td>
-                  <td class="px-6 py-4">{{ rec.value }}</td>
-                  <td class="px-6 py-4">
-                    <span :class="statusClass(rec.value)">
-                      {{ determineStatus(rec.value) }}
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+          <section class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 flex flex-col">
+            <div class="mb-3 flex items-center justify-between">
+              <h3 class="text-md sm:text-lg font-semibold text-gray-700">
+                Registros ({{ filteredRecords.length }})
+              </h3>
+            </div>
+            <div class="w-full max-h-[400px] overflow-y-auto rounded-lg border border-gray-200 flex-1">
+              <table class="min-w-full text-sm divide-y divide-gray-200">
+                <thead class="bg-indigo-100 text-xs sticky top-0 z-10">
+                  <tr>
+                    <th class="px-3 py-2 text-left font-medium text-indigo-700">Fecha</th>
+                    <th class="px-3 py-2 text-left font-medium text-indigo-700">Hora</th>
+                    <th class="px-3 py-2 text-left font-medium text-indigo-700">Glucosa</th>
+                    <th class="px-3 py-2 text-left font-medium text-indigo-700">Estado</th>
+                    <th class="px-3 py-2 text-left font-medium text-indigo-700">Rango</th>
+                    <th class="px-3 py-2 text-left font-medium text-indigo-700">Momento</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  <tr
+                    v-for="rec in paginatedRecords"
+                    :key="rec.id"
+                    class="hover:bg-indigo-50 transition"
+                  >
+                    <td class="px-3 py-2">{{ rec.fecha }}</td>
+                    <td class="px-3 py-2">{{ rec.hora }}</td>
+                    <td class="px-3 py-2 font-semibold">{{ rec.value }}</td>
+                    <td class="px-3 py-2 text-gray-700">{{ rec.estado?.nombreEstado }}</td>
+                    <td class="px-3 py-2 flex items-center gap-2">
+                      <span>{{ rec.rango?.nombreRango }}</span>
+                      <span
+                        class="w-4 h-4 rounded-full"
+                        :style="{ backgroundColor: rec.rango?.color || '#ccc' }"
+                      ></span>
+                    </td>
+                    <td class="px-3 py-2 text-gray-600">{{ rec.momento }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="flex justify-center items-center gap-2 mt-4">
+              <button
+                @click="changePage(currentPage - 1)"
+                :disabled="currentPage === 1"
+                class="px-3 py-1 rounded bg-indigo-100 text-indigo-700 disabled:opacity-40"
+              >
+                ◀
+              </button>
+
+              <span class="text-sm text-gray-600">
+                Página {{ currentPage }} de {{ totalPages }}
+              </span>
+
+              <button
+                @click="changePage(currentPage + 1)"
+                :disabled="currentPage === totalPages"
+                class="px-3 py-1 rounded bg-indigo-100 text-indigo-700 disabled:opacity-40"
+              >
+                ▶
+              </button>
+            </div>
+          </section>
+        </div>
       </template>
     </main>
   </div>
 </template>
 
-<script>
-// No se necesita importar axios ni Pinia en esta versión con datos estáticos
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
 import {
   Chart as ChartJS,
   Title,
@@ -121,9 +181,185 @@ import {
   ArcElement,
   CategoryScale,
   LinearScale,
-  Filler as FillerPlugin 
+  Filler as FillerPlugin
 } from 'chart.js'
-import { Line, Bar, Pie, Scatter } from 'vue-chartjs'
+import { Line as LineChart, Bar as BarChart, Pie as PieChart, Scatter as ScatterChart } from 'vue-chartjs'
+import { useGlucometriasStore } from '@/stores/glucometrias/AllGlucometrias'
+
+const store = useGlucometriasStore()
+const loading = ref(false)
+const error = ref<string | null>(null)
+const userRecords = ref<any[]>([])
+const filteredRecords = ref<any[]>([])
+const idUsuarioActual = ref<number | null>(null)
+const todosLosUsuarios = ref<any[]>([])
+
+const currentPage = ref(1)
+const pageSize = ref(10)
+
+const totalPages = computed(() => 
+  Math.ceil(filteredRecords.value.length / pageSize.value) || 1
+)
+
+const paginatedRecords = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return filteredRecords.value.slice(start, start + pageSize.value)
+})
+
+const changePage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}
+
+const currentUser = computed(() => {
+  if (idUsuarioActual.value !== null) {
+    return todosLosUsuarios.value.find((d: any) => d.idUsuario === idUsuarioActual.value)
+  }
+  return null
+})
+
+const currentUserId = computed(() => currentUser.value?.idUsuario || idUsuarioActual.value)
+
+const baseChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'bottom',
+      labels: {
+        usePointStyle: true,
+        padding: 15,
+        font: {
+          size: 10
+        }
+      }
+    },
+    tooltip: {
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      titleColor: '#1f2937',
+      bodyColor: '#1f2937',
+      borderColor: '#e5e7eb',
+      borderWidth: 1,
+      titleFont: {
+        size: 11
+      },
+      bodyFont: {
+        size: 11
+      }
+    }
+  }
+}
+
+const lineOptions = {
+  ...baseChartOptions,
+  scales: {
+    x: { 
+      grid: { display: false },
+      ticks: {
+        maxTicksLimit: 8,
+        font: {
+          size: 9
+        }
+      }
+    },
+    y: {
+      beginAtZero: true,
+      grid: { color: 'rgba(0,0,0,0.1)' },
+      ticks: {
+        callback: function (value: any) {
+          return value + ' mg/dL'
+        },
+        font: {
+          size: 9
+        }
+      }
+    }
+  }
+}
+
+const barOptions = {
+  ...baseChartOptions,
+  scales: {
+    x: { 
+      grid: { display: false },
+      ticks: {
+        maxTicksLimit: 6,
+        font: {
+          size: 9
+        }
+      }
+    },
+    y: {
+      beginAtZero: true,
+      grid: { color: 'rgba(0,0,0,0.1)' },
+      ticks: {
+        callback: function (value: any) {
+          return value + ' mg/dL'
+        },
+        font: {
+          size: 9
+        }
+      }
+    }
+  }
+}
+
+const pieOptions = {
+  ...baseChartOptions,
+  plugins: {
+    ...baseChartOptions.plugins,
+    legend: {
+      ...baseChartOptions.plugins.legend,
+      labels: {
+        usePointStyle: true,
+        padding: 10,
+        font: {
+          size: 9
+        }
+      }
+    }
+  }
+}
+
+const scatterOptions = {
+  ...baseChartOptions,
+  scales: {
+    x: {
+      title: {
+        display: true,
+        text: 'Hora del día',
+        font: {
+          size: 10
+        }
+      },
+      ticks: {
+        font: {
+          size: 9
+        }
+      }
+    },
+    y: {
+      title: {
+        display: true,
+        text: 'Glucosa (mg/dL)',
+        font: {
+          size: 10
+        }
+      },
+      beginAtZero: true,
+      grid: { color: 'rgba(0,0,0,0.1)' },
+      ticks: {
+        callback: function (value: any) {
+          return value + ' mg/dL'
+        },
+        font: {
+          size: 9
+        }
+      }
+    }
+  }
+}
 
 ChartJS.register(
   Title,
@@ -138,177 +374,195 @@ ChartJS.register(
   FillerPlugin
 )
 
-// Datos de prueba estáticos para que los gráficos aparezcan
-const MOCK_RECORDS = [
-  // Fecha: 2025-09-20
-  { id: 1, datetime: '2025-09-20T08:00:00', value: 110 },
-  { id: 2, datetime: '2025-09-20T12:30:00', value: 155 },
-  { id: 3, datetime: '2025-09-20T18:45:00', value: 95 },
-  { id: 4, datetime: '2025-09-20T22:00:00', value: 65 }, // Baja
+const downloadReport = async () => {
+  const element = document.getElementById('capture')
+  if (!element) return
 
-];
+  const canvas = await html2canvas(element, { scale: 2 })
+  const imgData = canvas.toDataURL('image/png')
+  const pdf = new jsPDF('p', 'mm', 'a4')
 
+  const imgProps = pdf.getImageProperties(imgData)
+  const pdfWidth = pdf.internal.pageSize.getWidth()
+  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
 
-export default {
-  name: 'GlucoReportNew',
-  components: {
-    LineChart: Line,
-    BarChart: Bar,
-    PieChart: Pie,
-    ScatterChart: Scatter,
-  },
-  data() {
-    return {
-      filters: { startDate: '', endDate: '' },
-      records: MOCK_RECORDS.map(r => ({
-          ...r, 
-          // Convertimos la fecha ISO a un objeto Date para facilitar la manipulación
-          datetime: new Date(r.datetime)
-      })),
-      filteredRecords: [], // Inicialmente vacío, se llenará en mounted
-      chartOptions: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom' } },
-        scales: {
-          x: { grid: { display: false } },
-          y: { beginAtZero: false, }
-        }
-      },
-    }
-  },
-  computed: {
-    // --- Configuraciones de Gráficos ---
-    chartConfigs() {
-      return [
-        { title: 'Tendencia Temporal', icon: '📈', component: 'LineChart', data: this.lineData, 
-          options: { ...this.chartOptions, scales: { x: { grid: { display: false } }, y: { beginAtZero: false } } } 
-        },
-        { title: 'Promedio Diario', icon: '📊', component: 'BarChart', data: this.barData, options: this.chartOptions },
-        { title: 'Estados', icon: '🧭', component: 'PieChart', data: this.pieData, options: this.chartOptions },
-        { title: 'Lecturas por Hora', icon: '⏱️', component: 'ScatterChart', data: this.scatterData, 
-          options: { ...this.chartOptions, scales: { x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Hora del Día (0-24)' } }, y: { beginAtZero: false } } } 
-        },
-      ]
-    },
-    
-    lineData() {
-      return {
-        labels: this.filteredRecords.map(r => this.formatDateShort(r.datetime)),
-        datasets: [{ 
-            label: 'Glucosa (mg/dL)', 
-            data: this.filteredRecords.map(r => r.value), 
-            borderColor: '#5c6ac4', 
-            backgroundColor: 'rgba(92, 106, 196, 0.2)', 
-            tension: 0.4, 
-            fill: true 
-        }]
-      }
-    },
-    
-    barData() {
-      const map = {}
-      this.filteredRecords.forEach(r => {
-        const day = r.datetime.toLocaleDateString('es-ES')
-        map[day] = map[day] || []
-        map[day].push(r.value)
-      })
-      const dailyAverages = Object.entries(map).map(([day, vals]) => ({
-        day,
-        avg: (vals.reduce((a, b) => a + b, 0) / vals.length), 
-      }))
-
-      return {
-        labels: dailyAverages.map(d => d.day),
-        datasets: [{ 
-            label: 'Promedio mg/dL', 
-            data: dailyAverages.map(d => d.avg), 
-            backgroundColor: '#8b5cf6', 
-            borderRadius: 4 
-        }]
-      }
-    },
-    
-    pieData() {
-      const counts = { Baja: 0, Normal: 0, Alta: 0 }
-      this.filteredRecords.forEach(r => {
-        if (r.value < 70) counts.Baja++
-        else if (r.value > 140) counts.Alta++
-        else counts.Normal++
-      })
-      const statusDistribution = [
-        { name: 'Baja (< 70)', value: counts.Baja, color: '#ef4444' },
-        { name: 'Normal (70-140)', value: counts.Normal, color: '#10b981' },
-        { name: 'Alta (> 140)', value: counts.Alta, color: '#f59e0b' }, 
-      ].filter(s => s.value > 0) 
-
-      return {
-        labels: statusDistribution.map(s => s.name),
-        datasets: [{ 
-            data: statusDistribution.map(s => s.value), 
-            backgroundColor: statusDistribution.map(s => s.color) 
-        }]
-      }
-    },
-    
-    scatterData() {
-      return {
-        datasets: [{
-          label: 'Glucosa vs Hora',
-          data: this.filteredRecords.map(r => {
-            // Calculamos la hora con minutos como decimal (ej: 8:30 = 8.5)
-            return { x: r.datetime.getHours() + r.datetime.getMinutes() / 60, y: r.value }
-          }),
-          backgroundColor: '#c084fc',
-          pointRadius: 6,
-          pointHoverRadius: 8,
-        }]
-      }
-    },
-  },
-  methods: {
-    // Definición de estado de glucosa
-    determineStatus(v) {
-      if (v < 70) return 'Baja'
-      if (v > 140) return 'Alta'
-      return 'Normal'
-    },
-
-    formatDate(dt) {
-      // Usamos toLocaleDateString en el objeto Date
-      return dt.toLocaleDateString('es-ES')
-    },
-    formatDateShort(dt) {
-      return dt.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })
-    },
-    formatTime(dt) {
-      // Usamos toLocaleTimeString en el objeto Date
-      return dt.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-    },
-    statusClass(v) {
-      if (v < 70) return 'inline-block px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800'
-      if (v > 140) return 'inline-block px-3 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800'
-      return 'inline-block px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800'
-    },
-    
-    filterRecords() {
-      const { startDate, endDate } = this.filters
-      
-      // Convertimos las fechas de filtro a timestamp al inicio y fin del día
-      const start = startDate ? new Date(startDate).getTime() : 0
-      const end = endDate ? new Date(endDate + 'T23:59:59').getTime() : Infinity 
-      
-      this.filteredRecords = this.records
-        .filter(r => {
-            const timestamp = r.datetime.getTime()
-            return (timestamp >= start) && (timestamp <= end)
-        })
-        .sort((a, b) => a.datetime - new Date(b.datetime)) 
-    },
-  },
-  mounted() {
-    // Cargamos todos los datos iniciales para que la tabla y gráficos aparezcan
-    this.filterRecords() 
-  },
+  pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+  pdf.save(`informe-glucosa-${currentUserId.value || 'usuario'}.pdf`)
 }
+
+const loadUserData = async () => {
+  if (!currentUserId.value) {
+    error.value = 'No hay usuario identificado'
+    return
+  }
+  loading.value = true
+  error.value = null
+  try {
+    userRecords.value = []
+    await store.verGlucos(currentUserId.value)
+    const userGlucometrias = store.glucometrias.filter(
+      (g: any) => g.usuario?.idUsuario === currentUserId.value
+    )
+    userRecords.value = userGlucometrias
+      .map((g: any) => {
+        try {
+          return {
+            id: g.idGlucometria,
+            fecha: g.fechaGlucometria,
+            hora: g.horaGlucometria,
+            value: g.nivelGlucometria,
+            momento: g.momento,
+            estado: g.estado,
+            rango: g.rango,
+            timestamp:
+              new Date(g.fechaGlucometria + ' ' + g.horaGlucometria).getTime() || Date.now()
+          }
+        } catch (err) {
+          return null
+        }
+      })
+      .filter((r: any) => r !== null)
+    filterRecords()
+  } catch (err) {
+    error.value = 'Error al cargar los datos del usuario'
+  } finally {
+    loading.value = false
+  }
+}
+
+const filterRecords = () => {
+  filteredRecords.value = userRecords.value.sort((a, b) => b.timestamp - a.timestamp)
+  currentPage.value = 1
+}
+
+const lineData = computed(() => {
+  const labels = filteredRecords.value.map((r) => `${r.fecha} ${r.hora}`)
+  const values = filteredRecords.value.map((r) => r.value)
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Glucosa (mg/dL)',
+        data: values,
+        borderColor: '#5c6ac4',
+        backgroundColor: 'rgba(92, 106, 196, 0.2)',
+        tension: 0.4,
+        fill: true,
+        pointBackgroundColor: '#5c6ac4',
+        pointBorderColor: '#ffffff',
+        pointBorderWidth: 2,
+        pointRadius: 3
+      }
+    ]
+  }
+})
+
+const barData = computed(() => {
+  const dailyData: Record<string, number[]> = {}
+  filteredRecords.value.forEach((r) => {
+    if (!dailyData[r.fecha]) dailyData[r.fecha] = []
+    dailyData[r.fecha].push(r.value)
+  })
+  const labels = Object.keys(dailyData)
+  
+  const colorPalette = [
+    '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
+    '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
+    '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'
+  ]
+  
+  const averages = labels.map((date) => {
+    const values = dailyData[date]
+    return values.reduce((s, v) => s + v, 0) / values.length
+  })
+  
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Promedio Diario (mg/dL)',
+        data: averages,
+        backgroundColor: labels.map((_, index) => colorPalette[index % colorPalette.length]),
+        borderColor: labels.map((_, index) => colorPalette[index % colorPalette.length]),
+        borderWidth: 1,
+        borderRadius: 4
+      }
+    ]
+  }
+})
+
+const pieData = computed(() => {
+  const counts: Record<string, { value: number; color: string }> = {}
+
+  filteredRecords.value.forEach((r) => {
+    const nombre = r.rango?.nombreRango || 'Sin rango'
+    const color = r.rango?.color || '#9ca3af'
+    if (!counts[nombre]) counts[nombre] = { value: 0, color }
+    counts[nombre].value++
+  })
+
+  const labels = Object.keys(counts)
+  
+  const defaultColors = [
+    '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6',
+    '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1'
+  ]
+  
+  return {
+    labels,
+    datasets: [
+      {
+        data: labels.map((n) => counts[n].value),
+        backgroundColor: labels.map((n, index) => counts[n].color || defaultColors[index % defaultColors.length]),
+        borderColor: '#ffffff',
+        borderWidth: 2
+      }
+    ]
+  }
+})
+
+const scatterData = computed(() => {
+  const dataPoints = filteredRecords.value.map((r) => {
+    let hour = 12
+    try {
+      const timeStr = r.hora.replace(' AM', '').replace(' PM', '')
+      const [h, m] = timeStr.split(':')
+      hour = parseInt(h) + (parseInt(m || 0) / 60)
+      if (r.hora.includes('PM') && hour < 12) hour += 12
+      if (r.hora.includes('AM') && hour === 12) hour = 0
+    } catch (e) {}
+    return { x: hour, y: r.value }
+  })
+  return {
+    datasets: [
+      {
+        label: 'Glucosa vs Hora del día',
+        data: dataPoints,
+        backgroundColor: '#c084fc',
+        borderColor: '#a855f7',
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }
+    ]
+  }
+})
+
+const chartConfigs = computed(() => [
+  { title: 'Tendencia Temporal', icon: '📈', component: LineChart, data: lineData.value, options: lineOptions },
+  { title: 'Promedio Diario', icon: '📊', component: BarChart, data: barData.value, options: barOptions },
+  { title: 'Distribución de Estados', icon: '🧭', component: PieChart, data: pieData.value, options: pieOptions },
+  { title: 'Lecturas por Hora', icon: '⏱️', component: ScatterChart, data: scatterData.value, options: scatterOptions }
+])
+
+onMounted(() => {
+  try {
+    const storedId = sessionStorage.getItem('idUsuario')
+    if (storedId) {
+      idUsuarioActual.value = Number(storedId)
+    }
+  } catch (e) {}
+  if (idUsuarioActual.value) {
+    loadUserData()
+  }
+})
 </script>

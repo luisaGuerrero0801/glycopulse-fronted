@@ -1,16 +1,23 @@
-
+// stores/PatientForm.ts
 import { defineStore } from 'pinia'
 
-
-import type { Patient } from '../types/patient'
-
+export interface Patient {
+  id: number
+  idUsuario: number
+  name: string
+  email: string
+  status: string
+  specialist: string
+  date: Date
+}
 
 interface DraftPatient {
-  name: string;
-  email: string;
-  status: string;
-  specialist: string;
-  date: Date;
+  idUsuario: number
+  name: string
+  email: string
+  status: string
+  specialist: string
+  date: Date
 }
 
 export const usePatientStore = defineStore('patientStore', {

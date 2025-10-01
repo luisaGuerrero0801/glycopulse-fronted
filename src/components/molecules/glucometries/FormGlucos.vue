@@ -77,7 +77,6 @@ const updateField = (field: string, event: Event) => {
 }
 
 const handleSubmit = (event: MouseEvent) => {
-  console.log("Payload glucometria FORMULARIO -------:", props.form)
   event.preventDefault()
   if (props.submitEdit) props.submitEdit()
   else if (props.submitForm) props.submitForm()

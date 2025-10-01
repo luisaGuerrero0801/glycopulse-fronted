@@ -8,7 +8,7 @@
     </p>
 
     <div
-      v-if="donanteActual === null"
+      v-if="patients.length === 0"
       class="text-lg mt-5 text-center mb-10 bg-white shadow-md rounded-lg py-10 px-5"
     >
       No hay citas registradas
@@ -30,78 +30,62 @@
         </thead>
         <tbody>
           <tr
-            v-if="donanteActual"
-            :key="donanteActual.idUsuario"
+            v-for="patient in paginatedPatients"
+            :key="patient.id"
             class="hover:bg-gray-50 cursor-pointer transition-colors"
           >
+            <td class="px-4 py-2 whitespace-nowrap border-b">{{ patient.name }}</td>
+            <td class="px-4 py-2 whitespace-nowrap border-b">{{ patient.email }}</td>
+            <td class="px-4 py-2 whitespace-nowrap border-b">{{ patient.status }}</td>
+            <td class="px-4 py-2 whitespace-nowrap border-b">{{ patient.specialist }}</td>
             <td class="px-4 py-2 whitespace-nowrap border-b">
-              {{ donanteActual.nombresUsuario }} {{ donanteActual.apellidosUsuario }}
-            </td>
-            <td class="px-4 py-2 whitespace-nowrap border-b">{{ donanteActual.correoUsuario }}</td>
-            <td class="px-4 py-2 whitespace-nowrap border-b">{{ donanteActual.estado }}</td>
-            <td class="px-4 py-2 whitespace-nowrap border-b">{{ donanteActual.estado }}</td>
-            <td class="px-4 py-2 whitespace-nowrap border-b">
-              {{ donanteActual.fechaAsignacion ? new Date(donanteActual.fechaAsignacion).toLocaleDateString() : 'No disponible' }}
+              {{ new Date(patient.date).toLocaleDateString() }}
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <div class="flex justify-center mt-6" v-if="totalPages > 1">
+      <paginate
+        :page-count="totalPages"
+        :click-handler="goToPage"
+        :prev-text="'Anterior'"
+        :next-text="'Siguiente'"
+        :container-class="'flex space-x-2'"
+        :page-class="'px-2 py-1 border rounded cursor-pointer text-gray-700 hover:bg-gray-200 text-sm'"
+        :active-class="'bg-blue-600 text-white font-semibold'"
+        :prev-class="'px-2 py-1 border rounded cursor-pointer text-gray-700 hover:bg-gray-200 text-sm'"
+        :next-class="'px-2 py-1 border rounded cursor-pointer text-gray-700 hover:bg-gray-200 text-sm'"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useUsuariosPagination } from '@/composables/utils/usePagination'
+import { onMounted, computed } from 'vue'
 import { usePatientStore } from '@/stores/PatientForm'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, ref } from 'vue'
+import Paginate from 'vuejs-paginate-next'
+import { usePagination } from '@/composables/pagination/usePagination'
 
 const patientStore = usePatientStore()
 const { patients } = storeToRefs(patientStore)
-
-const emits = defineEmits(['donante-seleccionado'])
 
 onMounted(() => {
   patientStore.loadFromLocalStorage()
 })
 
-const {
-  paginatedUsuarios: todosLosUsuarios,
-  currentPage,
-  totalPages,
-  goToPage,
-  loading,
-  error,
-  fetchUsuarios
-} = useUsuariosPagination()
+const patientsPerPage = 10
 
-const seleccionarDonante = (donante: any) => {
-  emits('donante-seleccionado', donante)
-}
-
-const idUsuarioActual = ref<number | null>(null)
-
-onMounted(() => {
-  try {
-    const storedId = sessionStorage.getItem('idUsuario') 
-    if (storedId) {
-      idUsuarioActual.value = Number(storedId)
-      console.log('ID del usuario actual obtenido de sessionStorage:', idUsuarioActual.value)
-    } else {
-      console.log('No se encontró el ID del usuario en sessionStorage.')
-    }
-  } catch (e) {
-    console.error('Error al obtener el ID del usuario de sessionStorage:', e)
-  }
-  fetchUsuarios()
+const sortedPatients = computed(() => {
+  return [...patients.value].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 })
 
-const donanteActual = computed(() => {
-  if (idUsuarioActual.value !== null) {
-    return todosLosUsuarios.value.find(
-      (d: any) => d.idUsuario === idUsuarioActual.value
-    )
-  }
-  return null
-})
+const { currentPage, paginatedItems, totalPages, goToPage } = usePagination(
+  sortedPatients,
+  patientsPerPage
+)
+
+const paginatedPatients = paginatedItems
 </script>

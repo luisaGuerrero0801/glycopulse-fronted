@@ -81,7 +81,6 @@ export const useRecetasStore = defineStore('recetas', {
           idUsuario: receta.idUsuario
         }
 
-        console.log('Payload que se envía a backend:', body)
 
         const res = await fetch(`${import.meta.env.VITE_API_URL}recetas`, {
           method: 'POST',

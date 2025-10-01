@@ -49,7 +49,6 @@ export const useGlucometriasStore = defineStore('glucometrias', {
           idUsuario: userId
         }
         const { data } = await GlucometriasProvider.crearGlucometria(payloadConUsuario)
-        console.log("Payload glucometria STORE ******", data)
         toast.success('Glucometría creada correctamente')
         // Refrescar lista
         await this.verGlucos(userId)

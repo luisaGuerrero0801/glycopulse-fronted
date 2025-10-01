@@ -13,7 +13,7 @@ interface Usuario {
   generoUsuario: string
   ciudadUsuario: string
   paisUsuario: string
-  activo: boolean // <- Este lo usaremos para traducir desde "estado"
+  activo: boolean
 }
 
 export const useUsuariosStore = defineStore('usuariosGestion', () => {
@@ -21,13 +21,10 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
   const loading = ref<boolean>(false)
   const error = ref<string | null>(null)
 
-  // 🔄 Obtener todos los usuarios y adaptar "estado" a "activo"
   const fetchUsuarios = async () => {
     loading.value = true
     try {
       const response = await axios.get(`${VITE_API_URL}usuarios`)
-
-      // Transformamos estado: 'Activo' | 'Inactivo' a activo: boolean
       usuariosFiltrados.value = response.data.map((usuario: any) => ({
         ...usuario,
         activo: usuario.estado === 'Activo'
@@ -39,7 +36,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
       loading.value = false
     }
   }
-   // 👩‍⚕️ Obtener pacientes asignados a un doctor
+
   const fetchPacientesByDoctor = async (idDoctor: number) => {
     loading.value = true
     try {
@@ -60,7 +57,6 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
     }
   }
 
-  // ✏️ Editar usuario
   const editarUsuario = async (usuarioEditado: any) => {
     try {
       const datosActualizados = {
@@ -72,11 +68,10 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
         generoUsuario: usuarioEditado.generoUsuario,
         ciudadUsuario: usuarioEditado.ciudadUsuario,
         paisUsuario: usuarioEditado.paisUsuario,
-        activo: usuarioEditado.activo, // será ignorado si backend usa "estado"
-        idRol: usuarioEditado.rol.idRol //  el idRol se envía correctamente
+        activo: usuarioEditado.activo,
+        idRol: usuarioEditado.rol.idRol
       }
 
-      // **CAMBIO AQUÍ: de axios.put a axios.patch**
       const response = await axios.patch(
         `${VITE_API_URL}usuarios/${usuarioEditado.idUsuario}`,
         datosActualizados
@@ -90,7 +85,7 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
         if (index !== -1) {
           usuariosFiltrados.value[index] = {
             ...response.data,
-            activo: response.data.estado === 'Activo' // Adaptar también aquí
+            activo: response.data.estado === 'Activo'
           }
         }
       }
@@ -101,7 +96,6 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
     }
   }
 
-  
   const cambiarEstadoUsuario = async (idUsuario: number, nuevoEstado: boolean) => {
     try {
       const response = await axios.patch(
@@ -124,13 +118,45 @@ export const useUsuariosStore = defineStore('usuariosGestion', () => {
     }
   }
 
+  const asignarDoctor = async (idPaciente: number, idDoctor: number) => {
+    loading.value = true
+    try {
+      const response = await axios.post(
+        `${VITE_API_URL}usuarios/${idPaciente}/asignar-doctor`,
+        { idDoctor }
+      )
+
+      if (response.status === 200) {
+        const index = usuariosFiltrados.value.findIndex(
+          (usuario) => usuario.idUsuario === idPaciente
+        )
+
+        if (index !== -1) {
+          usuariosFiltrados.value[index] = {
+            ...response.data,
+            activo: response.data.estado === 'Activo'
+          }
+        }
+      }
+
+      return response.data
+    } catch (err) {
+      error.value = 'Error al asignar el doctor.'
+      console.error('Error al asignar doctor:', err)
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     usuariosFiltrados,
     loading,
     error,
     fetchUsuarios,
     editarUsuario,
-    fetchPacientesByDoctor, // ✅ nuevo
-    cambiarEstadoUsuario
+    fetchPacientesByDoctor,
+    cambiarEstadoUsuario,
+    asignarDoctor
   }
 })

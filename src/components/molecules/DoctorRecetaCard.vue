@@ -1,3 +1,4 @@
+<!-- DoctorRecetaCard.vue  -->
 <template>
    <HeaderApp pagename="doctor/crear" />
   <div class="flex flex-col items-center p-6  min-w-screen overflow-y-auto">
@@ -283,7 +284,8 @@ const guardarReceta = async () => {
       ingredientes,
       pasosPreparacion,
       idUsuario: form.idUsuario,
-      imagenReceta: form.imagenUrl   
+      imagenReceta: form.imagenUrl ,  
+      categoria: form.categoria   // 👈 agregado
     }
     await recetasStore.crearReceta(recetaPayload)
     alert('Receta guardada con éxito 🎉')
@@ -318,7 +320,8 @@ const form = reactive({
   porciones: 1,
   calorias: 1,
   tiempo: '',
-  imagenUrl: '',   
+  imagenUrl: '',  
+   categoria: 'Populares'  
 })
 
 onMounted(() => {

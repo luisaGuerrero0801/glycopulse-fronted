@@ -1,8 +1,37 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
+  <!-- Tabs principales -->
+  <div class="flex justify-center mt-6 space-x-4">
+    <button
+      :class="[
+        'px-4 py-2 rounded-lg font-medium',
+        tabPrincipal === 'populares'
+          ? 'bg-blue-600 text-white'
+          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+      ]"
+      @click="tabPrincipal = 'populares'"
+    >
+      Populares
+    </button>
+    <button
+      :class="[
+        'px-4 py-2 rounded-lg font-medium',
+        tabPrincipal === 'favoritos'
+          ? 'bg-blue-600 text-white'
+          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+      ]"
+      @click="tabPrincipal = 'favoritos'"
+    >
+      Favoritos
+    </button>
+  </div>
+
+  <!-- Loading -->
   <div v-if="recetasStore.cargando" class="flex justify-center items-center mt-8">
     <span class="text-gray-500">Cargando recetas...</span>
   </div>
 
+  <!-- Recetas -->
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0.5 p-6 mx-auto max-w-screen-xl">
     <div
       v-for="receta in recetasPaginadas"
@@ -18,18 +47,24 @@
       <div class="p-2 flex items-center justify-between">
         <h2 class="text-lg font-semibold">{{ receta.nombre }}</h2>
 
-        <button
-          class="text-red-500 hover:scale-110 transition"
-          @click.stop="toggleFavorito(receta)"
-        >
-          <span class="material-icons">
-            {{ receta.esFavorito ? 'favorite' : 'favorite_border' }}
-          </span>
-        </button>
+        <!-- Botón favorito -->
+<button
+  :class="[
+    'hover:scale-110 transition',
+    receta.esFavorito ? 'text-red-600' : 'text-gray-400'
+  ]"
+  @click.stop="toggleFavorito(receta)"
+>
+  <span class="material-icons">
+    {{ receta.esFavorito ? 'favorite' : 'favorite_border' }}
+  </span>
+</button>
+
       </div>
     </div>
   </div>
 
+  <!-- Paginación -->
   <div class="flex justify-center mt-6 fixed bottom-4 w-full z-50">
     <paginate
       :page-count="totalPages"
@@ -44,6 +79,7 @@
     />
   </div>
 
+  <!-- Modal detalle receta -->
   <div
     v-if="recetaSeleccionada"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -77,6 +113,7 @@
         </button>
       </div>
 
+      <!-- Ingredientes -->
       <div v-if="tab === 'ingredientes'">
         <div class="flex flex-col md:flex-row gap-4 mb-4">
           <img
@@ -123,6 +160,7 @@
         </div>
       </div>
 
+      <!-- Preparación -->
       <div v-if="tab === 'preparacion'">
         <h3 class="text-lg text-gray-700 font-bold mb-2">Preparación:</h3>
         <div v-if="recetaSeleccionada.pasosPreparacion?.length">
@@ -143,30 +181,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
 import Paginate from 'vuejs-paginate-next'
-
 import { useRecetasPacienteStore } from '@/stores/VistaHomeRecetas'
 
-const router = useRouter()
-const route = useRoute()
-const pacienteId = Number(route.params.id) || 0
-
-const search = ref('')
 const tab = ref<'ingredientes' | 'preparacion'>('ingredientes')
 const recetaSeleccionada = ref<null | any>(null)
-
 const ingPagina = ref(0)
 const ingredientesPorPagina = 9
-
 const pasoPagina = ref(0)
 const pasosPorPagina = 8
-
+const tabPrincipal = ref<'populares' | 'favoritos'>('populares')
 const currentPage = ref(1)
-const itemsPerPage = 8
+// 🔹 Reiniciar página cuando cambias de tab
+watch(tabPrincipal, () => {
+  currentPage.value = 1
+})
+const itemsPerPage = 12
 
 const recetasStore = useRecetasPacienteStore()
+const pacienteId = Number(sessionStorage.getItem('idUsuario') || '0')
 
 onMounted(() => {
   if (pacienteId) {
@@ -174,15 +208,16 @@ onMounted(() => {
   }
 })
 
-const recetasFiltradas = computed(() =>
-  recetasStore.recetas.filter((r) =>
-    r.nombre.toLowerCase().includes(search.value.toLowerCase())
-  )
-)
+// Filtrado según tab principal
+const recetasFiltradas = computed(() => {
+  let recetas = recetasStore.recetas
+  if (tabPrincipal.value === 'favoritos') {
+    recetas = recetas.filter((r) => r.esFavorito)
+  }
+  return recetas
+})
 
-const totalPages = computed(() =>
-  Math.ceil(recetasFiltradas.value.length / itemsPerPage)
-)
+const totalPages = computed(() => Math.ceil(recetasFiltradas.value.length / itemsPerPage))
 
 const recetasPaginadas = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage
@@ -221,8 +256,10 @@ const abrirDetalle = (receta: any) => {
   pasoPagina.value = 0
 }
 
+// 🔹 Toggle favorito usando store (por usuario)
 const toggleFavorito = (receta: any) => {
-  receta.esFavorito = !receta.esFavorito
+  recetasStore.toggleFavoritoReceta(receta)
+  currentPage.value = 1
 }
 </script>
 

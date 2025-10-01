@@ -75,7 +75,7 @@ export const useRecetasStore = defineStore('recetas', {
           tiempoReceta: receta.tiempo,
           imagenReceta: (receta as any).imagenReceta || 'no-image',
           nivelReceta: receta.nivel,
-          categoriaReceta: 'Favoritos',
+          categoriaReceta: 'Populares',
           ingredientes: mapIngredientesFrontToBack(receta.ingredientes || []),
           pasos: mapPasosFrontToBack(receta.pasosPreparacion || []),
           idUsuario: receta.idUsuario

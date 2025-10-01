@@ -24,18 +24,21 @@ interface Receta {
   imagenReceta?: string
   ingredientes?: Ingrediente[]
   pasosPreparacion?: Paso[]
+  esFavorito?: boolean // 👈 agregado
 }
 
 export const useRecetasPacienteStore = defineStore('recetasPaciente', {
   state: () => ({
     recetas: [] as Receta[],
     cargando: false,
-    error: '' as string | null
+    error: '' as string | null,
+    usuarioId: 0 // 👈 guardamos el id del usuario
   }),
   actions: {
     async fetchRecetasPaciente(idUsuario: number) {
       this.cargando = true
       this.error = null
+      this.usuarioId = idUsuario // guardamos el usuario activo
       try {
         const token = sessionStorage.getItem('token')
         if (!token) throw new Error('Token no encontrado en sessionStorage')
@@ -44,7 +47,8 @@ export const useRecetasPacienteStore = defineStore('recetasPaciente', {
           `${import.meta.env.VITE_API_URL}recetas/usuario/${idUsuario}`,
           { headers: { Authorization: `Bearer ${token}` } }
         )
-
+        const claveFavoritos = `favoritos_${idUsuario}`
+        const favoritosGuardados = JSON.parse(localStorage.getItem(claveFavoritos) || '[]')
         // 🔹 Mapear datos del backend → frontend
         this.recetas = Array.isArray(data)
           ? data.map((r: any) => ({
@@ -65,7 +69,9 @@ export const useRecetasPacienteStore = defineStore('recetasPaciente', {
                 .sort((a: any, b: any) => a.ordenPasoReceta - b.ordenPasoReceta)
                 .map((p: any) => ({
                   descripcion: p.descripcionPasoReceta
-                }))
+                })),
+              // Marcamos como favorito si ya estaba guardado
+              esFavorito: favoritosGuardados.includes(r.idReceta)
             }))
           : []
       } catch (err: any) {
@@ -73,6 +79,25 @@ export const useRecetasPacienteStore = defineStore('recetasPaciente', {
       } finally {
         this.cargando = false
       }
+    },
+toggleFavoritoReceta(receta: Receta) {
+  // Alternar favorito en memoria
+  receta.esFavorito = !receta.esFavorito
+
+  // Guardar en localStorage con clave por usuario
+  const claveFavoritos = `favoritos_${this.usuarioId}`
+  const favoritosGuardados = JSON.parse(localStorage.getItem(claveFavoritos) || '[]')
+
+  if (receta.esFavorito) {
+    if (!favoritosGuardados.includes(receta.idReceta)) {
+      favoritosGuardados.push(receta.idReceta)
     }
+  } else {
+    const index = favoritosGuardados.indexOf(receta.idReceta)
+    if (index > -1) favoritosGuardados.splice(index, 1)
+  }
+
+  localStorage.setItem(claveFavoritos, JSON.stringify(favoritosGuardados))
+}
   }
 })

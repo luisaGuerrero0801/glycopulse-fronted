@@ -1,86 +1,93 @@
 <template>
-  <div class="min-h-screen bg-gray-100 p-4 overflow-x-hidden" id="capture">
-    <header class="flex flex-col items-center py-10">
-      <h1 class="text-7xl font-bold text-center">Estadísticas Generales</h1>
-      <p class="text-gray-600 mt-3 text-center text-2xl">Visualiza el estado general de la plataforma en tiempo real.</p>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6" id="capture">
+    <header class="mb-4 sm:mb-6 text-center">
+      <h1 class="text-xl sm:text-2xl font-bold text-black mb-1">Estadísticas Generales</h1>
+      <p class="text-gray-600 text-sm">Visualiza el estado general de la plataforma en tiempo real.</p>
     </header>
-    <div class="fixed top-4 right-4 z-50">
+
+    <div class="flex justify-end mb-3">
       <button
         @click="captureScreen"
-        class="bg-[var(--colorPrimarioButton)] hover:bg-[var(--colorSecundarioButton)] text-white px-4 py-2 rounded-lg shadow"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 text-sm rounded-lg shadow transition"
       >
-        Descargar
+        Descargar Informe
       </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 max-w-full mx-auto">
-      <div class="bg-white shadow-md rounded-xl p-4 w-full">
-        <h2 class="text-lg font-bold mb-2">Estadísticas</h2>
-        <div class="grid grid-cols-2 gap-4">
-          <div class="bg-[var(--colorPrimarioButton)] text-white rounded-lg p-4">
-            <p class="text-sm">Total Usuarios</p>
-            <p class="text-2xl font-bold">{{ totalUsuarios }}</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-w-full mx-auto">
+      <!-- Tarjeta de Estadísticas -->
+      <div class="bg-white shadow-md rounded-lg p-3 w-full">
+        <h2 class="text-base font-bold mb-2">Estadísticas</h2>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-[var(--colorPrimarioButton)] text-white rounded-lg p-3">
+            <p class="text-xs">Total Usuarios</p>
+            <p class="text-lg font-bold">{{ totalUsuarios }}</p>
           </div>
-          <div class="bg-[var(--colorSecundarioButton)] text-white rounded-lg p-4">
-            <p class="text-sm">Doctores</p>
-            <p class="text-2xl font-bold">{{ totalDoctores }}</p>
+          <div class="bg-[var(--colorSecundarioButton)] text-white rounded-lg p-3">
+            <p class="text-xs">Doctores</p>
+            <p class="text-lg font-bold">{{ totalDoctores }}</p>
           </div>
-          <div class="bg-green-500 text-white rounded-lg p-4">
-            <p class="text-sm">Pacientes</p>
-            <p class="text-2xl font-bold">{{ totalPacientes }}</p>
+          <div class="bg-green-500 text-white rounded-lg p-3">
+            <p class="text-xs">Pacientes</p>
+            <p class="text-lg font-bold">{{ totalPacientes }}</p>
           </div>
-          <div class="bg-purple-500 text-white rounded-lg p-4">
-            <p class="text-sm">Activos</p>
-            <p class="text-2xl font-bold">{{ totalActivos }}</p>
+          <div class="bg-purple-500 text-white rounded-lg p-3">
+            <p class="text-xs">Activos</p>
+            <p class="text-lg font-bold">{{ totalActivos }}</p>
           </div>
-          <div class="bg-blue-500 text-white rounded-lg p-4">
-            <p class="text-sm">Administradores</p>
-            <p class="text-2xl font-bold">{{ totalAdministradores }}</p>
+          <div class="bg-blue-500 text-white rounded-lg p-3">
+            <p class="text-xs">Administradores</p>
+            <p class="text-lg font-bold">{{ totalAdministradores }}</p>
           </div>
         </div>
       </div>
 
-      <div class="bg-white shadow-md rounded-xl p-4 w-full overflow-hidden">
-        <h2 class="text-lg font-bold mb-2">Pacientes por Doctor</h2>
-        <div class="w-full h-[250px] md:h-[300px] max-w-full">
+      <!-- Gráfico de Pacientes por Doctor -->
+      <div class="bg-white shadow-md rounded-lg p-3 w-full overflow-hidden">
+        <h2 class="text-base font-bold mb-2">Pacientes por Doctor</h2>
+        <div class="w-full h-[180px] md:h-[200px] max-w-full">
           <Bar :data="barChartData" :options="barChartOptions" @click="handleBarClick"/>
         </div>
       </div>
 
-      <div class="bg-white shadow-md rounded-xl p-4 w-full overflow-hidden">
-        <h2 class="text-lg font-bold mb-2">Pacientes sin Doctor</h2>
-        <div class="relative w-full h-[250px] md:h-[300px] flex items-center justify-center">
+      <!-- Gráfico de Pacientes sin Doctor -->
+      <div class="bg-white shadow-md rounded-lg p-3 w-full overflow-hidden">
+        <h2 class="text-base font-bold mb-2">Pacientes sin Doctor</h2>
+        <div class="relative w-full h-[180px] md:h-[200px] flex items-center justify-center">
           <Pie :data="sinDoctorChartData" :options="sinDoctorChartOptions" />
-          <div class="absolute text-3xl font-bold text-gray-700">
+          <div class="absolute text-xl font-bold text-gray-700">
             {{ totalSinDoctor }}
           </div>
         </div>
       </div>
 
-      <div class="bg-white shadow-md rounded-xl p-4 w-full overflow-hidden">
-        <h2 class="text-lg font-bold mb-2">Evolución de Usuarios</h2>
-        <div class="w-full h-[250px] md:h-[300px] max-w-full">
+      <!-- Gráfico de Evolución de Usuarios -->
+      <div class="bg-white shadow-md rounded-lg p-3 w-full overflow-hidden">
+        <h2 class="text-base font-bold mb-2">Evolución de Usuarios</h2>
+        <div class="w-full h-[180px] md:h-[200px] max-w-full">
           <Line :data="lineChartData" :options="lineChartOptions" />
         </div>
       </div>
 
+      <!-- Gráfico de Pacientes por Género -->
       <div class="col-span-1 md:col-span-2 xl:col-span-2">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div v-if="!isMobile || currentPage === 1" class="bg-white shadow-md rounded-xl p-4 w-full overflow-hidden">
-            <h2 class="text-lg font-bold mb-2">Pacientes por Género</h2>
-            <div class="w-full h-[250px] md:h-[300px] max-w-full">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div v-if="!isMobile || currentPage === 1" class="bg-white shadow-md rounded-lg p-3 w-full overflow-hidden">
+            <h2 class="text-base font-bold mb-2">Pacientes por Género</h2>
+            <div class="w-full h-[180px] md:h-[200px] max-w-full">
               <Pie :data="pieChartData" :options="pieChartOptions"/>
             </div>
           </div>
         </div>
 
-        <div v-if="isMobile" class="flex items-center justify-center gap-4 mt-4">
-          <button @click="prevPage" :disabled="currentPage===1" class="px-3 py-1 rounded border disabled:opacity-50">Anterior</button>
-          <div class="flex items-center gap-2">
+        <!-- Navegación para móviles -->
+        <div v-if="isMobile" class="flex items-center justify-center gap-3 mt-3">
+          <button @click="prevPage" :disabled="currentPage===1" class="px-2 py-1 text-sm rounded border disabled:opacity-50">Anterior</button>
+          <div class="flex items-center gap-1">
             <span v-for="n in totalPages" :key="n" @click="setPage(n)"
-                  :class="['w-3 h-3 rounded-full cursor-pointer', currentPage===n?'bg-[var(--colorPrimarioButton)]':'bg-gray-300']"/>
+                  :class="['w-2 h-2 rounded-full cursor-pointer', currentPage===n?'bg-[var(--colorPrimarioButton)]':'bg-gray-300']"/>
           </div>
-          <button @click="nextPage" :disabled="currentPage===totalPages" class="px-3 py-1 rounded border disabled:opacity-50">Siguiente</button>
+          <button @click="nextPage" :disabled="currentPage===totalPages" class="px-2 py-1 text-sm rounded border disabled:opacity-50">Siguiente</button>
         </div>
       </div>
     </div>
@@ -94,8 +101,6 @@ import { storeToRefs } from 'pinia';
 import { Bar, Pie, Line } from 'vue-chartjs';
 import html2canvas from 'html2canvas';
 import { useGraficosAdminStore } from '@/stores/graficosAdmin';
-
-// Chart.js
 import {
   Chart as ChartJS,
   Title,
@@ -111,12 +116,9 @@ import {
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend, ChartDataLabels, PointElement, LineElement);
 
-// Store de usuarios
 const usuariosStore = useUsuariosStore();
 const { usuariosFiltrados } = storeToRefs(usuariosStore);
 
-
-// Estadísticas
 const totalUsuarios = computed(() => usuariosFiltrados.value.length);
 const totalPacientes = computed(() => usuariosFiltrados.value.filter(u=>u.rol?.nombreRol === 'Paciente').length);
 const totalDoctores = computed(() => usuariosFiltrados.value.filter(u=>u.rol?.nombreRol === 'Doctor').length);
@@ -125,7 +127,6 @@ const totalAdministradores = computed(() =>
   usuariosFiltrados.value.filter(u => ['Admin', 'Administrador'].includes(u.rol?.nombreRol)).length
 );
 
-// Gráfico de barras
 const barChartData = computed(() => {
   const doctores = usuariosFiltrados.value.filter(u=>u.rol?.nombreRol === 'Doctor');
   return {
@@ -140,10 +141,28 @@ const barChartData = computed(() => {
 const barChartOptions = {
   responsive:true,
   maintainAspectRatio:false,
-  plugins:{ legend:{display:false}, datalabels:{anchor:'end', align:'top'} }
+  plugins:{ 
+    legend:{display:false}, 
+    datalabels:{anchor:'end', align:'top', font: { size: 10 } } 
+  },
+  scales: {
+    x: {
+      ticks: {
+        font: {
+          size: 10
+        }
+      }
+    },
+    y: {
+      ticks: {
+        font: {
+          size: 10
+        }
+      }
+    }
+  }
 };
 
-// Gráfico de pacientes por género
 const pieChartData = computed(() => {
   const pacientes = usuariosFiltrados.value.filter(u => u.rol?.nombreRol === 'Paciente');
   const hombres = pacientes.filter(u => u.generoUsuario === 'Hombre').length;
@@ -154,9 +173,21 @@ const pieChartData = computed(() => {
     datasets:[{data:[hombres,mujeres,otros], backgroundColor:['#36A2EB','#FF6384','#FFCE56']}]
   };
 });
-const pieChartOptions = { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}} };
+const pieChartOptions = { 
+  responsive:true, 
+  maintainAspectRatio:false, 
+  plugins:{
+    legend:{
+      position:'bottom',
+      labels: {
+        font: {
+          size: 10
+        }
+      }
+    }
+  }
+};
 
-// Pacientes sin doctor
 const totalSinDoctor = computed(() =>
   usuariosFiltrados.value.filter(u => u.rol?.nombreRol === 'Paciente' && !u.idUsuarioResponsable).length
 );
@@ -173,14 +204,21 @@ const sinDoctorChartData = computed(() => ({
 const sinDoctorChartOptions = {
   responsive: true,
   maintainAspectRatio: false,
-  plugins: { legend: { position: 'bottom' } }
+  plugins: { 
+    legend: { 
+      position: 'bottom',
+      labels: {
+        font: {
+          size: 10
+        }
+      }
+    } 
+  }
 };
 
-// Evolución de usuarios (por mes)
 const lineChartData = computed(() => {
   const counts: Record<string, number> = {};
   usuariosFiltrados.value.forEach(u => {
-    // Usar una propiedad que exista en tus datos para la fecha de registro.
     const fecha = new Date(u.fechaNacimientoUsuario);
     const mes = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
     counts[mes] = (counts[mes] || 0) + 1;
@@ -201,11 +239,35 @@ const lineChartData = computed(() => {
 const lineChartOptions = {
   responsive: true,
   maintainAspectRatio: false,
-  plugins: { legend: { position: 'bottom' } },
-  scales: { y: { beginAtZero: true } }
+  plugins: { 
+    legend: { 
+      position: 'bottom',
+      labels: {
+        font: {
+          size: 10
+        }
+      }
+    } 
+  },
+  scales: { 
+    y: { beginAtZero: true },
+    x: {
+      ticks: {
+        font: {
+          size: 10
+        }
+      }
+    },
+    y: {
+      ticks: {
+        font: {
+          size: 10
+        }
+      }
+    }
+  }
 };
 
-// Captura de pantalla
 function captureScreen(){
   const element=document.getElementById('capture');
   if(element){
@@ -219,7 +281,6 @@ function captureScreen(){
   }
 }
 
-// Móvil
 const windowWidth = ref(window.innerWidth);
 const isMobile = computed(() => windowWidth.value<768);
 const currentPage = ref(1);
@@ -230,7 +291,6 @@ function setPage(n:number){ if(n>=1 && n<=totalPages) currentPage.value=n; }
 watch(isMobile, mobile => { if(!mobile) currentPage.value=1; });
 window.addEventListener('resize', ()=>windowWidth.value=window.innerWidth);
 
-// Fetch usuarios al montar
 onMounted(() => { usuariosStore.fetchUsuarios(); });
 </script>
 

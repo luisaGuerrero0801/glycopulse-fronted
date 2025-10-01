@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen ">
     <div class="flex justify-center items-center flex-col py-8">
       <h1 class="text-6xl font-bold titulo">
         <span v-if="loading">Cargando usuario...</span>

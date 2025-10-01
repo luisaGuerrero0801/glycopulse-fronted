@@ -337,19 +337,19 @@ const handleSubmit = async () => {
     </div>
 
     <!-- Paginación abajo -->
-    <div class="flex justify-center mt-6">
-      <paginate
-        :page-count="totalPages"
-        :click-handler="goToPage"
-        :prev-text="'Anterior'"
-        :next-text="'Siguiente'"
-        :container-class="'flex space-x-2'"
-        :page-class="'px-4 py-2 border rounded cursor-pointer text-lg  text-gray-300 font-bold hover:bg-[var(--colorSecundarioButton)] transition'"
-        :active-class="'bg-[var(--colorPrimarioButton)] text-[var(--colorBlanco)] font-semibold'"
-        :prev-class="'px-4 py-2 border rounded cursor-pointer text-lg text-gray-700 hover:bg-gray-200 transition'"
-        :next-class="'px-4 py-2 border rounded cursor-pointer text-lg text-gray-700 hover:bg-gray-200 transition'"
-      />
-    </div>
+   <div class="flex justify-center mt-6 fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+  <paginate
+    :page-count="totalPages"
+    :click-handler="goToPage"
+    :prev-text="'Anterior'"
+    :next-text="'Siguiente'"
+    :container-class="'flex flex-wrap justify-center gap-2'"
+    :page-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-[var(--colorSecundarioButton)] transition'"
+    :active-class="'bg-[var(--colorPrimarioButton)] text-white font-semibold'"
+    :prev-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+    :next-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+  />
+</div>
 
     <PopUp
       :isVisible="isModalVisible"

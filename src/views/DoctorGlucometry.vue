@@ -5,8 +5,6 @@ import CardGlucometria from '@/components/molecules/glucometries/CardGlucometria
 import Paginate from 'vuejs-paginate-next'
 import { usePagination } from '@/composables/pagination/usePagination'
 
-
-
 const storeGluco = useGlucometriasStore()
 const glucometrias = computed(() => storeGluco.glucometrias)
 
@@ -31,12 +29,21 @@ function parseApiFecha(fechaApi: string): string {
   const mesStr = partes[2].toLowerCase()
   const año = partes[3]
   const meses: Record<string, string> = {
-    ene: '01', feb: '02', mar: '03', abr: '04',
-    may: '05', jun: '06', jul: '07', ago: '08',
-    sep: '09', oct: '10', nov: '11', dic: '12'
+    ene: '01',
+    feb: '02',
+    mar: '03',
+    abr: '04',
+    may: '05',
+    jun: '06',
+    jul: '07',
+    ago: '08',
+    sep: '09',
+    oct: '10',
+    nov: '11',
+    dic: '12'
   }
   const mes = meses[mesStr] || '01'
-  return `${año}-${mes}-${dia.padStart(2,'0')}`
+  return `${año}-${mes}-${dia.padStart(2, '0')}`
 }
 </script>
 
@@ -56,11 +63,14 @@ function parseApiFecha(fechaApi: string): string {
           :fecha="g.fechaGlucometria"
           :hora="g.horaGlucometria || ''"
           :glucosa="g.nivelGlucometria"
-          :comentario="g.recomendaciones.find(r => r.tipoRecomendacion.toLowerCase() === 'general')?.descripcionRecomendacion || ''"
+          :comentario="
+            g.recomendaciones.find((r) => r.tipoRecomendacion.toLowerCase() === 'general')
+              ?.descripcionRecomendacion || ''
+          "
         />
       </div>
 
-      <div class="flex justify-center mt-6">
+      <div class="flex justify-center mt-6 fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
         <paginate
           :page-count="totalPages"
           :click-handler="goToPage"

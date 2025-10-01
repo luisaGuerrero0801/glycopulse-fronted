@@ -1,49 +1,23 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <!-- Tabs principales -->
-  <div class="flex justify-center mt-6 space-x-4">
-    <button
-      :class="[
-        'px-4 py-2 rounded-lg font-medium',
-        tabPrincipal === 'populares'
-          ? 'bg-blue-600 text-white'
-          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-      ]"
-      @click="tabPrincipal = 'populares'"
-    >
-      Populares
-    </button>
-    <button
-      :class="[
-        'px-4 py-2 rounded-lg font-medium',
-        tabPrincipal === 'favoritos'
-          ? 'bg-blue-600 text-white'
-          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-      ]"
-      @click="tabPrincipal = 'favoritos'"
-    >
-      Favoritos
-    </button>
-  </div>
   <div v-if="recetasStore.cargando" class="flex justify-center items-center mt-8">
     <span class="text-gray-500">Cargando recetas...</span>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0.5 p-6 mx-auto max-w-screen-xl">
     <div
       v-for="receta in recetasPaginadas"
       :key="receta.idReceta"
-      class="bg-white h-[90%] bg rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition"
+      class="bg-white max-w-sm h-[90%] rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition"
       @click="abrirDetalle(receta)"
     >
       <img
         :src="receta.imagenReceta || 'https://via.placeholder.com/250'"
         alt="Imagen receta"
-        class="w-full h-40 object-cover"
+        class="w-full h-32 object-cover"
       />
-      <div class="p-4 flex items-center justify-between">
+      <div class="p-2 flex items-center justify-between">
         <h2 class="text-lg font-semibold">{{ receta.nombre }}</h2>
-   
+
         <button
           class="text-red-500 hover:scale-110 transition"
           @click.stop="toggleFavorito(receta)"
@@ -56,8 +30,7 @@
     </div>
   </div>
 
-
-  <div class="flex justify-center mt-6">
+  <div class="flex justify-center mt-6 fixed bottom-4 w-full z-50">
     <paginate
       :page-count="totalPages"
       :click-handler="goToPage"
@@ -71,7 +44,6 @@
     />
   </div>
 
-
   <div
     v-if="recetaSeleccionada"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -84,21 +56,20 @@
         ×
       </button>
 
-     
       <div class="flex border-b mb-4">
         <button
-          :class="[
-            'px-4 py-2 text-sm font-medium',
-            tab === 'ingredientes' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'
+          :class="[ 
+            'px-4 py-2 text-sm font-medium', 
+            tab === 'ingredientes' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700' 
           ]"
           @click="tab = 'ingredientes'"
         >
           Ingredientes
         </button>
         <button
-          :class="[
-            'px-4 py-2 text-sm font-medium',
-            tab === 'preparacion' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'
+          :class="[ 
+            'px-4 py-2 text-sm font-medium', 
+            tab === 'preparacion' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700' 
           ]"
           @click="tab = 'preparacion'"
         >
@@ -152,7 +123,6 @@
         </div>
       </div>
 
-      
       <div v-if="tab === 'preparacion'">
         <h3 class="text-lg text-gray-700 font-bold mb-2">Preparación:</h3>
         <div v-if="recetaSeleccionada.pasosPreparacion?.length">
@@ -162,7 +132,6 @@
             </li>
           </ol>
 
-         
           <div class="flex justify-between items-center mt-4">
             <button @click="pasoPagina--" :disabled="pasoPagina === 0" class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50">←</button>
             <button @click="pasoPagina++" :disabled="pasoPagina === totalPaginas - 1" class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50">→</button>
@@ -185,7 +154,6 @@ const route = useRoute()
 const pacienteId = Number(route.params.id) || 0
 
 const search = ref('')
-const tabPrincipal = ref<'populares' | 'favoritos'>('populares') // <-- NUEVO
 const tab = ref<'ingredientes' | 'preparacion'>('ingredientes')
 const recetaSeleccionada = ref<null | any>(null)
 
@@ -196,7 +164,7 @@ const pasoPagina = ref(0)
 const pasosPorPagina = 8
 
 const currentPage = ref(1)
-const itemsPerPage = 12
+const itemsPerPage = 8
 
 const recetasStore = useRecetasPacienteStore()
 
@@ -206,17 +174,11 @@ onMounted(() => {
   }
 })
 
-
-
-// Filtrado según tab principal
-const recetasFiltradas = computed(() => {
-  let recetas = recetasStore.recetas
-  if (tabPrincipal.value === 'favoritos') {
-    recetas = recetas.filter((r) => r.esFavorito)
-  }
-  return recetas
-})
-
+const recetasFiltradas = computed(() =>
+  recetasStore.recetas.filter((r) =>
+    r.nombre.toLowerCase().includes(search.value.toLowerCase())
+  )
+)
 
 const totalPages = computed(() =>
   Math.ceil(recetasFiltradas.value.length / itemsPerPage)
@@ -230,7 +192,6 @@ const recetasPaginadas = computed(() => {
 const goToPage = (page: number) => {
   currentPage.value = page
 }
-
 
 const ingredientesVisibles = computed(() => {
   if (!recetaSeleccionada.value?.ingredientes) return []
@@ -268,5 +229,17 @@ const toggleFavorito = (receta: any) => {
 <style scoped>
 .material-icons {
   font-size: 24px;
+}
+
+.grid {
+  gap: 0.5px;
+}
+
+.flex.justify-center.mt-6.fixed {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  left: 0;
+  z-index: 50;
 }
 </style>

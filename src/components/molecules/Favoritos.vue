@@ -1,5 +1,30 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  
+    <!-- Tabs principales -->
+  <div class="flex justify-center mt-6 space-x-4">
+    <button
+      :class="[
+        'px-4 py-2 rounded-lg font-medium',
+        tabPrincipal === 'populares'
+          ? 'bg-blue-600 text-white'
+          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+      ]"
+      @click="tabPrincipal = 'populares'"
+    >
+      Populares
+    </button>
+    <button
+      :class="[
+        'px-4 py-2 rounded-lg font-medium',
+        tabPrincipal === 'favoritos'
+          ? 'bg-blue-600 text-white'
+          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+      ]"
+      @click="tabPrincipal = 'favoritos'"
+    >
+      Favoritos
+    </button>
+  </div>
   <div v-if="recetasStore.cargando" class="flex justify-center items-center mt-8">
     <span class="text-gray-500">Cargando recetas...</span>
   </div>
@@ -160,6 +185,7 @@ const route = useRoute()
 const pacienteId = Number(route.params.id) || 0
 
 const search = ref('')
+const tabPrincipal = ref<'populares' | 'favoritos'>('populares') // <-- NUEVO
 const tab = ref<'ingredientes' | 'preparacion'>('ingredientes')
 const recetaSeleccionada = ref<null | any>(null)
 
@@ -170,7 +196,7 @@ const pasoPagina = ref(0)
 const pasosPorPagina = 8
 
 const currentPage = ref(1)
-const itemsPerPage = 8
+const itemsPerPage = 12
 
 const recetasStore = useRecetasPacienteStore()
 
@@ -181,11 +207,15 @@ onMounted(() => {
 })
 
 
-const recetasFiltradas = computed(() =>
-  recetasStore.recetas.filter((r) =>
-    r.nombre.toLowerCase().includes(search.value.toLowerCase())
-  )
-)
+
+// Filtrado según tab principal
+const recetasFiltradas = computed(() => {
+  let recetas = recetasStore.recetas
+  if (tabPrincipal.value === 'favoritos') {
+    recetas = recetas.filter((r) => r.esFavorito)
+  }
+  return recetas
+})
 
 
 const totalPages = computed(() =>

@@ -24,6 +24,7 @@ interface Receta {
   imagenReceta?: string
   ingredientes?: Ingrediente[]
   pasosPreparacion?: Paso[]
+  esFavorito?: boolean   // 👈 agregado
 }
 
 export const useRecetasPacienteStore = defineStore('recetasPaciente', {
@@ -31,6 +32,7 @@ export const useRecetasPacienteStore = defineStore('recetasPaciente', {
     recetas: [] as Receta[],
     cargando: false,
     error: '' as string | null
+    
   }),
   actions: {
     async fetchRecetasPaciente(idUsuario: number) {
@@ -65,7 +67,7 @@ export const useRecetasPacienteStore = defineStore('recetasPaciente', {
                 .sort((a: any, b: any) => a.ordenPasoReceta - b.ordenPasoReceta)
                 .map((p: any) => ({
                   descripcion: p.descripcionPasoReceta
-                }))
+                })),esFavorito:false       
             }))
           : []
       } catch (err: any) {

@@ -80,7 +80,7 @@
           <option
             v-for="usuario in especialistas"
             :key="usuario.idUsuario"
-            :value="usuario.nombresUsuario + ' ' + usuario.apellidosUsuario"
+            :value="usuario"
           >
             {{ usuario.nombresUsuario }} {{ usuario.apellidosUsuario }}
           </option>
@@ -161,11 +161,11 @@ import { toast } from 'vue3-toastify'
 const router = useRouter()
 const patientStore = usePatientStore()
 const usuariosStore = useUsuariosStore()
-
+const { VITE_API_URL } = import.meta.env
 const processing = ref(false)
 
 const patientData = ref({
-  specialist: '',
+  specialist: null as any,
   date: ''
 })
 
@@ -203,6 +203,30 @@ const today = computed(() => {
   return `${year}-${month}-${day}`
 })
 
+const asignarDoctorAPI = async (idPaciente: number, idDoctor: number) => {
+  try {
+    const response = await fetch(`${VITE_API_URL}usuarios/${idPaciente}/asignar-doctor`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        idDoctor: idDoctor
+      })
+    })
+    
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Error en la API: ${response.status} - ${errorText}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    throw error
+  }
+}
+
 const cargarUsuarios = async () => {
   try {
     await usuariosStore.fetchUsuarios()
@@ -224,6 +248,7 @@ const volverAlLogin = () => {
 
 const obtenerIdUsuario = (): number | null => {
   const sessionKeys = Object.keys(sessionStorage)
+  
   const sources = [
     sessionStorage.getItem('idUsuario'),
     localStorage.getItem('idUsuario'),
@@ -263,22 +288,30 @@ const handleSubmit = async () => {
   processing.value = true
 
   try {
+    const idPaciente = idUsuarioActual.value!
+    const idDoctor = patientData.value.specialist.idUsuario
+
+    await asignarDoctorAPI(idPaciente, idDoctor)
+
     patientStore.addPatient({
-      idUsuario: donanteActual.value.idUsuario,
+      idUsuario: idPaciente,
       name: `${donanteActual.value.nombresUsuario} ${donanteActual.value.apellidosUsuario}`,
       email: donanteActual.value.correoUsuario,
       status: donanteActual.value.estado || 'Activo',
-      specialist: patientData.value.specialist,
-      date: parseDateLocal(patientData.value.date)
+      specialist: `${patientData.value.specialist.nombresUsuario} ${patientData.value.specialist.apellidosUsuario}`,
+      date: parseDateLocal(patientData.value.date),
+      ciudadUsuario: donanteActual.value.ciudadUsuario,
+      paisUsuario: donanteActual.value.paisUsuario,
+      rhUsuario: donanteActual.value.rhUsuario
     })
 
-    toast.success('Consulta asignada correctamente')
+    toast.success('Consulta asignada correctamente y doctor asignado')
 
-    patientData.value.specialist = ''
+    patientData.value.specialist = null
     patientData.value.date = ''
     
   } catch (error) {
-    toast.error('Error al asignar la consulta')
+    toast.error('Error al asignar la consulta y doctor')
   } finally {
     processing.value = false
   }

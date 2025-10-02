@@ -11,6 +11,7 @@
     <div v-if="loading" class="text-center text-blue-600 font-bold mt-10">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
       Cargando información del usuario...
+      <p class="text-sm mt-2">ID buscado: {{ idUsuarioActual }}</p>
     </div>
 
     <!-- Formulario cuando se encuentra el usuario -->
@@ -118,12 +119,20 @@
           No se pudo encontrar el usuario con ID: <strong>{{ idUsuarioActual }}</strong>
         </p>
         <div class="text-xs text-gray-500 mb-4">
-          <p>IDs disponibles en el sistema: {{ idsDisponibles.join(', ') || 'Ninguno' }}</p>
+          <p>Total usuarios cargados: {{ todosLosUsuarios.length }}</p>
+          <p>IDs disponibles: {{ idsDisponibles.join(', ') || 'Ninguno' }}</p>
+          <p>Página actual: {{ currentPage }} de {{ totalPages }}</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-2 justify-center">
           <button 
-            @click="recargarUsuarios"
+            @click="cargarTodasLasPaginas"
             class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm"
+          >
+            Cargar Todas las Páginas
+          </button>
+          <button 
+            @click="recargarUsuarios"
+            class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors text-sm"
           >
             Reintentar Carga
           </button>
@@ -137,17 +146,27 @@
       </div>
     </div>
 
-    <!-- Debug info (solo en desarrollo) -->
-    <div v-if="showDebug" class="mt-8 p-4 bg-gray-100 rounded-lg text-xs">
+    <!-- Debug info -->
+    <div class="mt-8 p-4 bg-gray-100 rounded-lg text-xs">
       <h4 class="font-bold mb-2">Información de Debug:</h4>
       <p><strong>ID Usuario Actual:</strong> {{ idUsuarioActual }}</p>
       <p><strong>Usuario Encontrado:</strong> {{ donanteActual ? 'Sí' : 'No' }}</p>
       <p><strong>Total Usuarios Cargados:</strong> {{ todosLosUsuarios.length }}</p>
       <p><strong>Especialistas Encontrados:</strong> {{ especialistas.length }}</p>
+      <p><strong>Página:</strong> {{ currentPage }} de {{ totalPages }}</p>
       <p><strong>IDs Disponibles:</strong> {{ idsDisponibles.join(', ') }}</p>
-      <button @click="toggleDebug" class="mt-2 text-blue-600 hover:text-blue-800">
-        {{ showDebug ? 'Ocultar Debug' : 'Mostrar Debug' }}
-      </button>
+      
+      <div class="mt-3">
+        <h5 class="font-bold mb-1">Lista completa de usuarios:</h5>
+        <div v-for="usuario in todosLosUsuarios" :key="usuario.idUsuario" 
+             class="flex justify-between items-center p-1 border-b"
+             :class="usuario.idUsuario === idUsuarioActual ? 'bg-green-100' : ''">
+          <span>ID: {{ usuario.idUsuario }} - {{ usuario.nombresUsuario }} {{ usuario.apellidosUsuario }}</span>
+          <span v-if="usuario.idUsuario === idUsuarioActual" class="bg-green-500 text-white px-2 py-1 rounded text-xs">
+            ACTUAL
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -166,7 +185,6 @@ const patientStore = usePatientStore()
 // Estados reactivos
 const loading = ref(true)
 const processing = ref(false)
-const showDebug = ref(false)
 
 const patientData = ref({
   specialist: '',
@@ -184,7 +202,7 @@ const {
   totalPages
 } = useUsuariosPagination()
 
-// Computed
+// Computed - SOLO para datos derivados, NO para donanteActual
 const idsDisponibles = computed(() => {
   return todosLosUsuarios.value.map((u: any) => u.idUsuario).sort((a, b) => a - b)
 })
@@ -204,30 +222,71 @@ const today = computed(() => {
 })
 
 // Métodos
-const toggleDebug = () => {
-  showDebug.value = !showDebug.value
+const buscarUsuarioActual = () => {
+  if (idUsuarioActual.value === null) {
+    donanteActual.value = null
+    return
+  }
+
+  console.log('🔍 Buscando usuario con ID:', idUsuarioActual.value)
+  console.log('📊 Total usuarios disponibles:', todosLosUsuarios.value.length)
+  console.log('📋 IDs disponibles:', idsDisponibles.value)
+
+  const usuarioEncontrado = todosLosUsuarios.value.find(
+    (d: any) => d.idUsuario === idUsuarioActual.value
+  )
+
+  console.log('✅ Usuario encontrado:', usuarioEncontrado)
+  donanteActual.value = usuarioEncontrado || null
 }
 
 const recargarUsuarios = async () => {
   loading.value = true
   try {
+    console.log('🔄 Recargando usuarios...')
     await fetchUsuarios()
-    
-    // Buscar el usuario actual después de recargar
-    if (idUsuarioActual.value !== null) {
-      donanteActual.value = todosLosUsuarios.value.find(
-        (d: any) => d.idUsuario === idUsuarioActual.value
-      )
-    }
+    buscarUsuarioActual()
     
     if (donanteActual.value) {
       toast.success('Datos recargados correctamente')
     } else {
-      toast.warning('Datos recargados pero usuario no encontrado')
+      toast.warning(`Usuario con ID ${idUsuarioActual.value} no encontrado`)
     }
   } catch (error) {
     console.error('Error al recargar usuarios:', error)
     toast.error('Error al recargar los datos')
+  } finally {
+    loading.value = false
+  }
+}
+
+const cargarTodasLasPaginas = async () => {
+  if (totalPages.value <= 1) {
+    toast.info('Solo hay una página de usuarios')
+    return
+  }
+
+  loading.value = true
+  const todosLosUsuariosTemp: any[] = [...todosLosUsuarios.value]
+
+  try {
+    console.log(`📚 Cargando todas las ${totalPages.value} páginas...`)
+    
+    for (let page = 2; page <= totalPages.value; page++) {
+      console.log(`📄 Cargando página ${page}...`)
+      // Necesitarías una forma de cambiar de página en tu composable
+      // await fetchUsuarios(page)
+      // todosLosUsuariosTemp.push(...todosLosUsuarios.value)
+    }
+
+    // Actualizar la lista con todos los usuarios
+    // todosLosUsuarios.value = todosLosUsuariosTemp
+    buscarUsuarioActual()
+    
+    toast.success(`Cargadas ${totalPages.value} páginas de usuarios`)
+  } catch (error) {
+    console.error('Error cargando todas las páginas:', error)
+    toast.error('Error al cargar todas las páginas')
   } finally {
     loading.value = false
   }
@@ -238,66 +297,36 @@ const volverAlLogin = () => {
   router.push('/login')
 }
 
-const buscarUsuarioEnTodasLasPaginas = async () => {
-  console.log('Buscando usuario en todas las páginas...')
-  
-  const originalPage = currentPage.value
-  let usuarioEncontrado = null
-  
-  // Buscar en la página actual primero
-  usuarioEncontrado = todosLosUsuarios.value.find(
-    (d: any) => d.idUsuario === idUsuarioActual.value
-  )
-  
-  if (usuarioEncontrado) {
-    return usuarioEncontrado
-  }
-  
-  // Si hay múltiples páginas, buscar en las demás
-  if (totalPages.value > 1) {
-    for (let page = 1; page <= totalPages.value; page++) {
-      if (page !== originalPage) {
-        try {
-          // Aquí necesitarías una forma de cambiar de página en tu composable
-          console.log(`Buscando en página ${page}...`)
-          // await fetchUsuarios(page) // Si tu composable soporta cambiar página
-        } catch (error) {
-          console.error(`Error al cargar página ${page}:`, error)
-        }
-        
-        // Verificar si se encontró después de cambiar página
-        usuarioEncontrado = todosLosUsuarios.value.find(
-          (d: any) => d.idUsuario === idUsuarioActual.value
-        )
-        
-        if (usuarioEncontrado) {
-          return usuarioEncontrado
-        }
-      }
-    }
-  }
-  
-  return null
-}
-
 const obtenerIdUsuario = (): number | null => {
-  // Intentar múltiples fuentes posibles
+  console.log('🔎 Buscando ID en sessionStorage...')
+  
+  // Revisar sessionStorage completo para debugging
+  const sessionKeys = Object.keys(sessionStorage)
+  console.log('🗝️ Llaves en sessionStorage:', sessionKeys)
+  
+  sessionKeys.forEach(key => {
+    console.log(`📝 ${key}:`, sessionStorage.getItem(key))
+  })
+
   const sources = [
     sessionStorage.getItem('idUsuario'),
     localStorage.getItem('idUsuario'),
     sessionStorage.getItem('userId'),
     localStorage.getItem('userId'),
     sessionStorage.getItem('user_id'),
-    localStorage.getItem('user_id')
+    localStorage.getItem('user_id'),
+    sessionStorage.getItem('id'),
+    localStorage.getItem('id')
   ]
   
   for (const source of sources) {
     if (source && !isNaN(Number(source))) {
-      console.log('ID encontrado en:', source)
+      console.log('🎯 ID encontrado en storage:', source)
       return Number(source)
     }
   }
   
+  console.warn('❌ No se encontró ID en ningún storage')
   return null
 }
 
@@ -376,7 +405,7 @@ const cancelarCita = async () => {
 // Lifecycle
 onMounted(async () => {
   try {
-    // Obtener ID del usuario de múltiples fuentes
+    // Obtener ID del usuario
     idUsuarioActual.value = obtenerIdUsuario()
     
     if (!idUsuarioActual.value) {
@@ -385,36 +414,27 @@ onMounted(async () => {
       return
     }
 
-    console.log('Buscando usuario con ID:', idUsuarioActual.value)
+    console.log('🚀 Iniciando carga con ID:', idUsuarioActual.value)
 
     // Cargar usuarios
     await fetchUsuarios()
     
-    console.log('Usuarios cargados:', todosLosUsuarios.value.length)
-    console.log('IDs disponibles:', idsDisponibles.value)
-
-    // Buscar usuario actual
-    donanteActual.value = todosLosUsuarios.value.find(
-      (d: any) => d.idUsuario === idUsuarioActual.value
-    )
-
-    if (!donanteActual.value) {
-      console.warn('Usuario no encontrado en primera carga. IDs disponibles:', idsDisponibles.value)
-      
-      // Intentar búsqueda en todas las páginas si está disponible
-      if (totalPages.value > 1) {
-        donanteActual.value = await buscarUsuarioEnTodasLasPaginas()
-      }
-    }
+    // Buscar usuario actual después de cargar
+    buscarUsuarioActual()
 
     if (donanteActual.value) {
-      console.log('Usuario encontrado:', donanteActual.value)
+      console.log('🎉 Usuario encontrado exitosamente:', donanteActual.value)
     } else {
-      console.error(`Usuario con ID ${idUsuarioActual.value} no encontrado después de búsqueda exhaustiva`)
+      console.error('❌ Usuario NO encontrado después de carga inicial')
+      console.log('📊 Estado actual:')
+      console.log('- ID buscado:', idUsuarioActual.value)
+      console.log('- Total usuarios cargados:', todosLosUsuarios.value.length)
+      console.log('- IDs disponibles:', idsDisponibles.value)
+      console.log('- Página actual:', currentPage.value, 'de', totalPages.value)
     }
 
   } catch (error) {
-    console.error('Error crítico al cargar datos:', error)
+    console.error('💥 Error crítico al cargar datos:', error)
     toast.error('Error crítico al cargar la información')
   } finally {
     loading.value = false

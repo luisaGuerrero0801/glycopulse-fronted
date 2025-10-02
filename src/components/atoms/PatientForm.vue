@@ -124,20 +124,17 @@ const {
 onMounted(async () => {
   const storedId = sessionStorage.getItem('idUsuario')
   console.log('ID en sessionStorage:', storedId)
-
-  if (storedId) {
-    idUsuarioActual.value = Number(storedId)
-    console.log('ID de usuario actual:', idUsuarioActual.value)
-  }
-
+  if (storedId) idUsuarioActual.value = Number(storedId)
+  console.log('ID de usuario actual:', idUsuarioActual.value)
   await fetchUsuarios()
   console.log('Usuarios obtenidos:', todosLosUsuarios.value)
 })
 
 const donanteActual = computed(() => {
   if (idUsuarioActual.value !== null) {
+    console.log('Buscando usuario con id:', idUsuarioActual.value)
     const encontrado = todosLosUsuarios.value.find(
-      (d: any) => d.idUsuario === idUsuarioActual.value
+      (d: any) => String(d.idUsuario) === String(idUsuarioActual.value)
     )
     console.log('Usuario encontrado:', encontrado)
     return encontrado || null

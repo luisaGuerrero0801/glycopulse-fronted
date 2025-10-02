@@ -128,19 +128,19 @@ onMounted(async () => {
   console.log('ID de usuario actual:', idUsuarioActual.value)
   await fetchUsuarios()
   console.log('Usuarios obtenidos:', todosLosUsuarios.value)
-
-  todosLosUsuarios.value.forEach((u: any, idx: number) => {
-    console.log(`Usuario #${idx}:`, u, 'idUsuario:', u.idUsuario, 'id:', u.id)
-  })
 })
 
 const donanteActual = computed(() => {
   if (idUsuarioActual.value !== null) {
     console.log('Buscando usuario con id:', idUsuarioActual.value)
     const encontrado = todosLosUsuarios.value.find(
-      (d: any) => d.idUsuario === idUsuarioActual.value || d.id === idUsuarioActual.value
+      (d: any) => d.idUsuario === idUsuarioActual.value
     )
-    console.log('Usuario encontrado:', encontrado)
+    if (!encontrado) {
+      console.warn('No se encontró usuario con id:', idUsuarioActual.value)
+    } else {
+      console.log('Usuario encontrado:', encontrado)
+    }
     return encontrado || null
   }
   return null

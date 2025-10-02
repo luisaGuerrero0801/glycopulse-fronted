@@ -7,7 +7,6 @@
       <span class="text-[var(--colorPrimarioTexto)] font-bold"> Adminístrala</span>
     </p>
 
-    <!-- Estados de carga -->
     <div v-if="usuariosStore.loading" class="text-center text-blue-600 font-bold mt-10">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
       Cargando información del usuario...
@@ -15,7 +14,6 @@
       <p class="text-sm">Usuarios cargados: {{ todosLosUsuarios.length }}</p>
     </div>
 
-    <!-- Error -->
     <div v-else-if="usuariosStore.error" class="text-center text-red-600 font-bold mt-10">
       <div class="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
         <p>Error: {{ usuariosStore.error }}</p>
@@ -28,7 +26,6 @@
       </div>
     </div>
 
-    <!-- Formulario cuando se encuentra el usuario -->
     <form
       v-else-if="donanteActual"
       @submit.prevent="handleSubmit"
@@ -122,7 +119,6 @@
       </button>
     </form>
 
-    <!-- Usuario no encontrado -->
     <div v-else class="text-center text-red-600 font-bold mt-10">
       <div class="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
         <svg class="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,28 +148,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Debug info -->
-    <div class="mt-8 p-4 bg-gray-100 rounded-lg text-xs">
-      <h4 class="font-bold mb-2">Información del Sistema:</h4>
-      <p><strong>ID Usuario Actual:</strong> {{ idUsuarioActual }}</p>
-      <p><strong>Usuario Encontrado:</strong> {{ donanteActual ? 'Sí' : 'No' }}</p>
-      <p><strong>Total Usuarios Cargados:</strong> {{ todosLosUsuarios.length }}</p>
-      <p><strong>Especialistas Encontrados:</strong> {{ especialistas.length }}</p>
-      <p><strong>IDs Disponibles:</strong> {{ idsDisponibles.join(', ') }}</p>
-      
-      <div class="mt-3">
-        <h5 class="font-bold mb-1">Lista completa de usuarios:</h5>
-        <div v-for="usuario in todosLosUsuarios" :key="usuario.idUsuario" 
-             class="flex justify-between items-center p-1 border-b"
-             :class="usuario.idUsuario === idUsuarioActual ? 'bg-green-100' : ''">
-          <span>ID: {{ usuario.idUsuario }} - {{ usuario.nombresUsuario }} {{ usuario.apellidosUsuario }}</span>
-          <span v-if="usuario.idUsuario === idUsuarioActual" class="bg-green-500 text-white px-2 py-1 rounded text-xs">
-            ACTUAL
-          </span>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -181,15 +155,13 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePatientStore } from '@/stores/PatientForm'
-import { useUsuariosStore } from '@/stores/donantes' // Importar el store correcto
+import { useUsuariosStore } from '@/stores/donantes'
 import { toast } from 'vue3-toastify'
 
-// Router y Stores
 const router = useRouter()
 const patientStore = usePatientStore()
-const usuariosStore = useUsuariosStore() // Usar el store de usuarios
+const usuariosStore = useUsuariosStore()
 
-// Estados reactivos
 const processing = ref(false)
 
 const patientData = ref({
@@ -199,7 +171,6 @@ const patientData = ref({
 
 const idUsuarioActual = ref<number | null>(null)
 
-// Computed - Usar directamente los usuarios del store
 const todosLosUsuarios = computed(() => {
   return usuariosStore.usuariosFiltrados || []
 })
@@ -211,7 +182,6 @@ const donanteActual = computed(() => {
     (d: any) => d.idUsuario === idUsuarioActual.value
   )
   
-  console.log('🔍 Buscando usuario ID:', idUsuarioActual.value, 'Encontrado:', usuario)
   return usuario || null
 })
 
@@ -221,7 +191,6 @@ const idsDisponibles = computed(() => {
 
 const especialistas = computed(() => {
   return todosLosUsuarios.value.filter((usuario: any) => {
-    // Ajusta según cómo esté estructurado el rol en tu API
     return usuario.rol?.idRol === 3 || usuario.idRol === 3
   })
 })
@@ -234,14 +203,9 @@ const today = computed(() => {
   return `${year}-${month}-${day}`
 })
 
-// Métodos
 const cargarUsuarios = async () => {
   try {
-    console.log('🔄 Cargando usuarios desde el store...')
     await usuariosStore.fetchUsuarios()
-    
-    console.log('✅ Usuarios cargados:', todosLosUsuarios.value.length)
-    console.log('📋 IDs disponibles:', idsDisponibles.value)
     
     if (donanteActual.value) {
       toast.success('Usuario encontrado correctamente')
@@ -249,7 +213,6 @@ const cargarUsuarios = async () => {
       toast.warning(`Usuario con ID ${idUsuarioActual.value} no encontrado`)
     }
   } catch (error) {
-    console.error('❌ Error al cargar usuarios:', error)
     toast.error('Error al cargar los usuarios')
   }
 }
@@ -260,16 +223,7 @@ const volverAlLogin = () => {
 }
 
 const obtenerIdUsuario = (): number | null => {
-  console.log('🔎 Buscando ID en sessionStorage...')
-  
-  // Revisar sessionStorage completo para debugging
   const sessionKeys = Object.keys(sessionStorage)
-  console.log('🗝️ Llaves en sessionStorage:', sessionKeys)
-  
-  sessionKeys.forEach(key => {
-    console.log(`📝 ${key}:`, sessionStorage.getItem(key))
-  })
-
   const sources = [
     sessionStorage.getItem('idUsuario'),
     localStorage.getItem('idUsuario'),
@@ -283,22 +237,18 @@ const obtenerIdUsuario = (): number | null => {
   
   for (const source of sources) {
     if (source && !isNaN(Number(source))) {
-      console.log('🎯 ID encontrado en storage:', source)
       return Number(source)
     }
   }
   
-  console.warn('❌ No se encontró ID en ningún storage')
   return null
 }
 
-// Función para parsear fecha
 function parseDateLocal(dateString: string) {
   const parts = dateString.split('-')
   return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
 }
 
-// Handlers de formulario
 const handleSubmit = async () => {
   if (!patientData.value.specialist || !patientData.value.date) {
     toast.error('Por favor, completa todos los campos requeridos')
@@ -324,12 +274,10 @@ const handleSubmit = async () => {
 
     toast.success('Consulta asignada correctamente')
 
-    // Reset form
     patientData.value.specialist = ''
     patientData.value.date = ''
     
   } catch (error) {
-    console.error('Error al asignar consulta:', error)
     toast.error('Error al asignar la consulta')
   } finally {
     processing.value = false
@@ -357,17 +305,14 @@ const cancelarCita = async () => {
       toast.info('No tienes citas asignadas')
     }
   } catch (error) {
-    console.error('Error al cancelar cita:', error)
     toast.error('Error al cancelar la cita')
   } finally {
     processing.value = false
   }
 }
 
-// Lifecycle
 onMounted(async () => {
   try {
-    // Obtener ID del usuario
     idUsuarioActual.value = obtenerIdUsuario()
     
     if (!idUsuarioActual.value) {
@@ -375,28 +320,12 @@ onMounted(async () => {
       return
     }
 
-    console.log('🚀 Iniciando carga con ID:', idUsuarioActual.value)
-
-    // Cargar usuarios desde el store
     await cargarUsuarios()
-
-    if (donanteActual.value) {
-      console.log('🎉 Usuario encontrado exitosamente:', donanteActual.value)
-    } else {
-      console.error('❌ Usuario NO encontrado después de carga')
-      console.log('📊 Estado actual:')
-      console.log('- ID buscado:', idUsuarioActual.value)
-      console.log('- Total usuarios cargados:', todosLosUsuarios.value.length)
-      console.log('- IDs disponibles:', idsDisponibles.value)
-    }
-
   } catch (error) {
-    console.error('💥 Error crítico al cargar datos:', error)
     toast.error('Error crítico al cargar la información')
   }
 })
 </script>
 
 <style scoped>
-/* Estilos adicionales si son necesarios */
 </style>

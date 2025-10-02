@@ -98,6 +98,28 @@ toggleFavoritoReceta(receta: Receta) {
   }
 
   localStorage.setItem(claveFavoritos, JSON.stringify(favoritosGuardados))
-}
+},
+  
+async eliminarReceta(idReceta: number) {
+  try {
+    const token = sessionStorage.getItem('token')
+    if (!token) throw new Error('Token no encontrado en sessionStorage')
+
+    const res = await fetch(`${import.meta.env.VITE_API_URL}recetas/${idReceta}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    if (!res.ok) throw new Error('Error al eliminar receta')
+
+    // eliminar de estado local
+    this.recetas = this.recetas.filter(r => r.idReceta !== idReceta)
+  } catch (err: any) {
+    this.error = err.message
+    throw err
   }
+}
+
+}
+  
 })

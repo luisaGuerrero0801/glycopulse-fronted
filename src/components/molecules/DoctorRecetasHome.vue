@@ -1,4 +1,4 @@
-<!-- DoctorRecetasHomeView.vue -->
+<!-- DoctorRecetasHome.vue -->
 <template>
   <HeaderApp pagename="doctor/crear" />
   <div class="flex justify-end mt-8">
@@ -20,7 +20,8 @@
       v-for="receta in paginatedItems"
       :key="receta.idReceta"
       class="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-2xl transition min-h-[150px]"
-    @click="abrirDetalle(receta)">
+      @click="abrirDetalle(receta)"
+    >
       <img
         :src="receta.imagenReceta || 'https://via.placeholder.com/250'"
         alt="Imagen receta"
@@ -61,12 +62,35 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
   >
     <div class="bg-white rounded-xl w-11/12 max-w-3xl p-8 relative overflow-y-auto max-h-[90vh]">
-      <button
-        @click="recetaSeleccionada = null"
-        class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl font-bold"
-      >
-        ×
-      </button>
+<!-- Header del modal -->
+<div class="flex justify-between items-center mb-6">
+  <!-- Botón eliminar -->
+  <button
+    @click="eliminarReceta(recetaSeleccionada.idReceta)"
+    class="text-red-600 hover:text-red-800 font-medium flex items-center gap-1 text-base"
+  >
+    <span class="material-icons text-base">delete</span>
+    Eliminar
+  </button>
+<!-- Botón editar -->
+<!-- <button
+  @click="editarReceta(recetaSeleccionada)"
+  class="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 text-base"
+>
+  <span class="material-icons text-base">edit</span>
+  Editar
+</button> -->
+
+
+  <!-- Botón cerrar -->
+  <button
+    @click="recetaSeleccionada = null"
+    class="text-gray-500 hover:text-gray-800 text-xl font-bold leading-none"
+  >
+    ×
+  </button>
+</div>
+
 
       <!-- Tabs -->
       <div class="flex border-b mb-4">
@@ -276,4 +300,19 @@ const { currentPage, paginatedItems, totalPages, goToPage } = usePagination(
   computed(() => recetasFiltradas.value),
   recetasPorPagina
 )
+const eliminarReceta = async (id: number) => {
+  if (confirm('¿Seguro que quieres eliminar esta receta?')) {
+    await recetasStore.eliminarReceta(id)
+    recetaSeleccionada.value = null // cerrar modal tras eliminar
+  }
+  }
+const editarReceta = (receta: any) => {
+  router.push({
+    name: 'DoctorRecetaCard', // 👈 nombre de la vista donde está el formulario
+    params: { id: pacienteId }, // id del doctor o paciente
+    query: { editar: receta.idReceta } // 👈 aquí mandamos el id para edición
+  })
+}
+
+
 </script>

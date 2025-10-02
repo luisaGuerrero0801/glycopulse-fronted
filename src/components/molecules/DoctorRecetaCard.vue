@@ -350,4 +350,6 @@ interface Ingrediente {
   cantidad: number | null
   unidad: string
 }
+
+
 </script>

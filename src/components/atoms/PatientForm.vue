@@ -8,10 +8,24 @@
     </p>
 
     <!-- Estados de carga -->
-    <div v-if="loading" class="text-center text-blue-600 font-bold mt-10">
+    <div v-if="usuariosStore.loading" class="text-center text-blue-600 font-bold mt-10">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
       Cargando información del usuario...
       <p class="text-sm mt-2">ID buscado: {{ idUsuarioActual }}</p>
+      <p class="text-sm">Usuarios cargados: {{ todosLosUsuarios.length }}</p>
+    </div>
+
+    <!-- Error -->
+    <div v-else-if="usuariosStore.error" class="text-center text-red-600 font-bold mt-10">
+      <div class="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+        <p>Error: {{ usuariosStore.error }}</p>
+        <button 
+          @click="cargarUsuarios"
+          class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+        >
+          Reintentar
+        </button>
+      </div>
     </div>
 
     <!-- Formulario cuando se encuentra el usuario -->
@@ -121,20 +135,13 @@
         <div class="text-xs text-gray-500 mb-4">
           <p>Total usuarios cargados: {{ todosLosUsuarios.length }}</p>
           <p>IDs disponibles: {{ idsDisponibles.join(', ') || 'Ninguno' }}</p>
-          <p>Página actual: {{ currentPage }} de {{ totalPages }}</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-2 justify-center">
           <button 
-            @click="cargarTodasLasPaginas"
+            @click="cargarUsuarios"
             class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm"
           >
-            Cargar Todas las Páginas
-          </button>
-          <button 
-            @click="recargarUsuarios"
-            class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors text-sm"
-          >
-            Reintentar Carga
+            Recargar Usuarios
           </button>
           <button 
             @click="volverAlLogin"
@@ -148,12 +155,11 @@
 
     <!-- Debug info -->
     <div class="mt-8 p-4 bg-gray-100 rounded-lg text-xs">
-      <h4 class="font-bold mb-2">Información de Debug:</h4>
+      <h4 class="font-bold mb-2">Información del Sistema:</h4>
       <p><strong>ID Usuario Actual:</strong> {{ idUsuarioActual }}</p>
       <p><strong>Usuario Encontrado:</strong> {{ donanteActual ? 'Sí' : 'No' }}</p>
       <p><strong>Total Usuarios Cargados:</strong> {{ todosLosUsuarios.length }}</p>
       <p><strong>Especialistas Encontrados:</strong> {{ especialistas.length }}</p>
-      <p><strong>Página:</strong> {{ currentPage }} de {{ totalPages }}</p>
       <p><strong>IDs Disponibles:</strong> {{ idsDisponibles.join(', ') }}</p>
       
       <div class="mt-3">
@@ -175,15 +181,15 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePatientStore } from '@/stores/PatientForm'
-import { useUsuariosPagination } from '@/composables/utils/usePagination'
+import { useUsuariosStore } from '@/stores/donantes' // Importar el store correcto
 import { toast } from 'vue3-toastify'
 
 // Router y Stores
 const router = useRouter()
 const patientStore = usePatientStore()
+const usuariosStore = useUsuariosStore() // Usar el store de usuarios
 
 // Estados reactivos
-const loading = ref(true)
 const processing = ref(false)
 
 const patientData = ref({
@@ -192,23 +198,30 @@ const patientData = ref({
 })
 
 const idUsuarioActual = ref<number | null>(null)
-const donanteActual = ref<any>(null)
 
-// Composable para paginación
-const {
-  paginatedUsuarios: todosLosUsuarios,
-  fetchUsuarios,
-  currentPage,
-  totalPages
-} = useUsuariosPagination()
+// Computed - Usar directamente los usuarios del store
+const todosLosUsuarios = computed(() => {
+  return usuariosStore.usuariosFiltrados || []
+})
 
-// Computed - SOLO para datos derivados, NO para donanteActual
+const donanteActual = computed(() => {
+  if (idUsuarioActual.value === null) return null
+  
+  const usuario = todosLosUsuarios.value.find(
+    (d: any) => d.idUsuario === idUsuarioActual.value
+  )
+  
+  console.log('🔍 Buscando usuario ID:', idUsuarioActual.value, 'Encontrado:', usuario)
+  return usuario || null
+})
+
 const idsDisponibles = computed(() => {
   return todosLosUsuarios.value.map((u: any) => u.idUsuario).sort((a, b) => a - b)
 })
 
 const especialistas = computed(() => {
   return todosLosUsuarios.value.filter((usuario: any) => {
+    // Ajusta según cómo esté estructurado el rol en tu API
     return usuario.rol?.idRol === 3 || usuario.idRol === 3
   })
 })
@@ -222,73 +235,22 @@ const today = computed(() => {
 })
 
 // Métodos
-const buscarUsuarioActual = () => {
-  if (idUsuarioActual.value === null) {
-    donanteActual.value = null
-    return
-  }
-
-  console.log('🔍 Buscando usuario con ID:', idUsuarioActual.value)
-  console.log('📊 Total usuarios disponibles:', todosLosUsuarios.value.length)
-  console.log('📋 IDs disponibles:', idsDisponibles.value)
-
-  const usuarioEncontrado = todosLosUsuarios.value.find(
-    (d: any) => d.idUsuario === idUsuarioActual.value
-  )
-
-  console.log('✅ Usuario encontrado:', usuarioEncontrado)
-  donanteActual.value = usuarioEncontrado || null
-}
-
-const recargarUsuarios = async () => {
-  loading.value = true
+const cargarUsuarios = async () => {
   try {
-    console.log('🔄 Recargando usuarios...')
-    await fetchUsuarios()
-    buscarUsuarioActual()
+    console.log('🔄 Cargando usuarios desde el store...')
+    await usuariosStore.fetchUsuarios()
+    
+    console.log('✅ Usuarios cargados:', todosLosUsuarios.value.length)
+    console.log('📋 IDs disponibles:', idsDisponibles.value)
     
     if (donanteActual.value) {
-      toast.success('Datos recargados correctamente')
+      toast.success('Usuario encontrado correctamente')
     } else {
       toast.warning(`Usuario con ID ${idUsuarioActual.value} no encontrado`)
     }
   } catch (error) {
-    console.error('Error al recargar usuarios:', error)
-    toast.error('Error al recargar los datos')
-  } finally {
-    loading.value = false
-  }
-}
-
-const cargarTodasLasPaginas = async () => {
-  if (totalPages.value <= 1) {
-    toast.info('Solo hay una página de usuarios')
-    return
-  }
-
-  loading.value = true
-  const todosLosUsuariosTemp: any[] = [...todosLosUsuarios.value]
-
-  try {
-    console.log(`📚 Cargando todas las ${totalPages.value} páginas...`)
-    
-    for (let page = 2; page <= totalPages.value; page++) {
-      console.log(`📄 Cargando página ${page}...`)
-      // Necesitarías una forma de cambiar de página en tu composable
-      // await fetchUsuarios(page)
-      // todosLosUsuariosTemp.push(...todosLosUsuarios.value)
-    }
-
-    // Actualizar la lista con todos los usuarios
-    // todosLosUsuarios.value = todosLosUsuariosTemp
-    buscarUsuarioActual()
-    
-    toast.success(`Cargadas ${totalPages.value} páginas de usuarios`)
-  } catch (error) {
-    console.error('Error cargando todas las páginas:', error)
-    toast.error('Error al cargar todas las páginas')
-  } finally {
-    loading.value = false
+    console.error('❌ Error al cargar usuarios:', error)
+    toast.error('Error al cargar los usuarios')
   }
 }
 
@@ -410,34 +372,27 @@ onMounted(async () => {
     
     if (!idUsuarioActual.value) {
       toast.error('No se encontró ID de usuario. Por favor, inicia sesión nuevamente.')
-      loading.value = false
       return
     }
 
     console.log('🚀 Iniciando carga con ID:', idUsuarioActual.value)
 
-    // Cargar usuarios
-    await fetchUsuarios()
-    
-    // Buscar usuario actual después de cargar
-    buscarUsuarioActual()
+    // Cargar usuarios desde el store
+    await cargarUsuarios()
 
     if (donanteActual.value) {
       console.log('🎉 Usuario encontrado exitosamente:', donanteActual.value)
     } else {
-      console.error('❌ Usuario NO encontrado después de carga inicial')
+      console.error('❌ Usuario NO encontrado después de carga')
       console.log('📊 Estado actual:')
       console.log('- ID buscado:', idUsuarioActual.value)
       console.log('- Total usuarios cargados:', todosLosUsuarios.value.length)
       console.log('- IDs disponibles:', idsDisponibles.value)
-      console.log('- Página actual:', currentPage.value, 'de', totalPages.value)
     }
 
   } catch (error) {
     console.error('💥 Error crítico al cargar datos:', error)
     toast.error('Error crítico al cargar la información')
-  } finally {
-    loading.value = false
   }
 })
 </script>

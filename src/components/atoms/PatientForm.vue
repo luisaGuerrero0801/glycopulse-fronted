@@ -140,11 +140,6 @@ const especialistas = computed(() => {
   return todosLosUsuarios.value.filter((usuario: any) => usuario.rol?.idRol === 3)
 })
 
-function parseDateLocal(dateString: string) {
-  const parts = dateString.split('-')
-  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
-}
-
 const today = computed(() => {
   const now = new Date()
   const year = now.getFullYear()
@@ -152,6 +147,11 @@ const today = computed(() => {
   const day = String(now.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
 })
+
+function parseDateLocal(dateString: string) {
+  const parts = dateString.split('-')
+  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
+}
 
 const handleSubmit = () => {
   if (!patientData.value.specialist || !patientData.value.date) {

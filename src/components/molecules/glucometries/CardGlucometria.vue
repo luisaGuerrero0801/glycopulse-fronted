@@ -5,6 +5,8 @@ const props = defineProps<{
   hora: string
   glucosa: number
   comentario: string
+  mostrarVer?: boolean
+  mostrarEditar?: boolean
 }>()
 
 const emit = defineEmits(['verGluco', 'editarGluco'])
@@ -51,12 +53,14 @@ const editarRegistro = () => {
           <div class="px-16 py-3">
             <div class="flex justify-end gap-3 flex-wrap">
               <button
+              v-if="mostrarVer"
                 class="flex-shrink-0 bg-gray-300 text-lg text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition"
                 @click="verDetalle"
               >
                 Ver
               </button>
               <button
+              v-if="mostrarEditar"
                 class="flex-shrink-0 bg-blue-900 text-lg text-stone-50 px-4 py-2 rounded-md hover:bg-gray-500 transition"
                 @click="editarRegistro"
               >

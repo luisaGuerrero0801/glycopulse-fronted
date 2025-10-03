@@ -23,7 +23,6 @@ onMounted(() => {
        <NavbarApp :links="[
         { name: 'Pacientes', to: '/doctor/pacientes', icon: UserIcon},
         { name: 'Glucometrias', to: '/doctor/pacientes', icon:  FolderIcon },
-        { name: 'Recetas', to: '/doctor/recetas/5/crear', icon: TableCellsIcon },
         // { name: 'Recetas Saludables', to: '/recetas-saludables', icon: 'BookOpenIcon' },
         // { name: 'Reportes', to: '#', icon: 'ChartBarIcon' }
       ]" />

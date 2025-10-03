@@ -330,6 +330,8 @@ const handleSubmit = async () => {
             g.recomendaciones.find((r) => r.tipoRecomendacion.toLowerCase() === 'general')
               ?.descripcionRecomendacion || ''
           "
+            :mostrar-editar="true"
+          :mostrar-ver="true"
           @verGluco="verDetalleGlucometria(g.idGlucometria)"
           @editarGluco="editarGlucometria(g.idGlucometria)"
         />

@@ -16,7 +16,6 @@ import NavbarApp from '@/components/molecules/NavbarApp.vue'  // Importamos Navb
        <NavbarApp :links="[
      { name: 'Pacientes', to: '/doctor/pacientes', icon: UserIcon},
         { name: 'Glucometrias', to: '/doctor/pacientes', icon:  FolderIcon },
-        { name: 'Recetafs', to: '/doctor/recetas/3/crear', icon: TableCellsIcon },
         // { name: 'Recetas Saludables', to: '/recetas-saludables', icon: 'BookOpenIcon' },
         // { name: 'Reportes', to: '#', icon: 'ChartBarIcon' }
       ]" />

@@ -56,7 +56,11 @@ export function useRegister() {
   }
 
   const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  const validarContrasena = (password: string) => password.length >= 8
+  // Debe tener: mínimo 8 caracteres, mayúscula, minúscula, número y caracter especial
+  const validarContrasena = (password: string) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*.,_-]).{8,}$/
+    return regex.test(password)
+  }
 
   const formatDate = (dateString: string) => {
     if (!dateString) return ''
@@ -146,7 +150,9 @@ export function useRegister() {
     }
 
     if (!validarContrasena(form.value.contrasenaUsuario)) {
-      toast.error('La contraseña debe tener al menos 8 caracteres')
+      toast.error(
+        'La contraseña debe tener mínimo 8 caracteres, incluir mayúscula, minúscula, número y un caracter especial'
+      )
       return false
     }
     if (

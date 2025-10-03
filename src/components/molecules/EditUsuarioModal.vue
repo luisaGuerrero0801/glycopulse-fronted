@@ -282,6 +282,11 @@ watch(
 function cancelar() {
   emit('close')
 }
+function validarContrasena(password: string): boolean {
+  // Al menos 8 caracteres, 1 mayúscula, 1 minúscula, 1 número y 1 carácter especial
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+  return regex.test(password)
+}
 
 async function guardar() {
   try {
@@ -294,10 +299,16 @@ async function guardar() {
       return
     }
 
-    if (form.nuevaContrasenaUsuario.trim() !== '' && form.nuevaContrasenaUsuario.trim().length < 8) {
-      showToast('La contraseña debe tener al menos 8 caracteres.', '#ff9800')
-      return
-    }
+if (form.nuevaContrasenaUsuario.trim() !== '') {
+  if (!validarContrasena(form.nuevaContrasenaUsuario.trim())) {
+    showToast(
+      'La contraseña debe tener al menos 8 caracteres, incluir mayúscula, minúscula, número y carácter especial',
+      '#ff9800'
+    )
+    return
+  }
+}
+
 
     const datosActualizados: Record<string, any> = {
       nombresUsuario: form.nombresUsuario,

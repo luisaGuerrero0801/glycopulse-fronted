@@ -72,16 +72,6 @@
     <span class="material-icons text-base">delete</span>
     Eliminar
   </button>
-<!-- Botón editar -->
-<!-- <button
-  @click="editarReceta(recetaSeleccionada)"
-  class="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 text-base"
->
-  <span class="material-icons text-base">edit</span>
-  Editar
-</button> -->
-
-
   <!-- Botón cerrar -->
   <button
     @click="recetaSeleccionada = null"
@@ -235,7 +225,7 @@ import Paginate from 'vuejs-paginate-next'
 import { useRecetasPacienteStore } from '@/stores/VistaHomeRecetas'
 import HeaderApp from './HeaderApp.vue'
 import { usePagination } from '@/composables/pagination/usePagination'
-
+import { toast } from 'vue3-toastify'
 const search = ref('')
 const router = useRouter()
 const route = useRoute()
@@ -302,17 +292,20 @@ const { currentPage, paginatedItems, totalPages, goToPage } = usePagination(
 )
 const eliminarReceta = async (id: number) => {
   if (confirm('¿Seguro que quieres eliminar esta receta?')) {
-    await recetasStore.eliminarReceta(id)
-    recetaSeleccionada.value = null // cerrar modal tras eliminar
+    try {
+      await recetasStore.eliminarReceta(id)
+      recetaSeleccionada.value = null // cerrar modal tras eliminar
+      toast.success('Receta eliminada correctamente ✅')
+    } catch (error) {
+      console.error(error)
+      toast.error('Error al eliminar la receta ❌')
+    }
+  } else {
+    toast.info('Eliminación cancelada 🚫')
   }
-  }
-const editarReceta = (receta: any) => {
-  router.push({
-    name: 'DoctorRecetaCard', // 👈 nombre de la vista donde está el formulario
-    params: { id: pacienteId }, // id del doctor o paciente
-    query: { editar: receta.idReceta } // 👈 aquí mandamos el id para edición
-  })
 }
+
+
 
 
 </script>

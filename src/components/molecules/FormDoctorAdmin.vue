@@ -231,7 +231,11 @@ const onlyLetters = (e: KeyboardEvent) => {
 
 const soloNumeros = (texto: string) => /^[0-9]+$/.test(texto)
 const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-const validarContrasena = (password: string) => password.length >= 8
+// Debe tener: mínimo 8 caracteres, mayúscula, minúscula, número y caracter especial
+const validarContrasena = (password: string) => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*.,_-]).{8,}$/
+  return regex.test(password)
+}
 
 const validarFormulario = () => {
   if (!form.value.idRol) {
@@ -242,10 +246,13 @@ const validarFormulario = () => {
     toast.error('Correo inválido')
     return false
   }
-  if (!validarContrasena(form.value.contrasenaUsuario)) {
-    toast.error('La contraseña debe tener al menos 8 caracteres')
-    return false
-  }
+if (!validarContrasena(form.value.contrasenaUsuario)) {
+  toast.error(
+    'La contraseña debe tener al menos 8 caracteres, incluir mayúscula, minúscula, número y carácter especial'
+  )
+  return false
+}
+
   if (!soloNumeros(form.value.celularUsuario) || form.value.celularUsuario.length < 10) {
     toast.error('El número de teléfono debe tener al menos 10 dígitos')
     return false

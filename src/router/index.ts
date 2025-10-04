@@ -180,6 +180,14 @@ const router = createRouter({
       meta: { requiresAuth: false, role: 'doctor' }
     },
     {
+  path: '/doctor/pacientes/:id/reportes',
+  name: 'DoctorReportesHome',
+  component: () => import('../views/DoctorReportesHomeView.vue'),
+  meta: {  requiresAuth: true, role: 'doctor'
+  }
+},
+
+    {
       path: '/donantes',
       name: 'donantes',
       // route level code-splitting

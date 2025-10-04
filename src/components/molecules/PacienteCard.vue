@@ -77,6 +77,9 @@ const emit = defineEmits<{
 const irAOpcion = (event: Event, pacienteId: number) => {
   const select = event.target as HTMLSelectElement
   const opcion = select.value
+  if (opcion === 'reportes') {
+    router.push({ name: 'DoctorReportesHome', params: { id: pacienteId } })
+  }
 
   if (opcion === 'recetas') {
     router.push({ name: 'DoctorRecetasHome', params: { id: pacienteId } })

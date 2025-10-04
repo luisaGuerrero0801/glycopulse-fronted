@@ -1,10 +1,17 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6 sm:p-8" id="capture">
+    <HeaderApp class="w-2" pagename="Donantes" />
+
+  <div 
+    class="min-h-screen bg-gradient-to-br  to-indigo-50 p-6 sm:p-8 mx-auto " 
+    id="capture"
+  >
+
+  
     <header class="mb-6 sm:mb-8">
       <h1 class="text-3xl sm:text-4xl font-extrabold text-black mb-4 text-center">
         Informe de Glucosa
       </h1>
-      <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-lg space-y-4">
+      <div class="max-w-full lg:max-w-6xl xl:max-w-7xl mx-auto bg-white p-6 rounded-xl shadow-lg space-y-4">
         <div class="flex flex-wrap gap-4 items-end">
           <div class="flex-1">
             <p class="text-gray-600">
@@ -63,7 +70,7 @@
       </button>
     </div>
 
-    <main v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <main v-else class="max-w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <div
         v-if="!filteredRecords.length"
         class="lg:col-span-3 text-center py-8 text-gray-500 bg-white rounded-xl shadow-lg"
@@ -102,7 +109,7 @@
                 Registros ({{ filteredRecords.length }})
               </h3>
             </div>
-            <div class="w-full max-h-[400px] overflow-y-auto rounded-lg border border-gray-200 flex-1">
+            <div class="w-full max-h-[600px] lg:max-h-[800px] overflow-y-auto rounded-lg border border-gray-200 flex-1">
               <table class="min-w-full text-sm divide-y divide-gray-200">
                 <thead class="bg-indigo-100 text-xs sticky top-0 z-10">
                   <tr>
@@ -185,6 +192,7 @@ import {
 } from 'chart.js'
 import { Line as LineChart, Bar as BarChart, Pie as PieChart, Scatter as ScatterChart } from 'vue-chartjs'
 import { useGlucometriasStore } from '@/stores/glucometrias/AllGlucometrias'
+import HeaderApp from '../HeaderApp.vue'
 
 const store = useGlucometriasStore()
 const loading = ref(false)

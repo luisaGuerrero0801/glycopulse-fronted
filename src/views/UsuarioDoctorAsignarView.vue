@@ -10,7 +10,7 @@ import HeaderApp from '@/components/molecules/HeaderApp.vue';
   <div class="w-full flex">
     <VistaInicial />
     <div class="w-full flex-col">
-      <HeaderApp pagename="Asignar Cita" />
+      <HeaderApp pagename="Asignación consulta" />
      <UsuarioDoctorAsignar />
     </div>
   </div>

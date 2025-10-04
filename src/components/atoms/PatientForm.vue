@@ -1,9 +1,9 @@
 <template>
   <div class="md:w-1/2 lg:w-2/5 mx-auto px-4">
-    <h2 class="font-black text-3xl text-center">Seguimiento Consultas</h2>
+    <h2 class="font-black text-3xl text-center">Asignación de especialistas</h2>
 
     <p class="text-lg mt-5 text-center mb-10">
-      Agenda tu cita y
+     Asigna tu consulta y
       <span class="text-[var(--colorPrimarioTexto)] font-bold"> Adminístrala</span>
     </p>
 

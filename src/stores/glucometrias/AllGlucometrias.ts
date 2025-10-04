@@ -6,6 +6,7 @@ import type {
   CrearGlucometriaDto,
   Glucometria
 } from '@/types/glucometria'
+import type { AxiosResponse } from 'axios'
 
 export const useGlucometriasStore = defineStore('glucometrias', {
   state: () => ({
@@ -31,6 +32,10 @@ export const useGlucometriasStore = defineStore('glucometrias', {
       try {
         const { data } = await GlucometriasProvider.todasGlucometrias(userId, filters)
         this.glucometrias = data
+        if (!data || data.length === 0) {
+          this.error = null
+          console.info('No hay registros de glucometrías')
+        }
       } catch (err: any) {
         this.error = 'Error al cargar glucometrías'
         toast.error(this.error)
@@ -91,7 +96,7 @@ export const useGlucometriasStore = defineStore('glucometrias', {
         const { data } = await GlucometriasProvider.obtenerGlucometriaPorId(idGlucometria)
         return data
       } catch (err: any) {
-        this.error = 'Error al obtener eldetalle de la glucometría'
+        this.error = 'Error al obtener el detalle de la glucometría'
         toast.error(this.error)
         console.error(err)
       } finally {
@@ -103,12 +108,28 @@ export const useGlucometriasStore = defineStore('glucometrias', {
       this.loading = true
       this.error = null
       try {
-        const { data } = await GlucometriasProvider.obtenerUltimaPorUsuario(userId)
+        const response: AxiosResponse<{ fecha: string; hora: string } | null> =
+          await GlucometriasProvider.obtenerUltimaPorUsuario(userId)
+
+        const data = response.data
+
+        // Si el backend devuelve vacío o null
+        if (!data) {
+          console.info('No hay registros de glucometrías para este usuario.')
+          return null
+        }
+
         return data
       } catch (err: any) {
-        this.error = 'Error al obtener última glucometría'
-        toast.error(this.error)
+        // Si el backend devuelve 404 → significa que no hay registros
+        if (err?.response?.status === 404) {
+          console.info('No hay glucometrías registradas (404 del servidor).')
+          return null
+        }
+
+        this.error = 'Error al obtener la última glucometría'
         console.error(err)
+        return null
       } finally {
         this.loading = false
       }

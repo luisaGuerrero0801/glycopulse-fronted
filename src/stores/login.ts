@@ -4,7 +4,6 @@ import { toast } from 'vue3-toastify'
 import router from '@/router'
 import jwtDecode from 'jwt-decode'
 
-
 interface DecodedToken {
   sub: number
   emailUser: string
@@ -41,7 +40,6 @@ export const loginStore = defineStore('login', {
         sessionStorage.setItem('token', this.token)
         sessionStorage.setItem('rol', this.rol)
 
-
         if (this.idUsuario !== null) {
           sessionStorage.setItem('idUsuario', this.idUsuario.toString())
         } else {
@@ -53,19 +51,24 @@ export const loginStore = defineStore('login', {
           sessionStorage.setItem('idDoctor', this.idUsuario.toString())
         }
 
-        toast('Login correcto', { type: toast.TYPE.SUCCESS })
+        const rol = this.rol
 
-        // Redirección por rol
-        if (this.rol === 'Paciente') {
-          router.push('/asignar')
-        } else if (this.rol === 'Doctor') {
-          router.push('/doctor/pacientes')
-        } else if (this.rol === 'Admin') {
-          router.push('/admin/panel')
-        }
-
+        toast.success('Login correcto', {
+          autoClose: 1500,
+          onClose: () => {
+            if (rol === 'Paciente') {
+              router.push('/asignar')
+            } else if (rol === 'Doctor') {
+              router.push('/doctor/pacientes')
+            } else if (rol === 'Admin') {
+              router.push('/admin/panel')
+            }
+          }
+        })
       } catch (e: any) {
-        const mensaje = e?.response?.data?.message || 'Error al iniciar sesión. Verifica tus datos o intenta más tarde.'
+        const mensaje =
+          e?.response?.data?.message ||
+          'Error al iniciar sesión. Verifica tus datos o intenta más tarde.'
         if (mensaje === 'El usuario está inactivo') {
           toast(' Tu cuenta está inhabilitada. Contacta al administrador.', {
             type: toast.TYPE.WARNING

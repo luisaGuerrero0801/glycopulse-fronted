@@ -222,7 +222,7 @@ const handleSubmit = async () => {
         fechaGlucometria: form.value.fecha,
         horaGlucometria: form.value.hora,
         nivelGlucometria: form.value.glucosa,
-        momento: String(form.value.momento),
+        momento: String(form.value.momento)
       })
     }
     if (userId) {
@@ -255,7 +255,18 @@ const handleSubmit = async () => {
 
     <!-- Estado de carga -->
     <div v-if="storeGluco.loading" class="text-gray-600">Cargando glucometrías...</div>
-    <div v-else-if="storeGluco.error" class="text-red-600">{{ storeGluco.error }}</div>
+    <!-- Error al cargar -->
+    <div v-else-if="storeGluco.error" class="text-red-600">
+      {{ storeGluco.error }}
+    </div>
+
+    <!-- Sin registros -->
+    <div
+      v-else-if="!storeGluco.glucometrias || storeGluco.glucometrias.length === 0"
+      class="text-gray-500 italic"
+    >
+      No hay registros de glucometrías.
+    </div>
 
     <!-- Tabla de glucometrías -->
     <div v-else>
@@ -271,8 +282,10 @@ const handleSubmit = async () => {
               @click="toggleSort('fecha')"
             >
               <span class="truncate text-indigo-950 text-lg">FECHA</span>
-              <span v-if="sortConfig.fecha" 
-              class="text-indigo-950 flex-shrink-0 text-xl font-semibold">
+              <span
+                v-if="sortConfig.fecha"
+                class="text-indigo-950 flex-shrink-0 text-xl font-semibold"
+              >
                 {{ sortConfig.fecha === 'ASC' ? '↑' : '↓' }}
               </span>
             </button>
@@ -330,7 +343,7 @@ const handleSubmit = async () => {
             g.recomendaciones.find((r) => r.tipoRecomendacion.toLowerCase() === 'general')
               ?.descripcionRecomendacion || ''
           "
-            :mostrar-editar="true"
+          :mostrar-editar="true"
           :mostrar-ver="true"
           @verGluco="verDetalleGlucometria(g.idGlucometria)"
           @editarGluco="editarGlucometria(g.idGlucometria)"
@@ -339,19 +352,19 @@ const handleSubmit = async () => {
     </div>
 
     <!-- Paginación abajo -->
-   <div class="flex justify-center mt-6 fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
-  <paginate
-    :page-count="totalPages"
-    :click-handler="goToPage"
-    :prev-text="'Anterior'"
-    :next-text="'Siguiente'"
-    :container-class="'flex flex-wrap justify-center gap-2'"
-    :page-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-[var(--colorSecundarioButton)] transition'"
-    :active-class="'bg-[var(--colorPrimarioButton)] text-white font-semibold'"
-    :prev-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
-    :next-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
-  />
-</div>
+    <div class="flex justify-center mt-8 mb-8">
+      <paginate
+        :page-count="totalPages"
+        :click-handler="goToPage"
+        :prev-text="'Anterior'"
+        :next-text="'Siguiente'"
+        :container-class="'flex flex-wrap justify-center gap-2'"
+        :page-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-[var(--colorSecundarioButton)] transition'"
+        :active-class="'bg-[var(--colorPrimarioButton)] text-white font-semibold'"
+        :prev-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+        :next-class="'px-4 py-2 border rounded cursor-pointer text-sm text-gray-700 hover:bg-gray-200 transition'"
+      />
+    </div>
 
     <PopUp
       :isVisible="isModalVisible"

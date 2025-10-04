@@ -12,8 +12,8 @@
 <script lang="ts" setup>
 interface Props {
   text: string
-  colorButton: string
-  colorButtonHover: string
+  colorButton?: string
+  colorButtonHover?: string
 }
 
 defineEmits<{ OnClick: [] }>()

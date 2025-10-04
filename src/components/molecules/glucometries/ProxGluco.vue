@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { loginStore } from '@/stores/login'
 import { useGlucometriasStore } from '@/stores/glucometrias/AllGlucometrias'
 import { toast } from 'vue3-toastify'
@@ -16,14 +16,22 @@ const cargarUltimaGlucometria = async () => {
     const data = await storeGluco.obtenerUltimaGlucometria(userId)
     ultimaGluco.value = data
   } catch (error) {
-    toast.error('No se pudo cargar la última glucometría')
     console.error(error)
+    toast.error('No se pudo cargar la última glucometría')
   }
 }
 
 onMounted(() => {
   cargarUltimaGlucometria()
 })
+
+watch(
+  () => storeGluco.glucometrias,
+  () => {
+    cargarUltimaGlucometria()
+  },
+  { deep: true } // detecta cambios dentro del array
+)
 </script>
 
 <template>

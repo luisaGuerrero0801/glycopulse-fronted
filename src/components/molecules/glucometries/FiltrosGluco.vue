@@ -4,6 +4,11 @@ import InputAtom from '@/components/atoms/ImputAtom.vue'
 import { useGlucometriasStore } from '@/stores/glucometrias/AllGlucometrias'
 import { loginStore } from '@/stores/login'
 
+interface Props {
+  pacienteId?: number
+}
+const props = defineProps<Props>()
+
 const storeGluco = useGlucometriasStore()
 const auth = loginStore()
 const userId = auth.getUserId()
@@ -12,33 +17,36 @@ const userId = auth.getUserId()
 const fecha = ref<string>('')
 const rango = ref<string>('')
 
-// Cargar rangos dinámicos desde el store
+// Rangos dinámicos desde el store
 const rangos = ref<{ value: string; label: string }[]>([])
 
 const cargarRangos = async () => {
   await storeGluco.obtenerRangosStore()
   rangos.value = storeGluco.rangos.map(r => ({
     value: r,
-    label: r.charAt(0).toUpperCase() + r.slice(1) // capitaliza la primera letra
+    label: r.charAt(0).toUpperCase() + r.slice(1)
   }))
-  rangos.value.unshift({ value: 'no', label: 'Todas' }) // opción por defecto
+  rangos.value.unshift({ value: 'no', label: 'Todas' })
 }
 
 // Función para aplicar filtros
 const aplicarFiltros = () => {
-  if (!userId) return
+  const idParaCargar = props.pacienteId ?? userId
+  if (!idParaCargar) return
+
   const filters: Record<string, string> = {}
   if (fecha.value) filters.fechaGlucometria = fecha.value
   if (rango.value && rango.value !== 'no') filters.rangoGlucometria = rango.value
-  storeGluco.verGlucos(userId, filters)
+
+  storeGluco.verGlucos(idParaCargar, filters)
 }
 
-// Observadores para que cada cambio en los inputs aplique el filtro automáticamente
+// Observadores para aplicar filtro automáticamente
 watch([fecha, rango], () => {
   aplicarFiltros()
 })
 
-// Cargar rangos al montar el componente
+// Cargar rangos al montar
 onMounted(() => {
   cargarRangos()
 })

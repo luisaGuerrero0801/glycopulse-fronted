@@ -117,18 +117,6 @@ const router = createRouter({
         requiresAuth: false
       }
     },
-
-    {
-      path: '/glucometria',
-      name: 'vistaInicial',
-      // route level code-splitting
-      // this generates a separate chunk (LoginView-[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/glucometries/GlucometryView.vue'),
-      meta: {
-        requiresAuth: true /**cambiar a true */
-      }
-    },
     {
       path: '/recetas-saludables/recetas/:id/crear',
       name: 'recetasSaludables',
@@ -159,12 +147,12 @@ const router = createRouter({
       component: () => import('@/views/DoctorPacientesView.vue'),
       meta: { requiresAuth: false, role: 'doctor' }
     },
-    // {
-    //   path: '/doctor/glucometrias',
-    //   name: 'DoctorGlucometrias',
-    //   component: () => import('@/views/DoctorGlucometriasView.vue'),
-    //   meta: { requiresAuth: true, role: 'doctor' }
-    // },
+    {
+      path: '/doctor/pacientes/:id/glucometrias',
+      name: 'DoctorGlucometry',
+      component: () => import('@/views/glucometries/GlucometriasDoctor.vue'),
+      meta: { requiresAuth: true, role: 'doctor' }
+    },
     {
       path: '/doctor/:id/recetas',
       name: 'DoctorRecetasHome',

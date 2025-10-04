@@ -4,7 +4,9 @@ import { storeToRefs } from 'pinia'
 import { usePacientesDoctorStore } from '@/stores/usePacientesDoctorStore'
 import PacientesLista from '@/components/molecules/DoctorPacientes.vue'
 import NavbarApp from '@/components/molecules/NavbarApp.vue'  // Importamos NavbarApp
+// @ts-ignore
 import { FaceFrownIcon } from '@heroicons/vue/24/outline'
+// @ts-ignore
 import { TableCellsIcon, UserIcon, FolderIcon } from '@heroicons/vue/20/solid';
 
 
@@ -22,7 +24,7 @@ onMounted(() => {
     <div class="col-span-1">
        <NavbarApp :links="[
         { name: 'Pacientes', to: '/doctor/pacientes', icon: UserIcon},
-        { name: 'Glucometrias', to: '/doctor/pacientes', icon:  FolderIcon },
+        //{ name: 'Glucometrias', to: '/doctor/pacientes', icon:  FolderIcon },
         // { name: 'Recetas Saludables', to: '/recetas-saludables', icon: 'BookOpenIcon' },
         // { name: 'Reportes', to: '#', icon: 'ChartBarIcon' }
       ]" />

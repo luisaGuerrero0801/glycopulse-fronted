@@ -67,29 +67,27 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { defineEmits, defineProps } from 'vue'
+import { defineProps } from 'vue'
 const router = useRouter()
 
-const emit = defineEmits<{
-  (e: 'mostrarGlucometrias', pacienteId: number): void
-}>()
 
 const irAOpcion = (event: Event, pacienteId: number) => {
   const select = event.target as HTMLSelectElement
   const opcion = select.value
-  if (opcion === 'reportes') {
-    router.push({ name: 'DoctorReportesHome', params: { id: pacienteId } })
+
+  switch (opcion) {
+    case 'reportes':
+      router.push({ name: 'DoctorReportesHome', params: { id: pacienteId } })
+      break
+    case 'recetas':
+      router.push({ name: 'DoctorRecetasHome', params: { id: pacienteId } })
+      break
+    case 'glucometrias':
+      router.push({ name: 'DoctorGlucometry', params: { id: pacienteId } })
+      break
   }
 
-  if (opcion === 'recetas') {
-    router.push({ name: 'DoctorRecetasHome', params: { id: pacienteId } })
-  }
- if (opcion === 'glucometrias') {
-    // Emitimos el evento al padre en lugar de hacer router.push
-    emit('mostrarGlucometrias', pacienteId)
-  }
-
-  // Resetear select
+  // Resetear el valor del select
   select.value = ''
 }
 

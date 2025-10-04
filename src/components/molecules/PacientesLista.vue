@@ -10,20 +10,16 @@
         v-for="paciente in pacientes"
         :key="paciente.id"
         :paciente="paciente"
-        @mostrarGlucometrias="mostrarGlucometrias"
+        @mostrarGlucometrias="irAGlucometrias"
       />
     </div>
-    <DoctorGlucometry
-      v-if="pacienteSeleccionadoId !== null"
-      :pacienteId="pacienteSeleccionadoId"
-    />
   </div>
 </template>
 
 
 <script setup lang="ts">
-import DoctorGlucometry from '@/views/DoctorGlucometry.vue'
 import PacienteCard from './PacienteCard.vue'
+import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 
 defineProps<{
@@ -31,9 +27,10 @@ defineProps<{
   loading: boolean
 }>()
 
-const pacienteSeleccionadoId = ref<number|null>(null)
+const router = useRouter()
 
-const mostrarGlucometrias = (pacienteId: number) => {
-  pacienteSeleccionadoId.value = pacienteId
+// Función que redirige a la vista de glucometrías del paciente
+const irAGlucometrias = (pacienteId: number) => {
+  router.push({ name: 'DoctorGlucometry', params: { id: pacienteId } })
 }
 </script>

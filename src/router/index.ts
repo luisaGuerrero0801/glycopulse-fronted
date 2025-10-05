@@ -4,132 +4,13 @@ import { loginStore } from '@/stores/login'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // ========== RUTAS PÚBLICAS ==========
-    {
-      path: '/',
-      name: 'login',
-      component: () => import('../views/LoginView.vue'),
-      meta: { requiresAuth: false }
-    },
-    {
-      path: '/verify',
-      name: 'verify',
-      component: () => import('../views/VerifyAccountView.vue'),
-      meta: { requiresAuth: false }
-    },
-    {
-      path: '/register',
-      name: 'register',
-      component: () => import('../views/RegisterView.vue'),
-      meta: { requiresAuth: false }
-    },
-    {
-      path: '/recover',
-      name: 'recover',
-      component: () => import('../views/RecoverAccountView.vue'),
-      meta: { requiresAuth: false }
-    },
-    {
-      path: '/reset-password',
-      name: 'reset-password',
-      component: () => import('../views/ResetPasswordView.vue'),
-      meta: { requiresAuth: false }
-    },
-
-    // ========== POLÍTICAS Y TÉRMINOS ==========
-    {
-      path: '/condiciones',
-      name: 'Condiciones',
-      component: () => import('../views/policies/CondicionesView.vue'),
-    },
-    {
-      path: '/privacidad',
-      name: 'PoliticaPrivacidad',
-      component: () => import('../views/policies/PoliticaPrivacidadView.vue'),
-    },
-    {
-      path: '/terminos',
-      name: 'TerminosCondiciones',
-      component: () => import('../views/policies/TerminosCondicionesView.vue'),
-    },
-
-    // ========== RUTAS DE PACIENTE ==========
-    {
-      path: '/paciente',
-      meta: { requiresAuth: true, allowedRoles: ['paciente'] },
-      children: [
-        {
-          path: 'recetas-saludables/recetas/:id/crear',
-          name: 'recetasSaludables',
-          component: () => import('../views/RecetasSaludablesView.vue'),
-        },
-        {
-          path: 'reportes',
-          name: 'reportes',
-          component: () => import('../views/Reportes/ReportesView.vue'),
-        },
-        {
-          path: 'glucometrias',
-          name: 'glucometrias',
-          component: () => import('../views/glucometries/GlucometriasPaciente.vue'),
-        },
-        {
-          path: 'donantes',
-          name: 'donantes',
-          component: () => import('../views/DonantesView.vue'),
-        },
-        {
-          path: 'asignar',
-          name: 'Asignar',
-          component: () => import('../views/UsuarioDoctorAsignarView.vue'),
-        },
-        {
-          path: 'favoritos',
-          name: 'AdminFav',
-          component: () => import('../views/FavoritosView.vue'),
-        },
-      ]
-    },
-
-    // ========== RUTAS DE DOCTOR ==========
-    {
-      path: '/doctor',
-      meta: { requiresAuth: true, allowedRoles: ['doctor'] },
-      children: [
-        {
-          path: 'pacientes',
-          name: 'DoctorPacientes',
-          component: () => import('@/views/DoctorPacientesView.vue'),
-        },
-        {
-          path: 'pacientes/:id/glucometrias',
-          name: 'DoctorGlucometry',
-          component: () => import('@/views/glucometries/GlucometriasDoctor.vue'),
-        },
-        {
-          path: ':id/recetas',
-          name: 'DoctorRecetasHome',
-          component: () => import('@/views/DoctorRecetasHomeView.vue'),
-        },
-        {
-          path: 'recetas/:id/crear',
-          name: 'DoctorRecetaCard',
-          component: () => import('@/views/DoctorRecetaCardView.vue'),
-        },
-        {
-          path: 'pacientes/:id/reportes',
-          name: 'DoctorReportesHome',
-          component: () => import('../views/DoctorReportesHomeView.vue'),
-        },
-      ]
-    },
-
-    // ========== RUTAS DE ADMINISTRADOR ==========
     {
       path: '/admin',
       name: 'admin',
       component: () => import('../views/AdminPageView.vue'),
-      meta: { requiresAuth: true, allowedRoles: ['admin'] },
+      meta: {
+        requiresAuth: true /**cambiar a true */
+      },
       children: [
         {
           path: 'users',
@@ -141,11 +22,14 @@ const router = createRouter({
           name: 'AdminPanel',
           component: () => import('../views/PanelView.vue')
         },
+
         {
           path: 'dashboard',
           name: 'AdminDashboard',
           component: () => import('../views/DashboardView.vue')
         },
+
+      
         {
           path: 'groups',
           name: 'AdminGroups',
@@ -156,10 +40,16 @@ const router = createRouter({
           name: 'AdminRol',
           component: () => import('../views/RolView.vue')
         },
+
         {
           path: 'recipe',
           name: 'AdminRecipe',
           component: () => import('../views/CreateRecipeView.vue')
+        },
+        {
+          path: 'favoritos',
+          name: 'AdminFav',
+          component: () => import('../views/FavoritosView.vue')
         },
         {
           path: 'doctores/nuevo',
@@ -168,12 +58,153 @@ const router = createRouter({
         }
       ]
     },
-
-    // ========== RUTA DE FALLBACK ==========
     {
-      path: '/:pathMatch(.*)*',
-      redirect: '/'
-    }
+      path: '/',
+      name: 'login',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/LoginView.vue'),
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: '/verify',
+      name: 'verify',
+      component: () => import('../views/VerifyAccountView.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/register',
+      name: 'register',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/RegisterView.vue'),
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: '/recover',
+      name: 'recover',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/RecoverAccountView.vue'),
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/ResetPasswordView.vue'),
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: '/recetas-saludables/recetas/:id/crear',
+      name: 'recetasSaludables',
+      component: () => import('../views/RecetasSaludablesView.vue'),
+      meta: {
+        requiresAuth: true /**cambiar a true */
+      }
+    },
+    {
+      path: '/reportes',
+      name: 'reportes',
+      component: () => import('../views/Reportes/ReportesView.vue'),
+      meta: {
+        requiresAuth: true /**cambiar a true */
+      }
+    },
+    {
+      path: '/glucometrias',
+      name: 'glucometrias',
+      component: () => import('../views/glucometries/GlucometriasPaciente.vue'),
+      meta: {
+        requiresAuth: true /**cambiar a true */
+      }
+    },
+    {
+      path: '/doctor/pacientes',
+      name: 'DoctorPacientes',
+      component: () => import('@/views/DoctorPacientesView.vue'),
+      meta: { requiresAuth: false, role: 'doctor' }
+    },
+    {
+      path: '/doctor/pacientes/:id/glucometrias',
+      name: 'DoctorGlucometry',
+      component: () => import('@/views/glucometries/GlucometriasDoctor.vue'),
+      meta: { requiresAuth: true, role: 'doctor' }
+    },
+    {
+      path: '/doctor/:id/recetas',
+      name: 'DoctorRecetasHome',
+      component: () => import('@/views/DoctorRecetasHomeView.vue'),
+      meta: { requiresAuth: false, role: 'doctor' }
+    },
+
+    // 🔹 Vista de creación de receta (Card)
+    {
+      path: '/doctor/recetas/:id/crear',
+      name: 'DoctorRecetaCard',
+      component: () => import('@/views/DoctorRecetaCardView.vue'),
+      meta: { requiresAuth: false, role: 'doctor' }
+    },
+    {
+  path: '/doctor/pacientes/:id/reportes',
+  name: 'DoctorReportesHome',
+  component: () => import('../views/DoctorReportesHomeView.vue'),
+  meta: {  requiresAuth: true, role: 'doctor'
+  }
+},
+
+    {
+      path: '/donantes',
+      name: 'donantes',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/DonantesView.vue'),
+      meta: {
+        requiresAuth: true /**cambiar a true */
+      }
+    },
+
+    {
+      path: '/asignar',
+      name: 'Asignar',
+      component: () => import('../views/UsuarioDoctorAsignarView.vue'),
+      meta: { requiresAuth: true }
+    },
+
+
+
+    // terminos y condiciones 
+
+    {
+    path: '/condiciones',
+    name: 'Condiciones',
+    component: () => import('../views/policies/CondicionesView.vue'),
+  },
+  {
+    path: '/privacidad',
+    name: 'PoliticaPrivacidad',
+    component: () => import('../views/policies/PoliticaPrivacidadView.vue'),
+  },
+  {
+    path: '/terminos',
+    name: 'TerminosCondiciones',
+    component: () => import('../views/policies/TerminosCondicionesView.vue'),
+  
+  },
   ]
 })
 
@@ -182,46 +213,17 @@ router.beforeEach((to, from, next) => {
   login.initStore() // mantener sesión al recargar
 
   const token = login.token
-  const userRole = login.rol // 'paciente', 'doctor', 'admin'
+  const rol = login.rol
 
-  const requiresAuth = to.meta.requiresAuth as boolean
+  const requiresAuth = to.meta.requiresAuth
   const allowedRoles = (to.meta.allowedRoles || []) as string[]
 
-  // Si la ruta requiere autenticación y no hay token
   if (requiresAuth && !token) {
     return next('/')
   }
 
-  // Si la ruta requiere autenticación y tiene token
-  if (requiresAuth && token) {
-    // Si la ruta tiene roles específicos y el usuario no tiene un rol permitido
-    if (allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
-      // Redirigir según el rol del usuario
-      switch (userRole) {
-        case 'paciente':
-          return next('/paciente/reportes') // o la ruta principal del paciente
-        case 'doctor':
-          return next('/doctor/pacientes')
-        case 'admin':
-          return next('/admin/panel')
-        default:
-          return next('/')
-      }
-    }
-  }
-
-  // Si está autenticado y trata de acceder a login/register, redirigir según su rol
-  if (token && ['/', '/register', '/login'].includes(to.path)) {
-    switch (userRole) {
-      case 'paciente':
-        return next('/paciente/reportes')
-      case 'doctor':
-        return next('/doctor/pacientes')
-      case 'admin':
-        return next('/admin/panel')
-      default:
-        next()
-    }
+  if (requiresAuth && allowedRoles.length && !allowedRoles.includes(rol)) {
+    return next('/')
   }
 
   next()

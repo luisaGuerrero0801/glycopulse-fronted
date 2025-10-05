@@ -22,8 +22,8 @@ const crearReceta = () => {
       <NavbarApp
         :links="[
           { name: 'Pacientes', to: '/doctor/pacientes', icon: 'FolderPlusIcon' },
-          { name: 'Glucometrias', to: '/doctor/#', icon: 'UserIcon' },
-          { name: 'Recetas', to: '/doctor/recetas/5/crear', icon: 'BeakerIcon' }
+          // { name: 'Glucometrias', to: '/doctor/#', icon: 'UserIcon' },
+          // { name: 'Recetas', to: '/doctor/recetas/5/crear', icon: 'BeakerIcon' }
           // { name: 'Recetas Saludables', to: '/recetas-saludables', icon: 'BookOpenIcon' },
           // { name: 'Reportes', to: '#', icon: 'ChartBarIcon' }
         ]"

@@ -9,8 +9,7 @@ const router = createRouter({
       name: 'admin',
       component: () => import('../views/AdminPageView.vue'),
       meta: {
-        requiresAuth: true,
-        allowedRoles: ['admin'] // Solo administradores
+        requiresAuth: true /**cambiar a true */
       },
       children: [
         {
@@ -23,11 +22,14 @@ const router = createRouter({
           name: 'AdminPanel',
           component: () => import('../views/PanelView.vue')
         },
+
         {
           path: 'dashboard',
           name: 'AdminDashboard',
           component: () => import('../views/DashboardView.vue')
         },
+
+      
         {
           path: 'groups',
           name: 'AdminGroups',
@@ -38,6 +40,7 @@ const router = createRouter({
           name: 'AdminRol',
           component: () => import('../views/RolView.vue')
         },
+
         {
           path: 'recipe',
           name: 'AdminRecipe',
@@ -58,6 +61,9 @@ const router = createRouter({
     {
       path: '/',
       name: 'login',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
       component: () => import('../views/LoginView.vue'),
       meta: {
         requiresAuth: false
@@ -72,6 +78,9 @@ const router = createRouter({
     {
       path: '/register',
       name: 'register',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
       component: () => import('../views/RegisterView.vue'),
       meta: {
         requiresAuth: false
@@ -80,6 +89,9 @@ const router = createRouter({
     {
       path: '/recover',
       name: 'recover',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
       component: () => import('../views/RecoverAccountView.vue'),
       meta: {
         requiresAuth: false
@@ -88,6 +100,9 @@ const router = createRouter({
     {
       path: '/reset-password',
       name: 'reset-password',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
       component: () => import('../views/ResetPasswordView.vue'),
       meta: {
         requiresAuth: false
@@ -98,8 +113,7 @@ const router = createRouter({
       name: 'recetasSaludables',
       component: () => import('../views/RecetasSaludablesView.vue'),
       meta: {
-        requiresAuth: true,
-        allowedRoles: ['paciente'] // Solo pacientes
+        requiresAuth: true /**cambiar a true */
       }
     },
     {
@@ -107,8 +121,7 @@ const router = createRouter({
       name: 'reportes',
       component: () => import('../views/Reportes/ReportesView.vue'),
       meta: {
-        requiresAuth: true,
-        allowedRoles: ['paciente'] // Solo pacientes
+        requiresAuth: true /**cambiar a true */
       }
     },
     {
@@ -116,98 +129,81 @@ const router = createRouter({
       name: 'glucometrias',
       component: () => import('../views/glucometries/GlucometriasPaciente.vue'),
       meta: {
-        requiresAuth: true,
-        allowedRoles: ['paciente'] // Solo pacientes
+        requiresAuth: true /**cambiar a true */
       }
     },
     {
       path: '/doctor/pacientes',
       name: 'DoctorPacientes',
       component: () => import('@/views/DoctorPacientesView.vue'),
-      meta: { 
-        requiresAuth: true, 
-        allowedRoles: ['doctor'] // Solo doctores
-      }
+      meta: { requiresAuth: false, role: 'doctor' }
     },
     {
       path: '/doctor/pacientes/:id/glucometrias',
       name: 'DoctorGlucometry',
       component: () => import('@/views/glucometries/GlucometriasDoctor.vue'),
-      meta: { 
-        requiresAuth: true, 
-        allowedRoles: ['doctor'] // Solo doctores
-      }
+      meta: { requiresAuth: true, role: 'doctor' }
     },
     {
       path: '/doctor/:id/recetas',
       name: 'DoctorRecetasHome',
       component: () => import('@/views/DoctorRecetasHomeView.vue'),
-      meta: { 
-        requiresAuth: true, 
-        allowedRoles: ['doctor'] // Solo doctores
-      }
+      meta: { requiresAuth: false, role: 'doctor' }
     },
+
+    // 🔹 Vista de creación de receta (Card)
     {
       path: '/doctor/recetas/:id/crear',
       name: 'DoctorRecetaCard',
       component: () => import('@/views/DoctorRecetaCardView.vue'),
-      meta: { 
-        requiresAuth: true, 
-        allowedRoles: ['doctor'] // Solo doctores
-      }
+      meta: { requiresAuth: false, role: 'doctor' }
     },
     {
-      path: '/doctor/pacientes/:id/reportes',
-      name: 'DoctorReportesHome',
-      component: () => import('../views/DoctorReportesHomeView.vue'),
-      meta: { 
-        requiresAuth: true, 
-        allowedRoles: ['doctor'] // Solo doctores
-      }
-    },
+  path: '/doctor/pacientes/:id/reportes',
+  name: 'DoctorReportesHome',
+  component: () => import('../views/DoctorReportesHomeView.vue'),
+  meta: {  requiresAuth: true, role: 'doctor'
+  }
+},
+
     {
       path: '/donantes',
       name: 'donantes',
+      // route level code-splitting
+      // this generates a separate chunk (LoginView-[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
       component: () => import('../views/DonantesView.vue'),
       meta: {
-        requiresAuth: true,
-        allowedRoles: ['admin', 'doctor'] // Admin y doctores
+        requiresAuth: true /**cambiar a true */
       }
     },
+
     {
       path: '/asignar',
       name: 'Asignar',
       component: () => import('../views/UsuarioDoctorAsignarView.vue'),
-      meta: { 
-        requiresAuth: true,
-        allowedRoles: ['admin'] // Solo admin
-      }
+      meta: { requiresAuth: true }
     },
+
+
+
+
     {
-      path: '/condiciones',
-      name: 'Condiciones',
-      component: () => import('../views/policies/CondicionesView.vue'),
-      meta: { requiresAuth: false }
-    },
-    {
-      path: '/privacidad',
-      name: 'PoliticaPrivacidad',
-      component: () => import('../views/policies/PoliticaPrivacidadView.vue'),
-      meta: { requiresAuth: false }
-    },
-    {
-      path: '/terminos',
-      name: 'TerminosCondiciones',
-      component: () => import('../views/policies/TerminosCondicionesView.vue'),
-      meta: { requiresAuth: false }
-    },
-    // Ruta de fallback para páginas no encontradas
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'NotFound',
-      component: () => import('../views/NotFoundView.vue'), // Crea esta vista
-      meta: { requiresAuth: false }
-    }
+    path: '/condiciones',
+    name: 'Condiciones',
+    component: () => import('../views/policies/CondicionesView.vue'),
+  },
+  {
+    path: '/privacidad',
+    name: 'PoliticaPrivacidad',
+    component: () => import('../views/policies/PoliticaPrivacidadView.vue'),
+  },
+  {
+    path: '/terminos',
+    name: 'TerminosCondiciones',
+    component: () => import('../views/policies/TerminosCondicionesView.vue'),
+  
+  },
   ]
 })
 
@@ -221,21 +217,14 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.meta.requiresAuth
   const allowedRoles = (to.meta.allowedRoles || []) as string[]
 
-  // Si la ruta requiere autenticación y no hay token, redirigir al login
   if (requiresAuth && !token) {
     return next('/')
   }
 
-  // Si la ruta requiere autenticación y tiene roles específicos
-  if (requiresAuth && allowedRoles.length > 0) {
-    // Si el usuario no tiene un rol permitido, mantenerlo en la página actual
-    if (!allowedRoles.includes(rol)) {
-      // En lugar de redirigir al login, mantenemos al usuario donde está
-      return next(false)
-    }
+  if (requiresAuth && allowedRoles.length && !allowedRoles.includes(rol)) {
+    return next('/')
   }
 
-  // Si todo está bien, continuar
   next()
 })
 

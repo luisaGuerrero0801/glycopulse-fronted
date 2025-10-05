@@ -159,7 +159,6 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
-import { useNotificacionesStore } from '@/stores/notificaciones'
 import { toast } from 'vue3-toastify'
 import { useRegisterStore } from '@/stores/register'
 import LabelForm from '@/components/atoms/LabelForm.vue'
@@ -170,7 +169,6 @@ import { startCase, toLower } from 'lodash'
 const emit = defineEmits(['registro-exitoso'])
 
 const registerStore = useRegisterStore()
-const notificaciones = useNotificacionesStore()
 
 const isLoading = ref(false)
 const successMessage = ref('')
@@ -297,11 +295,6 @@ const registrarUsuario = async () => {
 
     await registerStore.registerUser(usuario)
 
-    notificaciones.agregar(
-      `Nuevo ${usuario.idRol === 2 ? 'Administrador' : 'Doctor'} registrado: ${
-        usuario.nombresUsuario
-      } ${usuario.apellidosUsuario}`
-    )
 
     successMessage.value = `¡${
       usuario.idRol === 2 ? 'Administrador' : 'Doctor'

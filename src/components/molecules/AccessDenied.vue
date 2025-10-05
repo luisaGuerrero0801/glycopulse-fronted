@@ -13,7 +13,7 @@ export default {
   name: 'AccessDenied',
   data() {
     return {
-      countdown: 5,
+      countdown: 3,
     };
   },
   created() {

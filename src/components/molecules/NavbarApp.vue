@@ -31,7 +31,6 @@ const props = defineProps({
 const sidebarOpen = ref(false);
 const searchQuery = ref('');
 
-
 function toggleSidebar() {
   sidebarOpen.value = !sidebarOpen.value;
 
@@ -44,7 +43,6 @@ function toggleSidebar() {
     });
   }
 }
-
 
 function handleKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape' && sidebarOpen.value) {
@@ -60,11 +58,9 @@ onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown);
 });
 
-
 watch(sidebarOpen, (isOpen) => {
   document.body.style.overflow = isOpen ? 'hidden' : '';
 });
-
 
 const filteredLinks = computed(() => {
   if (!searchQuery.value) return props.links;
@@ -86,18 +82,16 @@ const filteredLinks = computed(() => {
       ☰
     </button>
 
-  
     <section
       role="navigation"
       aria-label="Sidebar navigation"
-      class="fixed top-0 left-0 z-50 w-72 h-screen bg-[var(--colorPrimarioVentanas)] transition-transform duration-300 ease-in-out
+      class="fixed top-0 left-0 z-50 w-72 min-h-screen bg-[var(--colorPrimarioVentanas)] transition-transform duration-300 ease-in-out
              lg:translate-x-0 lg:static lg:block"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     >
 
       <LogoApp text="Glycopulse" />
 
-   
       <div class="pb-8 pt-8 pr-10 pl-10">
         <input
           type="text"
@@ -108,7 +102,6 @@ const filteredLinks = computed(() => {
         />
       </div>
 
-     
       <div class="pb-8 pt-4 pr-10 pl-8">
         <ul>
           <li
@@ -142,7 +135,6 @@ const filteredLinks = computed(() => {
       </div>
     </section>
 
-  
     <div
       v-if="sidebarOpen"
       @click="sidebarOpen = false"

@@ -1,103 +1,76 @@
 <script lang="ts" setup>
-import LogoApp from '../atoms/LogoApp.vue';
-import { RouterLink, useRoute } from 'vue-router';
-import DropdownMenu from '../atoms/DropdownMenu.vue';
-import {
-  ref,
-  onMounted,
-  onUnmounted,
-  watch,
-  nextTick,
-  computed
-} from 'vue';
-const route = useRoute();
-const rol = sessionStorage.getItem('rol');
-// Iconos de Heroicons
+import LogoApp from '../atoms/LogoApp.vue'
+import { RouterLink, useRoute } from 'vue-router'
+import DropdownMenu from '../atoms/DropdownMenu.vue'
+import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
+const route = useRoute()
+const rol = sessionStorage.getItem('rol')
 import {
   HomeIcon,
   UsersIcon,
   BookOpenIcon,
   ChartBarIcon,
- ArrowRightOnRectangleIcon,
-} from '@heroicons/vue/24/outline';
-import { FolderIcon, FolderPlusIcon } from '@heroicons/vue/20/solid';
+  ArrowRightOnRectangleIcon
+} from '@heroicons/vue/24/outline'
+import { FolderIcon, FolderPlusIcon } from '@heroicons/vue/20/solid'
 
-const sidebarOpen = ref(false);
-const searchQuery = ref('');
+const sidebarOpen = ref(false)
+const searchQuery = ref('')
 
-// Toggle del sidebar
 function toggleSidebar() {
-  sidebarOpen.value = !sidebarOpen.value;
+  sidebarOpen.value = !sidebarOpen.value
 
   if (sidebarOpen.value) {
     nextTick(() => {
       const firstFocusable = document.querySelector(
         'section[role="navigation"] input, section[role="navigation"] a'
-      ) as HTMLElement | null;
-      firstFocusable?.focus();
-    });
+      ) as HTMLElement | null
+      firstFocusable?.focus()
+    })
   }
 }
 
-// Cerrar sidebar con tecla Esc
 function handleKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape' && sidebarOpen.value) {
-    sidebarOpen.value = false;
+    sidebarOpen.value = false
   }
 }
 
 onMounted(() => {
-  window.addEventListener('keydown', handleKeydown);
-});
+  window.addEventListener('keydown', handleKeydown)
+})
 
 onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeydown);
-});
-
+  window.removeEventListener('keydown', handleKeydown)
+})
 
 watch(sidebarOpen, (isOpen) => {
-  document.body.style.overflow = isOpen ? 'hidden' : '';
-});
+  document.body.style.overflow = isOpen ? 'hidden' : ''
+})
 
 const links = [
-  { name: 'Inicio', to: '/admin/panel', icon:  HomeIcon },
+  { name: 'Inicio', to: '/admin/panel', icon: HomeIcon },
   { name: 'Dashboard', to: '/admin/dashboard', icon: ChartBarIcon },
   { name: 'Usuarios', to: '/admin/users', icon: UsersIcon },
-
-  { name: 'Salir', to: '/', icon:  ArrowRightOnRectangleIcon  },
-];
+  { name: 'Salir', to: '/', icon: ArrowRightOnRectangleIcon }
+]
 
 const filteredLinks = computed(() => {
-  if (!searchQuery.value) return links;
-  return links.filter(link =>
-    link.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
-});
+  if (!searchQuery.value) return links
+  return links.filter((link) => link.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+})
 </script>
 
 <template>
-  <div>
-
-    <button
-      @click="toggleSidebar"
-      class="md:hidden p-4 text-white bg-blue-950"
-      aria-label="Toggle sidebar"
-      :aria-expanded="sidebarOpen.toString()"
-    >
-      ☰
-    </button>
-
-
+  <div class="flex min-h-screen">
     <section
       role="navigation"
       aria-label="Sidebar navigation"
-      class="fixed top-0 left-0 z-50 w-72 h-screen bg-[var(--colorPrimarioVentanas)] transition-transform duration-300 ease-in-out
-             md:translate-x-0 md:static md:block"
+      class="fixed top-0 left-0 z-50 w-72 min-h-screen bg-[var(--colorPrimarioVentanas)] transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:block"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     >
       <LogoApp text="Glycopulse" />
 
-  
       <div class="pb-8 pt-8 pr-10 pl-10">
         <input
           type="text"
@@ -110,12 +83,8 @@ const filteredLinks = computed(() => {
 
       <div class="pb-8 pt-4 pr-10 pl-8">
         <ul>
-          <li
-            v-for="link in filteredLinks"
-            :key="link.name"
-            class="mb-1"
-          >
-            <RouterLink 
+          <li v-for="link in filteredLinks" :key="link.name" class="mb-1">
+            <RouterLink
               v-if="link.to !== '#'"
               :to="link.to"
               class="flex items-center gap-2 px-4 py-2 font-sans text-base text-red-50 hover:bg-blue-900 rounded-md"
@@ -140,19 +109,5 @@ const filteredLinks = computed(() => {
         </ul>
       </div>
     </section>
-
-     <div v-if="!route.path.startsWith('/admin/notification')" class="w-16 h-10 justify-center">
-  <DropdownMenu/>
-</div>
-
-
-
-    <div
-      v-if="sidebarOpen"
-      @click="sidebarOpen = false"
-      class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-      aria-hidden="true"
-    ></div>
   </div>
 </template>
-

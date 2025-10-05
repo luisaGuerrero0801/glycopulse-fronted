@@ -1,14 +1,12 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRegisterStore } from '@/stores/register'
-import { useNotificacionesStore } from '@/stores/notificaciones'
 import { toast } from 'vue3-toastify'
 import { computed } from 'vue'
 
 export function useRegister() {
   const router = useRouter()
   const registerStore = useRegisterStore()
-  const notificaciones = useNotificacionesStore()
   const soloNumeros = (texto: string) => /^[0-9]+$/.test(texto)
   const availableCities = computed(() => {
     return regionMap['CO']
@@ -212,9 +210,6 @@ export function useRegister() {
 
       await registerStore.registerUser(usuario)
 
-      notificaciones.agregar(
-        `👤 Nuevo usuario registrado: ${usuario.nombresUsuario} ${usuario.apellidosUsuario}`
-      )
 
       successMessage.value = '¡Registro exitoso! Redirigiendo...'
       router.push('/')

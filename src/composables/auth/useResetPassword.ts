@@ -10,18 +10,32 @@ export function useResetPassword() {
   // Cargar token desde URL
   store.token = String(route.query.token || '')
 
-  // Función de validación
-  const validarFormulario = (): boolean => {
-    if (!store.nuevaContrasena || store.nuevaContrasena.length < 8) {
-      toast.error('La contraseña debe tener al menos 8 caracteres')
-      return false
-    }
-    if (store.nuevaContrasena !== store.confirmarContrasena) {
-      toast.error('Las contraseñas no coinciden')
-      return false
-    }
-    return true
+// Función de validación
+const validarFormulario = (): boolean => {
+  const password = store.nuevaContrasena
+
+  if (!password || password.length < 8) {
+    toast.error('La contraseña debe tener al menos 8 caracteres')
+    return false
   }
+
+  // ✅ Nueva validación: debe tener letras, números y símbolos
+const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&^_-])[A-Za-z\d@$!%*#?&^_-]+$/
+
+
+  if (!regex.test(password)) {
+    toast.error('La contraseña debe incluir letras, números y símbolos')
+    return false
+  }
+
+  if (password !== store.confirmarContrasena) {
+    toast.error('Las contraseñas no coinciden')
+    return false
+  }
+
+  return true
+}
+
 
   // Acción para cambiar contraseña
   const cambiarContrasena = async () => {

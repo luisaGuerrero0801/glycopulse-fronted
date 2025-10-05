@@ -18,7 +18,7 @@ const pacienteId = Number(route.params.id)
       <NavbarApp
         :links="[
           { name: 'Pacientes', to: '/doctor/pacientes', icon: 'FolderPlusIcon' },
-          { name: 'Glucometrías', to: `/doctor/pacientes/${pacienteId}/glucosa`, icon: 'UserIcon' },
+          // { name: 'Glucometrías', to: `/doctor/pacientes/${pacienteId}/glucosa`, icon: 'UserIcon' },
         //   { name: 'Recetas', to: `/doctor/recetas/${pacienteId}/crear`, icon: 'BeakerIcon' }
         ]"
       />

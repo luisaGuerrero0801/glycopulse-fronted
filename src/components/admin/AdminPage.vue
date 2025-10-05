@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import LogoApp from '../atoms/LogoApp.vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
 import DropdownMenu from '../atoms/DropdownMenu.vue';
 import {
   ref,
@@ -10,7 +10,8 @@ import {
   nextTick,
   computed
 } from 'vue';
-
+const route = useRoute();
+const rol = sessionStorage.getItem('rol');
 // Iconos de Heroicons
 import {
   HomeIcon,
@@ -140,9 +141,10 @@ const filteredLinks = computed(() => {
       </div>
     </section>
 
-     <div class="w-16 h-10 justify-center">
-          <DropdownMenu/>
-        </div>
+     <div v-if="!route.path.startsWith('/admin/notification')" class="w-16 h-10 justify-center">
+  <DropdownMenu/>
+</div>
+
 
 
     <div
@@ -153,3 +155,4 @@ const filteredLinks = computed(() => {
     ></div>
   </div>
 </template>
+

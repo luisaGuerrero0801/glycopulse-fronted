@@ -187,7 +187,6 @@ const router = createRouter({
 
 
 
-    // terminos y condiciones 
 
     {
     path: '/condiciones',

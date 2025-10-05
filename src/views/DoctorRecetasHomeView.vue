@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DoctorLayout from '@/components/molecules/DoctorLayout.vue'
+// import DoctorLayout from '@/components/molecules/DoctorLayout.vue'
 import DoctorRecetasHome from '@/components/molecules/DoctorRecetasHome.vue'
 import { useRouter, useRoute } from 'vue-router'
 import NavbarApp from '@/components/molecules/NavbarApp.vue' // Importamos NavbarApp

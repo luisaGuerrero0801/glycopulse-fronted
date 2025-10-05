@@ -1,7 +1,16 @@
 <!-- DoctorReportesHome.vue  -->
 <template>
-     <HeaderApp pagename="doctor/Reportes" />
-  <div class="min-w-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6 sm:p-8" id="capture">
+
+  <div class="flex items-center justify-between mt-8 mb-0.5">
+    <HeaderApp pagename="doctor/Reportes" />
+        <button
+          @click="volver"
+          class="bg-indigo-950 hover:bg-gray-200 text-white px-5 py-3 rounded-lg text-lg font-medium"
+        >
+          ← Volver
+        </button>
+      </div>
+  <div class="min-w-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-2 sm:p-2" id="capture">
     
     <header class="mb-6 sm:mb-8">
       <h1 class="text-2xl sm:text-3xl font-extrabold text-black mb-4 text-center">
@@ -171,6 +180,7 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import HeaderApp from './HeaderApp.vue'
 import { ref, computed, onMounted } from 'vue'
 import html2canvas from 'html2canvas'
@@ -200,7 +210,9 @@ import { useGlucometriasStore } from '@/stores/glucometrias/AllGlucometrias'
 const props = defineProps<{
   pacienteId: number
 }>()
+const router = useRouter() // ✅ Inicialización
 
+const volver = () => router.push('/doctor/pacientes')
 const store = useGlucometriasStore()
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -210,10 +222,9 @@ const currentUserId = computed(() => props.pacienteId)
 
 
 const currentPage = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(2)
 
 const totalPages = computed(() => Math.ceil(filteredRecords.value.length / pageSize.value) || 1)
-
 const paginatedRecords = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   return filteredRecords.value.slice(start, start + pageSize.value)

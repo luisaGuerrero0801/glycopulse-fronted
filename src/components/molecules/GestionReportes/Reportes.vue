@@ -203,7 +203,7 @@ const idUsuarioActual = ref<number | null>(null)
 const todosLosUsuarios = ref<any[]>([])
 
 const currentPage = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(5)
 
 const totalPages = computed(() => 
   Math.ceil(filteredRecords.value.length / pageSize.value) || 1

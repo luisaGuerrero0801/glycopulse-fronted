@@ -1,7 +1,15 @@
 <!-- DoctorRecetasHome.vue -->
 <template>
-  <HeaderApp pagename="doctor/crear" />
-  <div class="flex justify-end mt-8">
+ <div class="flex items-center justify-between mt-8 mb-0.5">
+     <HeaderApp pagename="doctor/Reportes" />
+        <button
+          @click="volver"
+          class="bg-indigo-950 hover:bg-gray-200 text-white px-5 py-3 rounded-lg text-lg font-medium"
+        >
+          ← Volver
+        </button>
+      </div>
+  <div class="flex justify-end mt-4">
     <button
       @click="crearReceta"
       class="bg-blue-950 hover:bg-blue-800 text-white px-4 py-2 rounded-lg shadow"
@@ -232,6 +240,8 @@ const route = useRoute()
 const pacienteId = Number(route.params.id) || 0
 const tab = ref<'ingredientes' | 'preparacion'>('ingredientes')
 
+
+const volver = () => router.push('/doctor/pacientes')
 const ingPagina = ref(0) // página actual en ingredientes
 const ingredientesPorPagina = 9
 
